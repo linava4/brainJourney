@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF8F2F8),
+      backgroundColor: Colors.deepPurple.shade50,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ElevatedButton(
                 onPressed: _next,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF200D0B),
+                  backgroundColor: Colors.deepPurple,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

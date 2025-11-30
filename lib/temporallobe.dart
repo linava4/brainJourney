@@ -61,7 +61,7 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.hearing, size: 120, color: Colors.deepPurple),
+              Image.asset('assets/images/braintemporallobe.webp'),
               const SizedBox(height: 24),
               Text(
                 text[step],
@@ -152,13 +152,16 @@ class _WordSearchGameState extends State<WordSearchGame> {
     "ast",
     "art",
     "arten",
+    "ernten",
+    "ernte",
     "tee",
     "rat",
     "den",
     "der",
     "das",
     "an",
-    "er"
+    "er",
+    "da"
   };
 
   String feedback = "";
@@ -309,6 +312,7 @@ class PreGlitchDialog extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Image.asset('assets/images/temporallobe.webp'),
               const Text(
                 "Super! Du hast alle Wörter gefunden!",
                 style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
@@ -595,13 +599,7 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      width: 110,
-                      height: 110,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10)],
-                      ),
-                      child: const Icon(Icons.hearing, size: 64, color: Colors.deepPurple),
+                      child: Image.asset('assets/images/temporallobe.webp'),
                     ),
                     const SizedBox(height: 20),
                     Container(
@@ -620,7 +618,7 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: nextDialog,
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple, foregroundColor: Colors.white),
                       child: const Text('Weiter'),
                     )
                   ],

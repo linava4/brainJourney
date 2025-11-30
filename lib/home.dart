@@ -51,11 +51,9 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Gehirn-Karte'),
-        backgroundColor: Color(0xFF200D0B),
-        foregroundColor: Colors.white,
-
+        backgroundColor: Colors.deepPurple,
       ),
-      backgroundColor: Color(0xFFF8F2F8),
+      backgroundColor: Colors.deepPurple.shade50,
       body: Center(
         child: SizedBox(
           width: 380,
@@ -168,7 +166,7 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
               ),
 
               // small legend
-
+              
             ],
           ),
         ),
@@ -195,7 +193,7 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
               width: 70,
               height: 70,
               decoration: BoxDecoration(
-                color: completed ? Colors.pinkAccent : Color(0xFF200D0B),
+                color: completed ? Colors.green : Colors.deepPurple,
                 borderRadius: BorderRadius.circular(18),
                 boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 6)],
               ),
