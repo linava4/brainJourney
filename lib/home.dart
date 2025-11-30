@@ -52,6 +52,7 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
       appBar: AppBar(
         title: const Text('Gehirn-Karte'),
         backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
       ),
       backgroundColor: Colors.deepPurple.shade50,
       body: Center(
@@ -223,10 +224,21 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
       ctx,
       MaterialPageRoute(
         builder: (_) => Scaffold(
-          appBar: AppBar(title: Text(title), backgroundColor: Colors.deepPurple),
+          appBar: AppBar(title: Text(title), backgroundColor: Colors.deepPurple, foregroundColor: Colors.white,),
           body: Center(
             child: Column(mainAxisSize: MainAxisSize.min, children: [
-              Text('$title - noch nicht implementiert', style: const TextStyle(fontSize: 20)),
+              Image.asset('assets/images/logo.webp', height: 300, // Beispiel: Setzt die Höhe auf 120 Pixel
+                // Optional: Du kannst auch 'width' oder beides verwenden
+                // width: 120,
+                fit: BoxFit.contain, // Stellt sicher, dass das Bild in den zugewiesenen Raum passt
+              ),
+              Text(
+                  'Hey, du bist ja motiviert!' +
+                      '\nAber du musst dich noch ein bisschen gedulden.' +
+                      '\n -' + title + '-  ist noch nicht bereit...',
+                  textAlign: TextAlign.center, // Empfohlen, wenn der Text mehrzeilig ist
+                  style: const TextStyle(fontSize: 20)
+              ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {

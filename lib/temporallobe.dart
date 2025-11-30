@@ -35,9 +35,9 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
 
   final List<String> text = [
     "Das ist der Temporallappen, der coole Alleskönner in deinem Kopf.",
-    "🎧 Er verarbeitet Geräusche, Musik und hilft dir, Sprache zu verstehen.",
-    "📚 Er speichert neue Erinnerungen.",
-    "🖼️ Er erkennt Gesichter, Gegenstände und Wörter.",
+    "Er verarbeitet Geräusche, Musik und hilft dir, Sprache zu verstehen.",
+    "Er speichert neue Erinnerungen.",
+    "Er erkennt Gesichter, Gegenstände und Wörter.",
     "Zeit, seine Wort-Such-Skills zu testen!",
     "Los geht's!"
   ];
@@ -54,7 +54,7 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text('Temporallappen'), backgroundColor: Colors.deepPurple),
+      appBar: AppBar(title: const Text('Temporallappen'), backgroundColor: Colors.deepPurple, foregroundColor: Colors.white,),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
