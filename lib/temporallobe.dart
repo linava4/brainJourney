@@ -1,3 +1,4 @@
+import 'dart:async'; // NEU: Für den Timer
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -54,14 +55,14 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text('Temporallappen'), backgroundColor: Colors.deepPurple, foregroundColor: Colors.white,),
+      appBar: AppBar(title: const Text('Temporallappen'), backgroundColor: Color(0xFF3F9067), foregroundColor: Colors.white,),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/images/braintemporallobe.webp'),
+              Image.asset('assets/images/braintemporallobe1.png'),
               const SizedBox(height: 24),
               Text(
                 text[step],
@@ -72,7 +73,7 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
               ElevatedButton(
                 onPressed: next,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
+                  backgroundColor: Color(0xFF3F9067),
                   foregroundColor: Colors.white,
                 ),
                 child: Text(step < text.length - 1 ? "Weiter" : "Start"),
@@ -88,9 +89,6 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
 // ------------------------------------------------------
 // WORT-SUCHSPIEL
 // ------------------------------------------------------
-// ------------------------------------------------------
-// WORT-SUCHSPIEL
-// ------------------------------------------------------
 class WordSearchGame extends StatefulWidget {
   const WordSearchGame({super.key});
 
@@ -99,9 +97,17 @@ class WordSearchGame extends StatefulWidget {
 }
 
 class _WordSearchGameState extends State<WordSearchGame> {
+  // Timer-Variablen
+  static const int _timerDurationSeconds = 5 * 60; // 5 Minuten
+  late Timer _timer;
+  int _timeRemaining = _timerDurationSeconds;
+  bool _gameActive = true;
+  bool _showGiveUpButton = false;
+  bool _showContinueButton = false; // Neu: "Weiter" Button nach Aufgeben/Timeout
+
   final String baseWord = "VERSTANDEN";
   final TextEditingController controller = TextEditingController();
-  final FocusNode _focusNode = FocusNode(); // Hinzugefügt: FocusNode
+  final FocusNode _focusNode = FocusNode();
 
   final Set<String> foundWords = {};
 
@@ -167,13 +173,80 @@ class _WordSearchGameState extends State<WordSearchGame> {
   String feedback = "";
 
   @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      setState(() {
+        if (_timeRemaining > 0) {
+          _timeRemaining--;
+          // Nach 5 Minuten (wenn _timeRemaining 0 erreicht) den Aufgeben-Button anzeigen
+          if (_timeRemaining == 0) {
+            _timer.cancel(); // Timer stoppen, da Zeit abgelaufen
+            _giveUpOrTimeOut(isTimeout: true); // Timeout-Logik ausführen
+          } else if (_timeRemaining <= _timerDurationSeconds - 5 * 60) {
+
+            _showGiveUpButton = true;
+          }
+        }
+      });
+    });
+  }
+
+  // Hilfsmethode, um die verbleibende Zeit schön zu formatieren
+  String _formatTime(int seconds) {
+    int minutes = seconds ~/ 60;
+    int remainingSeconds = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
+
+  // NEU: Logik für Aufgeben oder Timeout
+  void _giveUpOrTimeOut({required bool isTimeout}) {
+    if (!_gameActive) return; // Nur einmal ausführen
+
+    _timer.cancel(); // Timer stoppen
+    _gameActive = false; // Spiel deaktivieren
+
+    setState(() {
+      if (isTimeout) {
+        feedback = "Die Zeit ist abgelaufen!";
+        _timeRemaining = 0; // Sicherstellen, dass 0:00 angezeigt wird
+      } else {
+        feedback = "Hier sind die fehlenden Wörter.";
+      }
+      _showContinueButton = true; // Weiter-Button anzeigen
+    });
+    // Fokus wegnehmen und Tastatur verstecken
+    _focusNode.unfocus();
+  }
+
+  void _continueToGlitch() {
+    // Liste der gefundenen Wörter für den nächsten Screen übergeben
+    final list = validWords.toList();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => PreGlitchDialog(foundWords: list)),
+    );
+  }
+
+  @override
   void dispose() {
+    _timer.cancel(); // Wichtig: Timer aufräumen
     controller.dispose();
-    _focusNode.dispose(); // Wichtig: FocusNode aufräumen
+    _focusNode.dispose();
     super.dispose();
   }
 
   void checkWordFromInput(String input) {
+    if (!_gameActive) return;
+
     final w = input.trim().toLowerCase();
 
     // Unabhängig davon, ob erfolgreich oder leer, Fokus zurücksetzen
@@ -188,12 +261,11 @@ class _WordSearchGameState extends State<WordSearchGame> {
       });
 
       if (foundWords.length == validWords.length) {
-        // convert to List to keep a stable order for the Glitch scene
-        final list = foundWords.toList();
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => PreGlitchDialog(foundWords: list)),
-        );
+        // Alle Wörter gefunden -> Spiel beenden
+        _timer.cancel(); // Timer stoppen
+        _gameActive = false;
+        _continueToGlitch(); // Direkter Übergang zum nächsten Screen
+        return; // Frühzeitig beenden
       }
     } else if (foundWords.contains(w)) {
       setState(() => feedback = "✔️ bereits gefunden");
@@ -209,85 +281,144 @@ class _WordSearchGameState extends State<WordSearchGame> {
     checkWordFromInput(controller.text);
   }
 
+  // NEU: Hilfsmethode, um fehlende Wörter zu finden
+  Set<String> _getMissingWords() {
+    return validWords.difference(foundWords);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final Set<String> missingWords = _getMissingWords();
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Color(0xFF3F9067),
         foregroundColor: Colors.white,
         title: const Text("Wort-Suchspiel"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              "Aus dem Wort: $baseWord",
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              "Finde so viele neue Wörter wie möglich!",
-              style: TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 30),
-            TextField(
-              controller: controller,
-              focusNode: _focusNode, // NEU: FocusNode dem TextField zuweisen
-              textInputAction: TextInputAction.done,
-              onSubmitted: (_) {
-                checkWord();
-              },
-              decoration: InputDecoration(
-                labelText: "Wort eingeben",
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.check),
-                  onPressed: checkWord,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // NEU: Timer-Anzeige
+              Text(
+                _gameActive ? "Verbleibende Zeit: ${_formatTime(_timeRemaining)}" : "Zeit abgelaufen!",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: _timeRemaining < 60 && _gameActive ? Colors.red : Color(0xFF3F9067),
                 ),
               ),
-            ),
-            const SizedBox(height: 10),
-            Text(feedback, style: const TextStyle(fontSize: 18)),
-            const SizedBox(height: 30),
-
-            // KORRIGIERT: Hinzufügen des Counters (z.B. 3/8)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  "Gefundene Wörter:",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  "(${foundWords.length}/${validWords.length})",
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple,
+              const SizedBox(height: 20),
+              Text(
+                "Aus dem Wort: $baseWord",
+                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                "Finde so viele neue Wörter wie möglich!",
+                style: TextStyle(fontSize: 18),
+              ),
+              const SizedBox(height: 30),
+              // Eingabe nur aktiv, wenn Spiel aktiv
+              TextField(
+                controller: controller,
+                focusNode: _focusNode,
+                enabled: _gameActive,
+                textInputAction: TextInputAction.done,
+                onSubmitted: (_) {
+                  checkWord();
+                },
+                decoration: InputDecoration(
+                  labelText: _gameActive ? "Wort eingeben" : "Spiel beendet",
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.check),
+                    onPressed: _gameActive ? checkWord : null,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-              ],
-            ),
-
-            const SizedBox(height: 10),
-
-            // ✅ HIER IST DIE KORREKTUR: Anzeige der Wörter als kommaseparierter Text
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Text(
-                // Verbindet alle gefundenen Wörter mit einem Komma und einem Leerzeichen
-                foundWords.join(', '),
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16, color: Colors.black87, fontStyle: FontStyle.italic),
               ),
-            ),
-          ],
+              const SizedBox(height: 10),
+              Text(feedback, style: const TextStyle(fontSize: 18)),
+              const SizedBox(height: 30),
+
+
+              // Weiter-Button nach Aufgeben/Timeout
+              if (_showContinueButton)
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: ElevatedButton(
+                    onPressed: _continueToGlitch,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF3F9067),
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text("Weiter"),
+                  ),
+                ),
+
+              const SizedBox(height: 30),
+
+              // Counter
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    "Gefundene Wörter:",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    "(${foundWords.length}/${validWords.length})",
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF3F9067),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 10),
+
+              // Gefundene Wörter
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Text(
+                  foundWords.join(', '),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 16, color: Colors.black87, fontStyle: FontStyle.italic),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // NEU: Fehlende Wörter anzeigen nach Aufgeben/Timeout
+              if (!_gameActive && missingWords.isNotEmpty)
+                Column(
+                  children: [
+                    const Divider(),
+                    const Text(
+                      "Fehlende Wörter:",
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
+                    ),
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Text(
+                        missingWords.join(', '),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 16, color: Colors.red, fontStyle: FontStyle.italic),
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -305,7 +436,7 @@ class PreGlitchDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text('Hmm...'), backgroundColor: Colors.deepPurple),
+      appBar: AppBar(title: const Text('Hmm...'), backgroundColor: Color(0xFF3F9067)),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(30),
@@ -326,6 +457,7 @@ class PreGlitchDialog extends StatelessWidget {
               ),
               const SizedBox(height: 40),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF3F9067), foregroundColor: Colors.white),
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
@@ -496,14 +628,14 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
     final ready = wordData != null && wordData!.length == words.length;
 
     return Scaffold(
-      backgroundColor: Colors.deepPurple.shade50,
+      backgroundColor: Color(0xFF3F9067).withOpacity(0.1),
       body: Stack(
         children: [
           // blurred background while glitch is active
           Positioned.fill(
             child: ImageFiltered(
               imageFilter: ImageFilter.blur(sigmaX: glitchActive ? 7.0 : 0.0, sigmaY: glitchActive ? 7.0 : 0.0),
-              child: Container(color: Colors.deepPurple.shade50),
+              child: Container(color: Color(0xFF3F9067).withOpacity(0.1)),
             ),
           ),
 
@@ -618,7 +750,7 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: nextDialog,
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple, foregroundColor: Colors.white),
+                      style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF3F9067), foregroundColor: Colors.white),
                       child: const Text('Weiter'),
                     )
                   ],
@@ -640,7 +772,7 @@ class TemporalLobeEndScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.deepPurple.shade50,
+      backgroundColor: Color(0xFF3F9067).withOpacity(0.1),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -658,6 +790,7 @@ class TemporalLobeEndScreen extends StatelessWidget {
             ),
             const SizedBox(height: 40),
             ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF3F9067), foregroundColor: Colors.white),
               onPressed: () {
                 // IMPORTANT: pop the ROOT navigator with result 'true' so BrainMapScreen receives it
                 // (requires the context of the outer Navigator, usually main App)

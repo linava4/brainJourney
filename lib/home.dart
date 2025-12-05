@@ -51,10 +51,10 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Gehirn-Karte'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Color(0xFF3F9067),
         foregroundColor: Colors.white,
       ),
-      backgroundColor: Colors.deepPurple.shade50,
+      backgroundColor: Color(0xFF3F9067).withOpacity(0.1),
       body: Center(
         child: SizedBox(
           width: 380,
@@ -134,7 +134,7 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
                         width: 70,
                         height: 70,
                         decoration: BoxDecoration(
-                          color: _completed.contains('temporal') ? Colors.green : Colors.deepPurple,
+                          color: _completed.contains('temporal') ? Color(0xFF3F9067) : Colors.grey,
                           borderRadius: BorderRadius.circular(18),
                           boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 6)],
                         ),
@@ -194,7 +194,7 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
               width: 70,
               height: 70,
               decoration: BoxDecoration(
-                color: completed ? Colors.green : Colors.deepPurple,
+                color: completed ? Color(0xFF3F9067) : Colors.grey,
                 borderRadius: BorderRadius.circular(18),
                 boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 6)],
               ),
@@ -224,10 +224,12 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
       ctx,
       MaterialPageRoute(
         builder: (_) => Scaffold(
-          appBar: AppBar(title: Text(title), backgroundColor: Colors.deepPurple, foregroundColor: Colors.white,),
+          backgroundColor: Colors.white,
+          appBar: AppBar(title: Text(title), backgroundColor: Color(0xFF3F9067), foregroundColor: Colors.white,),
           body: Center(
+
             child: Column(mainAxisSize: MainAxisSize.min, children: [
-              Image.asset('assets/images/logo.webp', height: 300, // Beispiel: Setzt die Höhe auf 120 Pixel
+              Image.asset('assets/images/brain.webp', height: 300, // Beispiel: Setzt die Höhe auf 120 Pixel
                 // Optional: Du kannst auch 'width' oder beides verwenden
                 // width: 120,
                 fit: BoxFit.contain, // Stellt sicher, dass das Bild in den zugewiesenen Raum passt

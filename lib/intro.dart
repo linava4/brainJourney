@@ -21,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _dialogStep = 0;
 
   final List<String> dialog = [
-    "Hey! Ich bin dein Gehirn! Willkommen bei BrainJourney!",
+    "Hey! Ich bin Herbert d. Braini! Willkommen bei BrainJourney!",
     "Ich begleite dich auf einer Reise durch meine verschiedenen Regionen...",
     "Gemeinsam entdecken wir, wie Gefühle, Sprache, Gedächtnis & vieles mehr funktionieren!",
     "Bist du bereit? Dann komm zur Gehirn-Karte und wähle eine Station!",
@@ -37,20 +37,21 @@ class _HomeScreenState extends State<HomeScreen> {
           MaterialPageRoute(builder: (_) => const BrainMapScreen()),
         );
       }
+
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.deepPurple.shade50,
+      backgroundColor: Color(0xFF3F9067).withOpacity(0.1),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/images/logo.webp'),
+              Image.asset('assets/images/brain.webp', width: 400,),
               const SizedBox(height: 20),
               Container(
                 padding: const EdgeInsets.all(20),
@@ -74,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ElevatedButton(
                 onPressed: _next,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
+                  backgroundColor: Color(0xFF3F9067),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
