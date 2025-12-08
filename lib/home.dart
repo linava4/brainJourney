@@ -1,12 +1,24 @@
-import 'dart:math';
 import 'dart:ui';
-import 'package:brainjourney/temporallobe.dart';
+// import 'package:brainjourney/temporallobe.dart'; // Deinen Import hier einkommentieren
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:math' as math;
-// ------------------------------------------------------
-// BRAIN MAP (Level-Auswahl als Gehirn-Karte)
-// ------------------------------------------------------
+
+// Platzhalter für den Flow
+class TemporalLobeFlow extends StatelessWidget {
+  const TemporalLobeFlow({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Temporallappen Flow")),
+      body: Center(
+        child: ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text("Level abschließen")),
+      ),
+    );
+  }
+}
+
 class BrainMapScreen extends StatefulWidget {
   const BrainMapScreen({super.key});
 
@@ -15,10 +27,13 @@ class BrainMapScreen extends StatefulWidget {
 }
 
 class _BrainMapScreenState extends State<BrainMapScreen> {
-  // simple storage of completed levels
   final Set<String> _completed = {};
   late SharedPreferences _prefs;
   bool _loading = true;
+
+  // Design-Farben
+  final Color _inkColor = const Color(0xFF3E2723);
+  final Color _paperColor = const Color(0xFFFDFBD4); // Das Beige für den Hintergrund
 
   @override
   void initState() {
@@ -45,137 +60,210 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+        backgroundColor: _paperColor,
+        body: const Center(child: CircularProgressIndicator(color: Colors.brown)),
+      );
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Gehirn-Karte'),
-        backgroundColor: Color(0xFF3F9067),
-        foregroundColor: Colors.white,
-      ),
-      backgroundColor: Color(0xFF3F9067).withOpacity(0.1),
-      body: Center(
-        child: SizedBox(
-          width: 380,
-          height: 600,
-          child: Stack(
-            children: [
-              // background "brain" silhouette (simple circle/oval)
-              Positioned.fill(
-                child: Center(
-                  child: Container(
-                    width: 360,
-                    height: 560,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(180),
-                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 12)],
-                    ),
-                  ),
-                ),
-              ),
+      // 1. BEIGER HINTERGRUND FÜR DEN GANZEN SCREEN
+      backgroundColor: _paperColor,
 
-              // Amygdala (bottom-left)
-              _brainIcon(
-                left: 60,
-                top: 360,
-                label: 'Amygdala',
-                id: 'amygdala',
-                completed: _completed.contains('amygdala'),
-                onTap: () {
-                  // TODO: replace with real Amygdala page later
-                  _openPlaceholder(context, 'Amygdala', 'amygdala');
-                },
-              ),
+      body: Stack(
+        children: [
 
-              // Hippocampus (center-left)
-              _brainIcon(
-                left: 90,
-                top: 250,
-                label: 'Hippocampus',
-                id: 'hippocampus',
-                completed: _completed.contains('hippocampus'),
-                onTap: () {
-                  _openPlaceholder(context, 'Hippocampus', 'hippocampus');
-                },
-              ),
+          // ------------------------------------------------
+          // 2. DAS KARTEN-BILD (Eingepasst zwischen die Leisten)
+          // ------------------------------------------------
+          Positioned(
+            // Wir lassen oben Platz für die TopBar und unten Platz für die BottomBar
+            top: 40,
+            bottom: 90, // Die BottomBar ist 90 hoch, wir lassen 10px Luft -> Karte endet darüber
+            left: 15,    // Kleiner Rand links
+            right: 15,   // Kleiner Rand rechts
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white, // Fallback Hintergrund
+                // Schatten, damit die Karte sich vom beigen Hintergrund abhebt
 
-              // Präfrontaler Cortex (top-center)
-              _brainIcon(
-                left: 150,
-                top: 80,
-                label: 'PFC',
-                id: 'pfc',
-                completed: _completed.contains('pfc'),
-                onTap: () {
-                  _openPlaceholder(context, 'Präfrontaler Cortex', 'pfc');
-                },
+                // Optional: Ecken leicht abrunden für Papier-Look
+                // borderRadius: BorderRadius.circular(2),
               ),
-
-              // Temporallappen (center-right) - our implemented level
-              Positioned(
-                left: 230,
-                top: 230,
-                child: GestureDetector(
-                  onTap: () async {
-                    // push the whole flow as one route and await a boolean result (true => completed)
-                    final completed = await Navigator.push<bool>(
-                      context,
-                      MaterialPageRoute(builder: (_) => const TemporalLobeFlow()),
-                    );
-                    if (completed == true) {
-                      _markCompleted('temporal');
-                    }
-                  },
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 70,
-                        height: 70,
-                        decoration: BoxDecoration(
-                          color: _completed.contains('temporal') ? Color(0xFF3F9067) : Colors.grey,
-                          borderRadius: BorderRadius.circular(18),
-                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 6)],
-                        ),
-                        child: const Icon(Icons.bubble_chart, color: Colors.white, size: 36),
-                      ),
-                      const SizedBox(height: 6),
-                      SizedBox(
-                        width: 86,
-                        child: Text(
-                          'Temporallappen',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
+              child: Image.asset(
+                'assets/images/MapBackground.png',
+                fit: BoxFit.fill, // Zerrt das Bild auf die verfügbare Größe
               ),
-
-              // Cerebellum (bottom-right)
-              _brainIcon(
-                left: 240,
-                top: 380,
-                label: 'Kleinhirn',
-                id: 'cerebellum',
-                completed: _completed.contains('cerebellum'),
-                onTap: () {
-                  _openPlaceholder(context, 'Kleinhirn', 'cerebellum');
-                },
-              ),
-
-              // small legend
-              
-            ],
+            ),
           ),
-        ),
+
+          // ------------------------------------------------
+          // 3. ORTE / BUTTONS
+          // (Positionen liegen "über" der Karte)
+          // ------------------------------------------------
+
+          // Lichtung der Vernunft (PFC)
+          _brainMapSign(
+            left: 120, top: 150,
+            label: 'Lichtung der\nVernunft\n(PFC)',
+            id: 'pfc',
+            completed: _completed.contains('pfc'),
+            onTap: () => _openPlaceholder(context, 'Präfrontaler Cortex', 'pfc'),
+          ),
+
+          // Höhle der Gefühle (Amygdala)
+          _brainMapSign(
+            left: 30, top: 330,
+            label: 'Höhle der\nGefühle\n(Amygdala)',
+            id: 'amygdala',
+            completed: _completed.contains('amygdala'),
+            onTap: () => _openPlaceholder(context, 'Amygdala', 'amygdala'),
+          ),
+
+          // Temporallappen
+          _brainMapSign(
+            left: 230, top: 230,
+            label: 'Wald der\nKlänge\n(Temporal)',
+            id: 'temporal',
+            completed: _completed.contains('temporal'),
+            onTap: () async {
+              final completed = await Navigator.push<bool>(
+                context,
+                MaterialPageRoute(builder: (_) => const TemporalLobeFlow()),
+              );
+              if (completed == true) {
+                _markCompleted('temporal');
+              }
+            },
+          ),
+
+          // Pfad der Erinnerung (Hippocampus)
+          _brainMapSign(
+            left: 200, top: 450,
+            label: 'Pfad der\nErinnerung',
+            id: 'hippocampus',
+            completed: _completed.contains('hippocampus'),
+            onTap: () => _openPlaceholder(context, 'Hippocampus', 'hippocampus'),
+          ),
+
+          // ------------------------------------------------
+          // 4. TOP BAR (Oben fixiert)
+          // ------------------------------------------------
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Linkes Icon
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: _inkColor, width: 2),
+                        color: _paperColor, // Füllt den Kreis beige
+                      ),
+                      child: Icon(Icons.hiking, color: _inkColor, size: 20),
+                    ),
+
+                    // Titel
+                    Text(
+                      'Gehirnkarte',
+                      style: TextStyle(
+                        fontFamily: 'Serif',
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: _inkColor,
+                        letterSpacing: 1.0,
+                      ),
+                    ),
+
+                    // Rechtes Icon
+                    Icon(Icons.settings, color: _inkColor, size: 28),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // ------------------------------------------------
+          // 5. BOTTOM BAR (Unten fixiert)
+          // ------------------------------------------------
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 90,
+              decoration: BoxDecoration(
+                  color: _paperColor, // Gleiches Beige wie Hintergrund
+                  border: Border(
+                    top: BorderSide(color: _inkColor, width: 2),
+                  ),
+                  boxShadow: [
+                    BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, -5))
+                  ]
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10, bottom: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _navItem(Icons.home_outlined, "Start"),
+                    _navItem(Icons.map, "Karte", isActive: true),
+
+                    // Zentraler Button
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD7C4A5),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: _inkColor, width: 2),
+                      ),
+                      child: Icon(Icons.hiking, color: _inkColor, size: 30),
+                    ),
+
+                    _navItem(Icons.menu_book_outlined, "Sammelbuch"),
+                    _navItem(Icons.person_outline, "Profil"),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _brainIcon({
+  Widget _navItem(IconData icon, String label, {bool isActive = false}) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          icon,
+          color: isActive ? _inkColor : Colors.grey[600],
+          size: 26,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+            color: isActive ? _inkColor : Colors.grey[600],
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _brainMapSign({
     required double left,
     required double top,
     required String label,
@@ -189,28 +277,41 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
       child: GestureDetector(
         onTap: onTap,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 70,
-              height: 70,
-              decoration: BoxDecoration(
-                color: completed ? Color(0xFF3F9067) : Colors.grey,
-                borderRadius: BorderRadius.circular(18),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 6)],
-              ),
-              child: Icon(
-                Icons.bubble_chart,
-                color: Colors.white,
-                size: 36,
-              ),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/SignMap.png',
+                  width: 80,
+                  height: 60,
+                  fit: BoxFit.contain,
+                ),
+                if (completed)
+                  const Positioned(
+                    top: 5, right: 5,
+                    child: Icon(Icons.check_circle, color: Color(0xFF3F9067), size: 24),
+                  ),
+              ],
             ),
-            const SizedBox(height: 6),
-            SizedBox(
-              width: 86,
+            Container(
+              margin: const EdgeInsets.only(top: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.7),
+                borderRadius: BorderRadius.circular(8),
+              ),
               child: Text(
                 label,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 12),
+                style: const TextStyle(
+                  fontFamily: 'Serif',
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                  height: 1.1,
+                ),
               ),
             )
           ],
@@ -224,33 +325,52 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
       ctx,
       MaterialPageRoute(
         builder: (_) => Scaffold(
-          backgroundColor: Colors.white,
-          appBar: AppBar(title: Text(title), backgroundColor: Color(0xFF3F9067), foregroundColor: Colors.white,),
+          backgroundColor: const Color(0xFFFdfBF7),
+          appBar: AppBar(
+            title: Text(title, style: const TextStyle(color: Colors.white)),
+            backgroundColor: const Color(0xFF3F9067),
+            iconTheme: const IconThemeData(color: Colors.white),
+          ),
           body: Center(
-
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              Image.asset('assets/images/brain.webp', height: 300, // Beispiel: Setzt die Höhe auf 120 Pixel
-                // Optional: Du kannst auch 'width' oder beides verwenden
-                // width: 120,
-                fit: BoxFit.contain, // Stellt sicher, dass das Bild in den zugewiesenen Raum passt
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    height: 200, width: 200,
+                    decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        shape: BoxShape.circle,
+                        image: const DecorationImage(
+                            image: AssetImage('assets/images/brain.webp'),
+                            fit: BoxFit.cover
+                        )
+                    ),
+                    child: const Icon(Icons.psychology, size: 80, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 30),
+                  Text(
+                    'Dieser Bereich ist noch verschlossen.',
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.brown[800]),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 40),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF3F9067),
+                      foregroundColor: Colors.white,
+                    ),
+                    onPressed: () {
+                      _markCompleted(id);
+                      Navigator.pop(ctx);
+                    },
+                    icon: const Icon(Icons.check),
+                    label: const Text('Test: Als erledigt markieren'),
+                  )
+                ],
               ),
-              Text(
-                  'Hey, du bist ja motiviert!' +
-                      '\nAber du musst dich noch ein bisschen gedulden.' +
-                      '\n -' + title + '-  ist noch nicht bereit...',
-                  textAlign: TextAlign.center, // Empfohlen, wenn der Text mehrzeilig ist
-                  style: const TextStyle(fontSize: 20)
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  // mark as completed for testing if desired
-                  _markCompleted(id);
-                  Navigator.pop(ctx);
-                },
-                child: const Text('Als abgeschlossen markieren'),
-              )
-            ]),
+            ),
           ),
         ),
       ),

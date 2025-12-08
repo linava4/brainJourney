@@ -4,11 +4,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-
-// ------------------------------------------------------
-// TEMPORAL FLOW: Intro -> WordSearch -> PreGlitch -> Glitch -> End
-// (Flow is one route so root pop(true) will return to BrainMapScreen)
-// ------------------------------------------------------
 class TemporalLobeFlow extends StatelessWidget {
   const TemporalLobeFlow({super.key});
 
