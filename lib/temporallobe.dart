@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:ui';
+import 'dart:ui'; // Wichtig für ImageFilter
 import 'package:brainjourney/home.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+
+import 'cerebellum.dart';
 
 // ------------------------------------------------------
 // MAIN FLOW / ROUTER
@@ -22,40 +24,8 @@ class TemporalLobeFlow extends StatelessWidget {
 // ------------------------------------------------------
 // HELPER WIDGET: WOOD BUTTON (Planks.png)
 // ------------------------------------------------------
-class WoodButton extends StatelessWidget {
-  final String text;
-  final VoidCallback onPressed;
 
-  const WoodButton({super.key, required this.text, required this.onPressed});
 
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        width: 220,
-        height: 70,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/Planks.png"),
-            fit: BoxFit.fill,
-          ),
-        ),
-        alignment: Alignment.center,
-        padding: const EdgeInsets.only(bottom: 5), // Text optisch mittig auf dem Holz
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF3E2723), // Dunkelbraun
-            fontFamily: 'Courier',
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 // ------------------------------------------------------
 // INTRO SCREEN
@@ -138,24 +108,24 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
             ),
           ),
 
-          // 4. SCHILD (Oben drauf) - DYNAMISCHE BREITE (70%)
+          // 4. SCHILD (Oben drauf)
           Positioned(
             left: 0,
             right: 0,
             child: Center(
               child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.7, // 70% der Breite
-                height: 120, // Höhe fixiert, damit es gut aussieht
+                width: MediaQuery.of(context).size.width * 0.7,
+                height: 120,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
                     Image.asset(
                         "assets/images/woodPlank.png",
-                        width: double.infinity, // Füllt die 70% Box
-                        fit: BoxFit.fill // Streckt das Holz auf die Box
+                        width: double.infinity,
+                        fit: BoxFit.fill
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 30.0), // TEXT NACH UNTEN GESCHOBEN
+                      padding: const EdgeInsets.only(top: 30.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -183,7 +153,7 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
             child: Image.asset("assets/images/brainPointing.png", width: 180),
           ),
 
-          // 6. ACTION BUTTON - JETZT MITTIG & PLANKS DESIGN
+          // 6. ACTION BUTTON
           Positioned(
             bottom: 30,
             left: 0,
@@ -654,7 +624,6 @@ class _WordSearchGameState extends State<WordSearchGame> {
             ),
           ),
 
-          // --- WEITER BUTTON (Overlay bei Spielende) ---
           if (_showContinueButton)
             Positioned(
               bottom: 30,
@@ -674,7 +643,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
 }
 
 // ------------------------------------------------------
-// PRE-GLITCH DIALOG - JETZT IM WOOD/PAPER STYLE
+// PRE-GLITCH DIALOG
 // ------------------------------------------------------
 class PreGlitchDialog extends StatelessWidget {
   final List<String> foundWords;
@@ -682,7 +651,6 @@ class PreGlitchDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Gleicher Text-Style wie im Intro
     final TextStyle handStyle = TextStyle(
       fontFamily: 'Courier',
       color: Colors.brown[900],
@@ -692,15 +660,12 @@ class PreGlitchDialog extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // 1. Hintergrund
           Positioned.fill(
             child: Image.asset(
               "assets/images/WoodBackground.jpg",
               fit: BoxFit.cover,
             ),
           ),
-
-          // 2. Papierrolle Mitte
           Center(
             child: Container(
               width: MediaQuery.of(context).size.width * 0.9,
@@ -742,8 +707,6 @@ class PreGlitchDialog extends StatelessWidget {
               ),
             ),
           ),
-
-          // 3. Schild Oben
           Positioned(
             left: 0, right: 0,
             child: Center(
@@ -766,15 +729,11 @@ class PreGlitchDialog extends StatelessWidget {
               ),
             ),
           ),
-
-          // 4. Brain Avatar
           Positioned(
             bottom: 40,
             left: 5,
             child: Image.asset("assets/images/brainPointing.png", width: 180),
           ),
-
-          // 5. Button
           Positioned(
             bottom: 30,
             left: 0, right: 0,
@@ -799,20 +758,18 @@ class PreGlitchDialog extends StatelessWidget {
 }
 
 // ------------------------------------------------------
-// GLITCH SCENE (ANGEPASST AUF WOOD STYLE)
+// GLITCH SCENE (NEU: WEICHES VERSCHWIMMEN)
 // ------------------------------------------------------
 class _WordData {
   final Offset pos;
   final double baseAngle;
   final double phase;
-  final int colorIndex;
   final double scale;
 
   _WordData({
     required this.pos,
     required this.baseAngle,
     required this.phase,
-    required this.colorIndex,
     required this.scale,
   });
 }
@@ -849,12 +806,15 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
     words = widget.foundWords.isNotEmpty ? List.from(widget.foundWords) : ["..."];
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _generateWordData();
+
+      // Langsame Animation (Atmen/Schweben)
       _controller = AnimationController(
         vsync: this,
-        duration: const Duration(milliseconds: 900),
-      )..repeat();
+        duration: const Duration(seconds: 3),
+      )..repeat(reverse: true);
 
-      Future.delayed(const Duration(seconds: 3), () {
+      // Zeit bis zur Diagnose (ca. 5 Sekunden wirken lassen)
+      Future.delayed(const Duration(seconds: 5), () {
         if (!mounted) return;
         _controller?.stop();
         setState(() {
@@ -868,19 +828,19 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
     final size = MediaQuery.of(context).size;
     final centerX = size.width / 2;
     final centerY = size.height / 2 - 40;
-    final maxX = size.width * 0.42;
-    final maxY = size.height * 0.36;
+    final maxX = size.width * 0.45;
+    final maxY = size.height * 0.40;
     final r = _rand;
 
     final list = List<_WordData>.generate(words.length, (i) {
       final rx = (r.nextDouble() * 2 - 1) * maxX;
       final ry = (r.nextDouble() * 2 - 1) * maxY;
       final pos = Offset(centerX + rx, centerY + ry);
-      final baseAngle = (r.nextDouble() - 0.5) * 0.6;
+      // Weniger Rotation, mehr sanftes Schwanken
+      final baseAngle = (r.nextDouble() - 0.5) * 0.3;
       final phase = r.nextDouble() * 2 * math.pi;
-      final colorIndex = i % Colors.primaries.length;
-      final scale = 0.9 + r.nextDouble() * 0.4;
-      return _WordData(pos: pos, baseAngle: baseAngle, phase: phase, colorIndex: colorIndex, scale: scale);
+      final scale = 0.8 + r.nextDouble() * 0.5;
+      return _WordData(pos: pos, baseAngle: baseAngle, phase: phase, scale: scale);
     });
 
     wordData = list;
@@ -898,38 +858,31 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
       if (dialogIndex < dialogAfterGlitch.length - 1) {
         dialogIndex++;
       } else {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => const TemporalLobeEndScreen()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const TemporalLobeEndScreen()));
       }
     });
-  }
-
-  Widget _glitchText(String text, TextStyle baseStyle, double offsetX, double offsetY, Color color) {
-    return Transform.translate(
-      offset: Offset(offsetX, offsetY),
-      child: Text(text, style: baseStyle.copyWith(color: color, shadows: const [])),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     final ready = wordData != null && wordData!.length == words.length;
 
-    // --- GLITCH ACTIVE (JETZT MIT HOLZ HINTERGRUND) ---
+    // --- GLITCH / BLUR SCENE (AKTIV) ---
     if (glitchActive) {
       return Scaffold(
         body: Stack(
           children: [
-            // 1. Hintergrund bleibt sichtbar (Immersions-Bruch durch Glitch darüber)
+            // 1. Hintergrund
             Positioned.fill(
               child: Image.asset(
                 "assets/images/WoodBackground.jpg",
                 fit: BoxFit.cover,
               ),
             ),
-            // Optional: Papierrolle im Hintergrund (statisch), damit es aussieht, als fliegen die Wörter davon
+            // Papierrolle (leicht transparent im Hintergrund)
             Center(
               child: Opacity(
-                opacity: 0.5,
+                opacity: 0.4,
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.9,
                   height: MediaQuery.of(context).size.height * 0.65,
@@ -939,15 +892,15 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
               ),
             ),
 
-            // 2. Grüner Schleier + Blur (Über dem Holz)
+            // 2. Hintergrund-Blur (Macht die ganze Szene traumartig)
             Positioned.fill(
-              child: ImageFiltered(
-                imageFilter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                child: Container(color: const Color(0xFF3F9067).withOpacity(0.3)),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
+                child: Container(color: Colors.white.withOpacity(0.1)),
               ),
             ),
 
-            // 3. Fliegende Wörter
+            // 3. Schwebende, verschwimmende Wörter
             if (ready)
               LayoutBuilder(builder: (_, constraints) {
                 final count = math.min(words.length, wordData!.length);
@@ -958,18 +911,29 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
                         animation: _controller ?? const AlwaysStoppedAnimation(0),
                         builder: (_, __) {
                           final d = wordData![i];
-                          final animVal = (_controller?.value ?? 0) * 2 * math.pi;
-                          final wobble = math.sin(animVal + d.phase) * 8;
-                          final rot = d.baseAngle + math.sin(animVal * 0.9 + d.phase) * 0.15;
-                          final dxR = math.sin(animVal * 1.3 + d.phase) * 3.5;
-                          final dyG = math.cos(animVal * 1.1 + d.phase) * 2.5;
-                          final left = (d.pos.dx + dxR).clamp(8.0, constraints.maxWidth - 80.0);
-                          final top = (d.pos.dy + wobble).clamp(60.0, constraints.maxHeight - 80.0);
+                          final animVal = _controller!.value;
+                          // Sinus-Welle für Pulsieren
+                          final sine = math.sin((animVal * 2 * math.pi) + d.phase);
+
+                          // Langsame Schwimm-Bewegung
+                          final wobbleX = math.cos(animVal * math.pi + d.phase) * 15;
+                          final wobbleY = math.sin(animVal * math.pi + d.phase) * 15;
+                          final rot = d.baseAngle + (sine * 0.1);
+
+                          final left = (d.pos.dx + wobbleX).clamp(20.0, constraints.maxWidth - 100.0);
+                          final top = (d.pos.dy + wobbleY).clamp(80.0, constraints.maxHeight - 100.0);
+
+                          // Blur-Stärke pulsiert (scharf -> unscharf -> scharf)
+                          final blurAmount = (sine.abs() * 3.0) + 0.5;
+
+                          // Opacity schwankt auch
+                          final opacity = 0.5 + (sine.abs() * 0.5);
 
                           final baseStyle = TextStyle(
-                            fontSize: 26 * d.scale,
+                            fontSize: 28 * d.scale,
                             fontWeight: FontWeight.bold,
-                            shadows: [Shadow(blurRadius: 6, color: Colors.black.withOpacity(0.25))],
+                            color: Colors.black.withOpacity(opacity),
+                            fontFamily: 'Courier',
                           );
 
                           return Positioned(
@@ -978,12 +942,20 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
                             child: Transform.rotate(
                               angle: rot,
                               child: Stack(
-                                alignment: Alignment.center,
                                 children: [
-                                  _glitchText(words[i], baseStyle, -dxR, 0, Colors.blue.withOpacity(0.9)),
-                                  _glitchText(words[i], baseStyle, dxR, -dyG, Colors.red.withOpacity(0.85)),
-                                  _glitchText(words[i], baseStyle, 0, dyG * 0.6, Colors.green.withOpacity(0.7)),
-                                  Text(words[i], style: baseStyle.copyWith(color: Colors.white.withOpacity(0.95)))
+                                  // SCHICHT 1: Der "Geist" (Doppelbild, versetzt)
+                                  Transform.translate(
+                                    offset: Offset(sine * 5, sine * 5),
+                                    child: ImageFiltered(
+                                      imageFilter: ImageFilter.blur(sigmaX: blurAmount + 2, sigmaY: blurAmount + 2),
+                                      child: Text(words[i], style: baseStyle.copyWith(color: Colors.brown.withOpacity(0.4))),
+                                    ),
+                                  ),
+                                  // SCHICHT 2: Hauptwort (Verschwimmt)
+                                  ImageFiltered(
+                                    imageFilter: ImageFilter.blur(sigmaX: blurAmount, sigmaY: blurAmount),
+                                    child: Text(words[i], style: baseStyle),
+                                  ),
                                 ],
                               ),
                             ),
@@ -1000,7 +972,7 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
       );
     }
 
-    // --- MONOLOG (BEREITS ANGEPASST) ---
+    // --- MONOLOG / DIAGNOSE ---
     else {
       final TextStyle handStyle = TextStyle(
         fontFamily: 'Courier',
@@ -1011,15 +983,9 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
       return Scaffold(
         body: Stack(
           children: [
-            // 1. Hintergrund
             Positioned.fill(
-              child: Image.asset(
-                "assets/images/WoodBackground.jpg",
-                fit: BoxFit.cover,
-              ),
+              child: Image.asset("assets/images/WoodBackground.jpg", fit: BoxFit.cover),
             ),
-
-            // 2. Papierrolle Mitte
             Center(
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.9,
@@ -1056,8 +1022,6 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
                 ),
               ),
             ),
-
-            // 3. Schild Oben
             Positioned(
               top: 0, left: 0, right: 0,
               child: Center(
@@ -1073,14 +1037,8 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              "Die Diagnose:",
-                              style: handStyle.copyWith(fontSize: 18, color: const Color(0xFF3E2723)),
-                            ),
-                            Text(
-                              "Schizophrenie",
-                              style: handStyle.copyWith(fontSize: 24, color: const Color(0xFF3E2723), fontWeight: FontWeight.w900),
-                            ),
+                            Text("Die Diagnose:", style: handStyle.copyWith(fontSize: 18, color: const Color(0xFF3E2723))),
+                            Text("Schizophrenie", style: handStyle.copyWith(fontSize: 24, color: const Color(0xFF3E2723), fontWeight: FontWeight.w900)),
                           ],
                         ),
                       ),
@@ -1089,18 +1047,12 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
                 ),
               ),
             ),
-
-            // 4. Brain Avatar
             Positioned(
-              bottom: 10,
-              left: 10,
+              bottom: 10, left: 10,
               child: Image.asset("assets/images/brainPointing.png", width: 180),
             ),
-
-            // 5. Button Mittig
             Positioned(
-              bottom: 30,
-              left: 0, right: 0,
+              bottom: 30, left: 0, right: 0,
               child: Center(
                 child: WoodButton(
                   text: "Weiter",
@@ -1116,7 +1068,7 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
 }
 
 // ------------------------------------------------------
-// END SCREEN - JETZT IM WOOD/PAPER STYLE
+// END SCREEN
 // ------------------------------------------------------
 class TemporalLobeEndScreen extends StatelessWidget {
   const TemporalLobeEndScreen({super.key});
@@ -1132,12 +1084,9 @@ class TemporalLobeEndScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // 1. Hintergrund
           Positioned.fill(
             child: Image.asset("assets/images/WoodBackground.jpg", fit: BoxFit.cover),
           ),
-
-          // 2. Papierrolle
           Center(
             child: Container(
               width: MediaQuery.of(context).size.width * 0.9,
@@ -1173,8 +1122,6 @@ class TemporalLobeEndScreen extends StatelessWidget {
               ),
             ),
           ),
-
-          // 3. Schild Oben
           Positioned(
             top: 0, left: 0, right: 0,
             child: Center(
@@ -1197,8 +1144,6 @@ class TemporalLobeEndScreen extends StatelessWidget {
               ),
             ),
           ),
-
-          // 4. Button
           Positioned(
             bottom: 30,
             left: 0, right: 0,

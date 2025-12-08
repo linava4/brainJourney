@@ -1,10 +1,15 @@
 import 'dart:ui';
 // import 'package:brainjourney/temporallobe.dart';
+import 'package:brainjourney/cerebellum.dart';
+import 'package:brainjourney/start.dart';
 import 'package:brainjourney/temporallobe.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'brain_bottom_navigation.dart';
 
+// Falls du die NavigationBar in eine eigene Datei ausgelagert hast:
+// import 'brain_navigation_bar.dart';
 
 class BrainMapScreen extends StatefulWidget {
   const BrainMapScreen({super.key});
@@ -20,6 +25,9 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
 
   final Color _inkColor = const Color(0xFF3E2723);
   final Color _paperColor = const Color(0xFFFDFBD4);
+
+  // Der aktuelle Index für die Karte ist 1
+  final int _currentIndex = 1;
 
   @override
   void initState() {
@@ -43,6 +51,20 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
     await _prefs.setStringList('completedLevels', _completed.toList());
   }
 
+  // --- NEU: Funktion zum Wechseln der Seiten ---
+  void _onNavTap(int index) {
+    if (index == _currentIndex) return; // Wenn wir schon auf der Karte sind, nichts tun.
+
+    // Beispielhafte Navigation (Du musst hier deine Ziel-Screens einfügen)
+    if (index == 0) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const StartScreen()));
+    } else if (index == 3) {
+      print("Gehe zu Sammelbuch");
+    } else if (index == 4) {
+      print("Gehe zu Profil");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_loading) {
@@ -58,64 +80,59 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
         children: [
 
           // ------------------------------------------------
-          // HAUPTBEREICH: Karte + Schilder (Responsive Container)
+          // HAUPTBEREICH: Karte + Schilder
           // ------------------------------------------------
           Positioned(
-            // Definiert den Bereich zwischen TopBar (ca. 80px Platz lassen) und BottomBar (90px)
             top: 60,
-            bottom: 90,
+            bottom: 90, // Platz für die BottomBar lassen
             left: 0,
             right: 0,
             child: LayoutBuilder(
               builder: (context, constraints) {
-                // Wir holen uns die aktuelle Breite und Höhe dieses Bereichs
                 final width = constraints.maxWidth;
                 final height = constraints.maxHeight;
 
                 return Stack(
                   children: [
-                    // 1. Das Hintergrundbild (füllt den Bereich)
+                    // Hintergrundbild
                     Positioned.fill(
                       child: Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
                         ),
                         child: Image.asset(
                           'assets/images/MapBackground.png',
-                          fit: BoxFit.fill, // Zerrt das Bild passend
+                          fit: BoxFit.fill,
                         ),
                       ),
                     ),
 
-                    // 2. Die Schilder (Positioniert mit Prozentwerten)
+                    // --- SCHILDER ---
 
-                    // PFC (Oben Mitte)
+                    // PFC
                     _brainMapSignResponsive(
                       width: width, height: height,
-                      x: 0.20,  // 35% von links
-                      y: 0.15,  // 15% von oben
+                      x: 0.20, y: 0.15,
                       label: 'Lichtung der\nVernunft\n(PFC)',
                       id: 'pfc',
                       completed: _completed.contains('pfc'),
                       onTap: () => _openPlaceholder(context, 'PFC', 'pfc'),
                     ),
 
-                    // Amygdala (Links Mitte)
+                    // Amygdala
                     _brainMapSignResponsive(
                       width: width, height: height,
-                      x: 0.80,  // 5% von links (ganz links)
-                      y: 0.30,  // 45% von oben (fast Mitte)
+                      x: 0.80, y: 0.30,
                       label: 'Höhle der\nGefühle\n(Amygdala)',
                       id: 'amygdala',
                       completed: _completed.contains('amygdala'),
                       onTap: () => _openPlaceholder(context, 'Amygdala', 'amygdala'),
                     ),
 
-                    // Temporallappen (Rechts Oben)
+                    // Temporallappen
                     _brainMapSignResponsive(
                       width: width, height: height,
-                      x: 0.10,  // 5% von links (ganz links)
-                      y: 0.55,  // 28% von oben
+                      x: 0.10, y: 0.55,
                       label: 'Wald der\nSprache',
                       id: 'temporal',
                       completed: _completed.contains('temporal'),
@@ -128,27 +145,26 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
                       },
                     ),
 
+                    // Kleinhirn
                     _brainMapSignResponsive(
                       width: width, height: height,
-                      x: 0.30,  // 65% von links (eher rechts)
-                      y: 0.35,  // 28% von oben
-                      label: '(Kleinhirn)',
+                      x: 0.30, y: 0.35,
+                      label: 'Fluss der Bewegung',
                       id: 'kleinhirn',
-                      completed: _completed.contains('temporal'),
+                      completed: _completed.contains('temporal'), // Achtung: Hier prüfst du temporal, evtl. kleinhirn ID nutzen?
                       onTap: () async {
                         final completed = await Navigator.push<bool>(
                           context,
-                          MaterialPageRoute(builder: (_) => const TemporalLobeFlow()),
+                          MaterialPageRoute(builder: (_) => const CerebellumFlow()),
                         );
-                        if (completed == true) _markCompleted('temporal');
+                        if (completed == true) _markCompleted('kleinhirn'); // ID angepasst
                       },
                     ),
 
-                    // Hippocampus (Rechts Unten)
+                    // Hippocampus
                     _brainMapSignResponsive(
                       width: width, height: height,
-                      x: 0.75,  // 55% von links
-                      y: 0.75,  // 65% von oben
+                      x: 0.75, y: 0.75,
                       label: 'Pfad der\nErinnerung \n Hippocampus',
                       id: 'hippocampus',
                       completed: _completed.contains('hippocampus'),
@@ -161,7 +177,7 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
           ),
 
           // ------------------------------------------------
-          // TOP BAR (Statisch darüber)
+          // TOP BAR
           // ------------------------------------------------
           Positioned(
             top: 0, left: 0, right: 0,
@@ -187,38 +203,13 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
           ),
 
           // ------------------------------------------------
-          // BOTTOM BAR (Statisch darunter)
+          // BOTTOM BAR (Hier ist jetzt das neue Widget!)
           // ------------------------------------------------
           Positioned(
             bottom: 0, left: 0, right: 0,
-            child: Container(
-              height: 90,
-              decoration: BoxDecoration(
-                  color: _paperColor,
-                  border: Border(top: BorderSide(color: _inkColor, width: 2)),
-                  boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, -5))]
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 10, bottom: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _navItem(Icons.home_outlined, "Start"),
-                    _navItem(Icons.map, "Karte", isActive: true),
-                    Container(
-                      width: 50, height: 50,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFD7C4A5),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: _inkColor, width: 2),
-                      ),
-                      child: Icon(Icons.hiking, color: _inkColor, size: 30),
-                    ),
-                    _navItem(Icons.menu_book_outlined, "Sammelbuch"),
-                    _navItem(Icons.person_outline, "Profil"),
-                  ],
-                ),
-              ),
+            child: BrainNavigationBar(
+              currentIndex: _currentIndex, // Hier übergeben wir 1 (für Karte)
+              onTap: _onNavTap,            // Die Funktion zum Umschalten
             ),
           ),
         ],
@@ -226,7 +217,7 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
     );
   }
 
-  // Helper für die Icons oben
+  // Helper für die Top Bar Icons
   Widget _circleIcon(IconData icon, double size) {
     return Container(
       padding: const EdgeInsets.all(8),
@@ -239,37 +230,14 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
     );
   }
 
-  Widget _navItem(IconData icon, String label, {bool isActive = false}) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: isActive ? _inkColor : Colors.grey[600], size: 26),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-            color: isActive ? _inkColor : Colors.grey[600],
-          ),
-        )
-      ],
-    );
-  }
-
   // --- RESPONSIVE WIDGET ---
   Widget _brainMapSignResponsive({
-    required double width,    // Die Gesamtbreite der Karte
-    required double height,   // Die Gesamthöhe der Karte
-    required double x,        // Prozent Horizontal (0.0 bis 1.0)
-    required double y,        // Prozent Vertikal (0.0 bis 1.0)
-    required String label,
-    required String id,
-    required bool completed,
-    required VoidCallback onTap,
+    required double width, required double height,
+    required double x, required double y,
+    required String label, required String id,
+    required bool completed, required VoidCallback onTap,
   }) {
     return Positioned(
-      // Berechnung: Gesamtbreite * Prozentwert = Pixelposition
       left: width * x,
       top: height * y,
       child: GestureDetector(
@@ -282,9 +250,7 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
               children: [
                 Image.asset(
                   'assets/images/SignMap.png',
-                  width: 80, // Feste Größe des Schildes
-                  height: 60,
-                  fit: BoxFit.contain,
+                  width: 80, height: 60, fit: BoxFit.contain,
                 ),
                 if (completed)
                   const Positioned(
@@ -317,8 +283,24 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
 
   void _openPlaceholder(BuildContext ctx, String title, String id) {
     Navigator.push(ctx, MaterialPageRoute(builder: (_) => Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: Center(child: Text("Platzhalter für $title")),
+      // Optional: AppBar transparent machen, damit das Bild bis oben geht
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        title: Text(title),
+        backgroundColor: Colors.black54, // Halbtransparent für Lesbarkeit
+        elevation: 0,
+        foregroundColor: Colors.white24,
+      ),
+      body: Container(
+        // Hier wird das Hintergrundbild gesetzt
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/doNotEnter.png'),
+            fit: BoxFit.cover, // Bild füllt den ganzen Screen
+          ),
+        ),
+      ),
     )));
   }
 }
+
