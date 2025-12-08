@@ -1,24 +1,26 @@
-import 'dart:async'; // NEU: Für den Timer
+import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
+// ------------------------------------------------------
+// MAIN FLOW / ROUTER
+// ------------------------------------------------------
 class TemporalLobeFlow extends StatelessWidget {
   const TemporalLobeFlow({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // This is a single route that pushes the Intro as the first page.
-    // At the very end we'll call Navigator.of(context, rootNavigator: true).pop(true)
-    // so the BrainMapScreen receives 'true'.
     return Navigator(
       onGenerateRoute: (_) => MaterialPageRoute(builder: (_) => const TemporalLobeIntro()),
     );
   }
 }
 
-// Intro
+// ------------------------------------------------------
+// INTRO SCREEN
+// ------------------------------------------------------
 class TemporalLobeIntro extends StatefulWidget {
   const TemporalLobeIntro({super.key});
 
@@ -50,14 +52,18 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text('Temporallappen'), backgroundColor: Color(0xFF3F9067), foregroundColor: Colors.white,),
+      appBar: AppBar(
+        title: const Text('Temporallappen'),
+        backgroundColor: const Color(0xFF3F9067),
+        foregroundColor: Colors.white,
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/images/braintemporallobe1.png'),
+              Image.asset('assets/images/braintemporallobe1.png', errorBuilder: (c, o, s) => const Icon(Icons.psychology, size: 100, color: Colors.green)),
               const SizedBox(height: 24),
               Text(
                 text[step],
@@ -68,7 +74,7 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
               ElevatedButton(
                 onPressed: next,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF3F9067),
+                  backgroundColor: const Color(0xFF3F9067),
                   foregroundColor: Colors.white,
                 ),
                 child: Text(step < text.length - 1 ? "Weiter" : "Start"),
@@ -82,7 +88,7 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
 }
 
 // ------------------------------------------------------
-// WORT-SUCHSPIEL
+// WORT-SUCHSPIEL (UPDATED DESIGN)
 // ------------------------------------------------------
 class WordSearchGame extends StatefulWidget {
   const WordSearchGame({super.key});
@@ -98,7 +104,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
   int _timeRemaining = _timerDurationSeconds;
   bool _gameActive = true;
   bool _showGiveUpButton = false;
-  bool _showContinueButton = false; // Neu: "Weiter" Button nach Aufgeben/Timeout
+  bool _showContinueButton = false;
 
   final String baseWord = "VERSTANDEN";
   final TextEditingController controller = TextEditingController();
@@ -107,62 +113,13 @@ class _WordSearchGameState extends State<WordSearchGame> {
   final Set<String> foundWords = {};
 
   final Set<String> validWords = {
-    "verstand",
-    "anders",
-    "tarnen",
-    "stranden",
-    "tanne",
-    "adern",
-    "strand",
-    "rasten",
-    "stand",
-    "teer",
-    "ader",
-    "rest",
-    "rede",
-    "rast",
-    "rand",
-    "rasen",
-    "raten",
-    "reste",
-    "erst",
-    "erste",
-    "ersten",
-    "reden",
-    "sterne",
-    "stern",
-    "vater",
-    "sand",
-    "ende",
-    "dran",
-    "erde",
-    "nest",
-    "nester",
-    "nerv",
-    "seen",
-    "dann",
-    "anden",
-    "denn",
-    "senden",
-    "vers",
-    "verse",
-    "nerven",
-    "star",
-    "rate",
-    "see",
-    "ast",
-    "art",
-    "arten",
-    "ernten",
-    "ernte",
-    "tee",
-    "rat",
-    "den",
-    "der",
-    "das",
-    "an",
-    "er",
-    "da"
+    "verstand", "anders", "tarnen", "stranden", "tanne", "adern", "strand",
+    "rasten", "stand", "teer", "ader", "rest", "rede", "rast", "rand", "rasen",
+    "raten", "reste", "erst", "erste", "ersten", "reden", "sterne", "stern",
+    "vater", "sand", "ende", "dran", "erde", "nest", "nester", "nerv", "seen",
+    "dann", "anden", "denn", "senden", "vers", "verse", "nerven", "star",
+    "rate", "see", "ast", "art", "arten", "ernten", "ernte", "tee", "rat",
+    "den", "der", "das", "an", "er", "da"
   };
 
   String feedback = "";
@@ -182,12 +139,10 @@ class _WordSearchGameState extends State<WordSearchGame> {
       setState(() {
         if (_timeRemaining > 0) {
           _timeRemaining--;
-          // Nach 5 Minuten (wenn _timeRemaining 0 erreicht) den Aufgeben-Button anzeigen
           if (_timeRemaining == 0) {
-            _timer.cancel(); // Timer stoppen, da Zeit abgelaufen
-            _giveUpOrTimeOut(isTimeout: true); // Timeout-Logik ausführen
+            _timer.cancel();
+            _giveUpOrTimeOut(isTimeout: true);
           } else if (_timeRemaining <= _timerDurationSeconds - 5 * 60) {
-
             _showGiveUpButton = true;
           }
         }
@@ -195,35 +150,29 @@ class _WordSearchGameState extends State<WordSearchGame> {
     });
   }
 
-  // Hilfsmethode, um die verbleibende Zeit schön zu formatieren
   String _formatTime(int seconds) {
     int minutes = seconds ~/ 60;
     int remainingSeconds = seconds % 60;
     return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 
-  // NEU: Logik für Aufgeben oder Timeout
   void _giveUpOrTimeOut({required bool isTimeout}) {
-    if (!_gameActive) return; // Nur einmal ausführen
-
-    _timer.cancel(); // Timer stoppen
-    _gameActive = false; // Spiel deaktivieren
-
+    if (!_gameActive) return;
+    _timer.cancel();
+    _gameActive = false;
     setState(() {
       if (isTimeout) {
         feedback = "Die Zeit ist abgelaufen!";
-        _timeRemaining = 0; // Sicherstellen, dass 0:00 angezeigt wird
+        _timeRemaining = 0;
       } else {
         feedback = "Hier sind die fehlenden Wörter.";
       }
-      _showContinueButton = true; // Weiter-Button anzeigen
+      _showContinueButton = true;
     });
-    // Fokus wegnehmen und Tastatur verstecken
     _focusNode.unfocus();
   }
 
   void _continueToGlitch() {
-    // Liste der gefundenen Wörter für den nächsten Screen übergeben
     final list = validWords.toList();
     Navigator.pushReplacement(
       context,
@@ -233,7 +182,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
 
   @override
   void dispose() {
-    _timer.cancel(); // Wichtig: Timer aufräumen
+    _timer.cancel();
     controller.dispose();
     _focusNode.dispose();
     super.dispose();
@@ -241,12 +190,8 @@ class _WordSearchGameState extends State<WordSearchGame> {
 
   void checkWordFromInput(String input) {
     if (!_gameActive) return;
-
     final w = input.trim().toLowerCase();
-
-    // Unabhängig davon, ob erfolgreich oder leer, Fokus zurücksetzen
     _focusNode.requestFocus();
-
     if (w.isEmpty) return;
 
     if (validWords.contains(w) && !foundWords.contains(w)) {
@@ -254,21 +199,17 @@ class _WordSearchGameState extends State<WordSearchGame> {
         foundWords.add(w);
         feedback = "✔️ korrekt!";
       });
-
       if (foundWords.length == validWords.length) {
-        // Alle Wörter gefunden -> Spiel beenden
-        _timer.cancel(); // Timer stoppen
+        _timer.cancel();
         _gameActive = false;
-        _continueToGlitch(); // Direkter Übergang zum nächsten Screen
-        return; // Frühzeitig beenden
+        _continueToGlitch();
+        return;
       }
     } else if (foundWords.contains(w)) {
       setState(() => feedback = "✔️ bereits gefunden");
     } else {
       setState(() => feedback = "❌ nicht gültig");
     }
-
-    // Clear Input
     controller.clear();
   }
 
@@ -276,7 +217,6 @@ class _WordSearchGameState extends State<WordSearchGame> {
     checkWordFromInput(controller.text);
   }
 
-  // NEU: Hilfsmethode, um fehlende Wörter zu finden
   Set<String> _getMissingWords() {
     return validWords.difference(foundWords);
   }
@@ -285,143 +225,288 @@ class _WordSearchGameState extends State<WordSearchGame> {
   Widget build(BuildContext context) {
     final Set<String> missingWords = _getMissingWords();
 
+    // Style für Texte auf Holzschildern
+    const TextStyle woodTextStyle = TextStyle(
+      color: Color(0xFF3E2723), // Dunkelbraun
+      fontWeight: FontWeight.bold,
+      fontSize: 18,
+      fontFamily: "Courier",
+    );
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      extendBodyBehindAppBar: false, // true, damit Appbar transparent über dem Hintergrund liegt
       appBar: AppBar(
-        backgroundColor: Color(0xFF3F9067),
-        foregroundColor: Colors.white,
-        title: const Text("Wort-Suchspiel"),
+        backgroundColor: Colors.brown, // Transparent
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.brown[900], size: 40,),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text("Wort-Suchspiel", style: TextStyle(color: Colors.brown[900], fontWeight: FontWeight.bold, fontSize: 28, fontFamily: 'Cursive')),
+        centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // NEU: Timer-Anzeige
-              Text(
-                _gameActive ? "Verbleibende Zeit: ${_formatTime(_timeRemaining)}" : "Zeit abgelaufen!",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: _timeRemaining < 60 && _gameActive ? Colors.red : Color(0xFF3F9067),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                "Aus dem Wort: $baseWord",
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                "Finde so viele neue Wörter wie möglich!",
-                style: TextStyle(fontSize: 18),
-              ),
-              const SizedBox(height: 30),
-              // Eingabe nur aktiv, wenn Spiel aktiv
-              TextField(
-                controller: controller,
-                focusNode: _focusNode,
-                enabled: _gameActive,
-                textInputAction: TextInputAction.done,
-                onSubmitted: (_) {
-                  checkWord();
-                },
-                decoration: InputDecoration(
-                  labelText: _gameActive ? "Wort eingeben" : "Spiel beendet",
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.check),
-                    onPressed: _gameActive ? checkWord : null,
+      body: Stack(
+        children: [
+          // ------------------------------------------------
+          // LAYER 1: WALD HINTERGRUND (Ganz unten)
+          // ------------------------------------------------
+          Positioned.fill(
+            child: Image.asset(
+              "assets/images/WoodBackground.jpg",
+              fit: BoxFit.cover,
+            ),
+          ),
+
+          // ------------------------------------------------
+          // LAYER 2: PAPIER HINTERGRUND (Darüber)
+          // ------------------------------------------------
+          Positioned.fill(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12.0, 60.0, 12.0, 12.0), // Oben mehr Platz lassen für Holz-Look
+              child: Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/PaperBackground.png"),
+                    fit: BoxFit.fill,
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(feedback, style: const TextStyle(fontSize: 18)),
-              const SizedBox(height: 30),
-
-
-              // Weiter-Button nach Aufgeben/Timeout
-              if (_showContinueButton)
-                Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: ElevatedButton(
-                    onPressed: _continueToGlitch,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF3F9067),
-                      foregroundColor: Colors.white,
-                    ),
-                    child: const Text("Weiter"),
-                  ),
-                ),
-
-              const SizedBox(height: 30),
-
-              // Counter
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Gefundene Wörter:",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    "(${foundWords.length}/${validWords.length})",
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF3F9067),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 10),
-
-              // Gefundene Wörter
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: Text(
-                  foundWords.join(', '),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 16, color: Colors.black87, fontStyle: FontStyle.italic),
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // NEU: Fehlende Wörter anzeigen nach Aufgeben/Timeout
-              if (!_gameActive && missingWords.isNotEmpty)
-                Column(
-                  children: [
-                    const Divider(),
-                    const Text(
-                      "Fehlende Wörter:",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
-                    ),
-                    const SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Text(
-                        missingWords.join(', '),
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 16, color: Colors.red, fontStyle: FontStyle.italic),
-                      ),
-                    ),
+                  boxShadow: [
+                    BoxShadow(color: Colors.black45, blurRadius: 10, offset: Offset(0, 5))
                   ],
                 ),
-            ],
+              ),
+            ),
           ),
-        ),
+
+          // ------------------------------------------------
+          // LAYER 3: SPIEL INHALT (Ganz oben)
+          // ------------------------------------------------
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+
+                      // --- ZEIT BALKEN (woodPlank.png) ---
+                      Container(
+                        width: 280,
+                        height: 60,
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage("assets/images/woodPlank.png"),
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                        // ÄNDERUNG: Alignment(0.0, 0.3) schiebt den Text etwas tiefer als Center
+                        alignment: const Alignment(0.0, 0.6),
+                        child: Text(
+                          _gameActive
+                              ? "Verbleibende Zeit: ${_formatTime(_timeRemaining)}"
+                              : "Zeit abgelaufen!",
+                          style: woodTextStyle.copyWith(fontSize: 20),
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // --- ZIELWORT BRETT (Planks.png) ---
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage("assets/images/Planks.png"),
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              "Aus dem Wort: $baseWord",
+                              style: woodTextStyle.copyWith(fontSize: 22),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              "Finde so viele neue Wörter wie möglich!",
+                              style: woodTextStyle.copyWith(fontSize: 14, fontWeight: FontWeight.normal),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      // --- EINGABE ---
+                      // ÄNDERUNG: margin horizontal hinzugefügt, damit es schmaler ist
+                      Container(
+                        height: 55, // Höhe fixiert für kompakteren Look
+                        margin: const EdgeInsets.symmetric(horizontal: 30), // Macht das Feld schmaler
+                        decoration: BoxDecoration(
+                            color: const Color(0xFFFDF5E6), // Papierfarbe
+                            borderRadius: const BorderRadius.all(Radius.circular(10)),
+                            border: Border.all(color: Colors.brown, width: 2),
+                            boxShadow: const [
+                              BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(2,2))
+                            ]
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: controller,
+                                focusNode: _focusNode,
+                                enabled: _gameActive,
+                                textInputAction: TextInputAction.done,
+                                onSubmitted: (_) => checkWord(),
+                                style: const TextStyle(fontSize: 20, color: Colors.black87, fontWeight: FontWeight.bold),
+                                decoration: InputDecoration(
+                                  hintText: _gameActive ? "Wort..." : "Ende",
+                                  border: InputBorder.none,
+                                  contentPadding: const EdgeInsets.only(bottom: 5), // Text vertikal zentrieren
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.edit, color: Colors.black54),
+                              onPressed: _gameActive ? checkWord : null,
+                              padding: EdgeInsets.zero,
+                            ),
+                            if (_gameActive)
+                              IconButton(
+                                icon: const Icon(Icons.check_circle, color: Colors.green),
+                                onPressed: checkWord,
+                                padding: EdgeInsets.zero,
+                              ),
+                          ],
+                        ),
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, bottom: 0),
+                        child: Text(
+                          feedback,
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.brown[900],
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+
+
+
+                      // --- LISTE (paperRoll.png) ---
+                      // ÄNDERUNG: Padding um den Stack, damit die Rolle kleiner/schmaler wirkt
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Stack(
+                          alignment: Alignment.topCenter,
+                          children: [
+                            Image.asset(
+                              "assets/images/paperRoll.png",
+                              width: double.infinity,
+                              fit: BoxFit.fitWidth,
+                            ),
+                            Positioned.fill(
+                              child: Padding(
+                                // Padding anpassen (oben etwas mehr wegen Rolle, seitlich wegen schmaler)
+                                padding: const EdgeInsets.fromLTRB(60, 75, 60, 40),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      "Gefundene Wörter: (${foundWords.length}/${validWords.length})",
+                                      style: const TextStyle(
+                                          fontSize: 16, // Etwas kleiner, damit es passt
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87
+                                      ),
+                                    ),
+                                    const Divider(color: Colors.black54, height: 10),
+                                    Expanded(
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              foundWords.isEmpty ? "..." : foundWords.join(', '),
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.black87,
+                                                fontStyle: FontStyle.italic,
+                                                height: 1.4,
+                                              ),
+                                            ),
+                                            if (!_gameActive && missingWords.isNotEmpty) ...[
+                                              const SizedBox(height: 15),
+                                              const Text(
+                                                "Fehlende Wörter:",
+                                                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 14),
+                                              ),
+                                              Text(
+                                                missingWords.join(', '),
+                                                textAlign: TextAlign.center,
+                                                style: const TextStyle(fontSize: 13, color: Colors.red),
+                                              ),
+                                            ]
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 80),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // --- AVATAR (Ganz oben, rechts unten) ---
+          Positioned(
+            bottom: 10,
+            right: 10,
+            child: Image.asset(
+              "assets/images/brainDetective.png",
+              width: 120,
+            ),
+          ),
+
+          // --- WEITER BUTTON (Overlay bei Spielende) ---
+          if (_showContinueButton)
+            Positioned(
+              bottom: 30,
+              left: 20,
+              child: ElevatedButton(
+                onPressed: _continueToGlitch,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF3F9067),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  elevation: 10,
+                ),
+                child: const Text("Weiter", style: TextStyle(fontSize: 20)),
+              ),
+            ),
+        ],
       ),
     );
   }
 }
 
 // ------------------------------------------------------
-// VOR-GLITCH-DIALOG ("Super...")
+// PRE-GLITCH DIALOG
 // ------------------------------------------------------
 class PreGlitchDialog extends StatelessWidget {
   final List<String> foundWords;
@@ -431,14 +516,14 @@ class PreGlitchDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text('Hmm...'), backgroundColor: Color(0xFF3F9067)),
+      appBar: AppBar(title: const Text('Hmm...'), backgroundColor: const Color(0xFF3F9067), foregroundColor: Colors.white,),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(30),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/images/temporallobe.webp'),
+              Image.asset('assets/images/braintemporallobe1.png', errorBuilder: (c,o,s) => const Icon(Icons.psychology, size: 80, color: Colors.green)),
               const Text(
                 "Super! Du hast alle Wörter gefunden!",
                 style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
@@ -452,7 +537,7 @@ class PreGlitchDialog extends StatelessWidget {
               ),
               const SizedBox(height: 40),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF3F9067), foregroundColor: Colors.white),
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF3F9067), foregroundColor: Colors.white),
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
@@ -472,10 +557,8 @@ class PreGlitchDialog extends StatelessWidget {
 }
 
 // ------------------------------------------------------
-// GLITCH + DIALOG SEQUENZ (maximal glitchy, stabil)
+// GLITCH SCENE
 // ------------------------------------------------------
-
-// helper class for per-word data
 class _WordData {
   final Offset pos;
   final double baseAngle;
@@ -505,11 +588,7 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
     with SingleTickerProviderStateMixin {
   bool glitchActive = true;
   AnimationController? _controller;
-
-  // per-word data generated once
   List<_WordData>? wordData;
-
-  // stable copy of words (so rebuilds can't change order)
   late final List<String> words;
 
   final List<String> dialogAfterGlitch = [
@@ -520,26 +599,19 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
   ];
 
   int dialogIndex = 0;
-
   final Random _rand = Random();
 
   @override
   void initState() {
     super.initState();
-
-    // stable copy
     words = widget.foundWords.isNotEmpty ? List.from(widget.foundWords) : ["..."];
-
-    // generate once after first layout (we need MediaQuery size)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _generateWordData();
-
       _controller = AnimationController(
         vsync: this,
         duration: const Duration(milliseconds: 900),
       )..repeat();
 
-      // stop glitch after a moment and show dialog
       Future.delayed(const Duration(seconds: 3), () {
         if (!mounted) return;
         _controller?.stop();
@@ -556,14 +628,13 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
     final centerY = size.height / 2 - 40;
     final maxX = size.width * 0.42;
     final maxY = size.height * 0.36;
-
     final r = _rand;
 
     final list = List<_WordData>.generate(words.length, (i) {
       final rx = (r.nextDouble() * 2 - 1) * maxX;
       final ry = (r.nextDouble() * 2 - 1) * maxY;
       final pos = Offset(centerX + rx, centerY + ry);
-      final baseAngle = (r.nextDouble() - 0.5) * 0.6; // radians, small tilt
+      final baseAngle = (r.nextDouble() - 0.5) * 0.6;
       final phase = r.nextDouble() * 2 * math.pi;
       final colorIndex = i % Colors.primaries.length;
       final scale = 0.9 + r.nextDouble() * 0.4;
@@ -582,17 +653,14 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
 
   void nextDialog() {
     setState(() {
-      // ✅ KORREKTUR: Die Index-Prüfung wurde korrigiert, um RangeError zu vermeiden.
       if (dialogIndex < dialogAfterGlitch.length - 1) {
         dialogIndex++;
       } else {
-        // Wenn keine Dialoge mehr, navigiere zum Endbildschirm
         Navigator.push(context, MaterialPageRoute(builder: (_) => const TemporalLobeEndScreen()));
       }
     });
   }
 
-  // small utility to draw RGB-shifted layered text for "glitch" look
   Widget _glitchText(String text, TextStyle baseStyle, double offsetX, double offsetY, Color color) {
     return Transform.translate(
       offset: Offset(offsetX, offsetY),
@@ -600,65 +668,37 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
     );
   }
 
-  // scanline overlay (subtle)
-  Widget _buildScanlines() {
-    return IgnorePointer(
-      child: Opacity(
-        opacity: 0.06,
-        child: Column(
-          children: List.generate(40, (i) {
-            return Container(
-              height: 2,
-              color: i % 2 == 0 ? Colors.black : Colors.transparent,
-            );
-          }),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    // safety: ensure wordData has been generated and lengths match
     final ready = wordData != null && wordData!.length == words.length;
 
     return Scaffold(
-      backgroundColor: Color(0xFF3F9067).withOpacity(0.1),
+      backgroundColor: const Color(0xFF3F9067).withOpacity(0.1),
       body: Stack(
         children: [
-          // blurred background while glitch is active
           Positioned.fill(
             child: ImageFiltered(
               imageFilter: ImageFilter.blur(sigmaX: glitchActive ? 7.0 : 0.0, sigmaY: glitchActive ? 7.0 : 0.0),
-              child: Container(color: Color(0xFF3F9067).withOpacity(0.1)),
+              child: Container(color: const Color(0xFF3F9067).withOpacity(0.1)),
             ),
           ),
-
-          // glitch area
           if (glitchActive)
             Positioned.fill(
               child: ready
                   ? LayoutBuilder(builder: (_, constraints) {
-                // ensure we never iterate past available data
                 final count = math.min(words.length, wordData!.length);
-
                 return Stack(
                   children: [
-                    // for each word, draw layered colored text with animated offsets
                     for (int i = 0; i < count; i++)
                       AnimatedBuilder(
                         animation: _controller ?? const AlwaysStoppedAnimation(0),
                         builder: (_, __) {
                           final d = wordData![i];
                           final animVal = (_controller?.value ?? 0) * 2 * math.pi;
-                          // wobble derived from controller + phase
                           final wobble = math.sin(animVal + d.phase) * 8;
-                          // rotation slight oscillation
                           final rot = d.baseAngle + math.sin(animVal * 0.9 + d.phase) * 0.15;
-                          // small RGB shifts
                           final dxR = math.sin(animVal * 1.3 + d.phase) * 3.5;
                           final dyG = math.cos(animVal * 1.1 + d.phase) * 2.5;
-
                           final left = (d.pos.dx + dxR).clamp(8.0, constraints.maxWidth - 80.0);
                           final top = (d.pos.dy + wobble).clamp(60.0, constraints.maxHeight - 80.0);
 
@@ -676,58 +716,29 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
                               child: Stack(
                                 alignment: Alignment.center,
                                 children: [
-                                  // Blue layer (shifted left)
                                   _glitchText(words[i], baseStyle, -dxR, 0, Colors.blue.withOpacity(0.9)),
-                                  // Red layer (shifted right & slightly up)
                                   _glitchText(words[i], baseStyle, dxR, -dyG, Colors.red.withOpacity(0.85)),
-                                  // Green subtle layer (shifted down)
                                   _glitchText(words[i], baseStyle, 0, dyG * 0.6, Colors.green.withOpacity(0.7)),
-                                  // top white (main) with slight blending
-                                  Text(
-                                    words[i],
-                                    style: baseStyle.copyWith(color: Colors.white.withOpacity(0.95)),
-                                  )
+                                  Text(words[i], style: baseStyle.copyWith(color: Colors.white.withOpacity(0.95)))
                                 ],
                               ),
                             ),
                           );
                         },
                       ),
-
-                    // optional subtle scanlines/noise overlay
-                    Positioned.fill(child: _buildScanlines()),
-
-                    // small center flicker/overlay to add depth (semi-transparent)
-                    Positioned.fill(
-                      child: IgnorePointer(
-                        child: AnimatedBuilder(
-                          animation: _controller ?? const AlwaysStoppedAnimation(0),
-                          builder: (_, __) {
-                            final a = 0.02 + (math.sin((_controller?.value ?? 0) * 10 * 2 * math.pi).abs() * 0.03);
-                            return Container(
-                              color: Colors.black.withOpacity(a),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
                   ],
                 );
               })
                   : const Center(child: CircularProgressIndicator()),
             )
-
           else
-          // dialog after glitch
             Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
-                      child: Image.asset('assets/images/temporallobe.webp'),
-                    ),
+                    Image.asset('assets/images/braintemporallobe1.png', errorBuilder: (c,o,s) => const SizedBox()),
                     const SizedBox(height: 20),
                     Container(
                       padding: const EdgeInsets.all(20),
@@ -745,7 +756,7 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: nextDialog,
-                      style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF3F9067), foregroundColor: Colors.white),
+                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF3F9067), foregroundColor: Colors.white),
                       child: const Text('Weiter'),
                     )
                   ],
@@ -759,7 +770,7 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
 }
 
 // ------------------------------------------------------
-// END SCREEN - user returns to brain map on finish
+// END SCREEN
 // ------------------------------------------------------
 class TemporalLobeEndScreen extends StatelessWidget {
   const TemporalLobeEndScreen({super.key});
@@ -767,7 +778,7 @@ class TemporalLobeEndScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF3F9067).withOpacity(0.1),
+      backgroundColor: const Color(0xFF3F9067).withOpacity(0.1),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -785,10 +796,8 @@ class TemporalLobeEndScreen extends StatelessWidget {
             ),
             const SizedBox(height: 40),
             ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF3F9067), foregroundColor: Colors.white),
+              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF3F9067), foregroundColor: Colors.white),
               onPressed: () {
-                // IMPORTANT: pop the ROOT navigator with result 'true' so BrainMapScreen receives it
-                // (requires the context of the outer Navigator, usually main App)
                 Navigator.of(context, rootNavigator: true).pop(true);
               },
               child: const Text("Zurück zur Gehirn-Karte"),
