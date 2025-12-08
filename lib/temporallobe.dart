@@ -238,7 +238,7 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
               border: Border(bottom: BorderSide(color: Colors.brown[900]!, width: 3))
           ),
           child: Text(
-            "VERSTANDEN",
+            "TEMPORAL",
             style: handStyle.copyWith(fontSize: 32, letterSpacing: 2),
           ),
         ),
@@ -247,9 +247,9 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildArrowWord("STAND", -0.3, handStyle),
-            _buildArrowWord("TEE", 0, handStyle),
-            _buildArrowWord("SAND", 0.3, handStyle),
+            _buildArrowWord("LAMPE", 0.3, handStyle),
+            _buildArrowWord("ER", 0, handStyle),
+            _buildArrowWord("TEMPO", -0.3, handStyle),
           ],
         ),
       ],
@@ -674,7 +674,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
 }
 
 // ------------------------------------------------------
-// PRE-GLITCH DIALOG
+// PRE-GLITCH DIALOG - JETZT IM WOOD/PAPER STYLE
 // ------------------------------------------------------
 class PreGlitchDialog extends StatelessWidget {
   final List<String> foundWords;
@@ -682,30 +682,104 @@ class PreGlitchDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Gleicher Text-Style wie im Intro
+    final TextStyle handStyle = TextStyle(
+      fontFamily: 'Courier',
+      color: Colors.brown[900],
+      fontWeight: FontWeight.bold,
+    );
+
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text('Hmm...'), backgroundColor: const Color(0xFF3F9067), foregroundColor: Colors.white,),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(30),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/images/braintemporallobe1.png', errorBuilder: (c,o,s) => const Icon(Icons.psychology, size: 80, color: Colors.green)),
-              const Text(
-                "Super! Du hast alle Wörter gefunden!",
-                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
+      body: Stack(
+        children: [
+          // 1. Hintergrund
+          Positioned.fill(
+            child: Image.asset(
+              "assets/images/WoodBackground.jpg",
+              fit: BoxFit.cover,
+            ),
+          ),
+
+          // 2. Papierrolle Mitte
+          Center(
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: MediaQuery.of(context).size.height * 0.60,
+              margin: const EdgeInsets.only(top: 40),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    width: double.infinity, height: double.infinity,
+                    child: Image.asset("assets/images/paperRoll.png", fit: BoxFit.fill),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 60.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset('assets/images/braintemporallobe1.png',
+                            height: 140,
+                            fit: BoxFit.contain,
+                            errorBuilder: (c,o,s) => const Icon(Icons.psychology, size: 80, color: Colors.green)
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          "Super! Du hast alle Wörter gefunden!",
+                          style: handStyle.copyWith(fontSize: 22),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          "Aber… warte… irgendwas stimmt nicht…",
+                          style: handStyle.copyWith(fontSize: 18, color: Colors.red[900]),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
-              const Text(
-                "Aber… warte… irgendwas stimmt nicht…",
-                style: TextStyle(fontSize: 22),
-                textAlign: TextAlign.center,
+            ),
+          ),
+
+          // 3. Schild Oben
+          Positioned(
+            left: 0, right: 0,
+            child: Center(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.7,
+                height: 120,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Image.asset("assets/images/woodPlank.png", width: double.infinity, fit: BoxFit.fill),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 30.0),
+                      child: Text(
+                        "Hmm...",
+                        style: handStyle.copyWith(fontSize: 28, color: const Color(0xFF3E2723), fontWeight: FontWeight.w900),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 40),
-              // Button mittig und Planks
-              WoodButton(
+            ),
+          ),
+
+          // 4. Brain Avatar
+          Positioned(
+            bottom: 40,
+            left: 5,
+            child: Image.asset("assets/images/brainPointing.png", width: 180),
+          ),
+
+          // 5. Button
+          Positioned(
+            bottom: 30,
+            left: 0, right: 0,
+            child: Center(
+              child: WoodButton(
                 text: "Oh oh…",
                 onPressed: () {
                   Navigator.pushReplacement(
@@ -715,17 +789,17 @@ class PreGlitchDialog extends StatelessWidget {
                     ),
                   );
                 },
-              )
-            ],
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
 
 // ------------------------------------------------------
-// GLITCH SCENE (MONOLOG NUN IM INTRO-STYLE)
+// GLITCH SCENE (ANGEPASST AUF WOOD STYLE)
 // ------------------------------------------------------
 class _WordData {
   final Offset pos;
@@ -840,18 +914,40 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
   Widget build(BuildContext context) {
     final ready = wordData != null && wordData!.length == words.length;
 
-    // Wenn Glitch aktiv ist: Zeige Glitch-Screen
+    // --- GLITCH ACTIVE (JETZT MIT HOLZ HINTERGRUND) ---
     if (glitchActive) {
       return Scaffold(
-        backgroundColor: const Color(0xFF3F9067).withOpacity(0.1),
         body: Stack(
           children: [
+            // 1. Hintergrund bleibt sichtbar (Immersions-Bruch durch Glitch darüber)
             Positioned.fill(
-              child: ImageFiltered(
-                imageFilter: ImageFilter.blur(sigmaX: 7.0, sigmaY: 7.0),
-                child: Container(color: const Color(0xFF3F9067).withOpacity(0.1)),
+              child: Image.asset(
+                "assets/images/WoodBackground.jpg",
+                fit: BoxFit.cover,
               ),
             ),
+            // Optional: Papierrolle im Hintergrund (statisch), damit es aussieht, als fliegen die Wörter davon
+            Center(
+              child: Opacity(
+                opacity: 0.5,
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  height: MediaQuery.of(context).size.height * 0.65,
+                  margin: const EdgeInsets.only(top: 40),
+                  child: Image.asset("assets/images/paperRoll.png", fit: BoxFit.fill),
+                ),
+              ),
+            ),
+
+            // 2. Grüner Schleier + Blur (Über dem Holz)
+            Positioned.fill(
+              child: ImageFiltered(
+                imageFilter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                child: Container(color: const Color(0xFF3F9067).withOpacity(0.3)),
+              ),
+            ),
+
+            // 3. Fliegende Wörter
             if (ready)
               LayoutBuilder(builder: (_, constraints) {
                 final count = math.min(words.length, wordData!.length);
@@ -904,7 +1000,7 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
       );
     }
 
-    // --- MONOLOG IM GLEICHEN STIL WIE DAS INTRO ---
+    // --- MONOLOG (BEREITS ANGEPASST) ---
     else {
       final TextStyle handStyle = TextStyle(
         fontFamily: 'Courier',
@@ -927,8 +1023,8 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
             Center(
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.9,
-                height: MediaQuery.of(context).size.height * 0.7,
-                margin: const EdgeInsets.only(top: 80),
+                height: MediaQuery.of(context).size.height * 0.65,
+                margin: const EdgeInsets.only(top: 40),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -961,9 +1057,9 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
               ),
             ),
 
-            // 3. Schild Oben (Dynamisch 70%)
+            // 3. Schild Oben
             Positioned(
-              top: 40, left: 0, right: 0,
+              top: 0, left: 0, right: 0,
               child: Center(
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width * 0.7,
@@ -973,7 +1069,7 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
                     children: [
                       Image.asset("assets/images/woodPlank.png", width: double.infinity, fit: BoxFit.fill),
                       Padding(
-                        padding: const EdgeInsets.only(top: 15.0),
+                        padding: const EdgeInsets.only(top: 30.0),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -1020,14 +1116,13 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
 }
 
 // ------------------------------------------------------
-// END SCREEN
+// END SCREEN - JETZT IM WOOD/PAPER STYLE
 // ------------------------------------------------------
 class TemporalLobeEndScreen extends StatelessWidget {
   const TemporalLobeEndScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Auch der Endscreen wird an den Style angepasst
     final TextStyle handStyle = TextStyle(
       fontFamily: 'Courier',
       color: Colors.brown[900],
@@ -1037,45 +1132,86 @@ class TemporalLobeEndScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
+          // 1. Hintergrund
           Positioned.fill(
             child: Image.asset("assets/images/WoodBackground.jpg", fit: BoxFit.cover),
           ),
+
+          // 2. Papierrolle
           Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  padding: const EdgeInsets.all(30),
-                  decoration: BoxDecoration(
-                      color: const Color(0xFFFDF5E6),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: const [BoxShadow(color: Colors.black45, blurRadius: 10)]
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: MediaQuery.of(context).size.height * 0.50,
+              margin: const EdgeInsets.only(top: 20),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    width: double.infinity, height: double.infinity,
+                    child: Image.asset("assets/images/paperRoll.png", fit: BoxFit.fill),
                   ),
-                  child: Column(
-                    children: [
-                      const Text(
-                        "Temporallappen-Quest abgeschlossen!",
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF3E2723)),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 20),
-                      const Text(
-                        "Bereit für die nächste Gehirnregion?",
-                        style: TextStyle(fontSize: 20, color: Color(0xFF3E2723)),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 50.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Temporallappen-Quest abgeschlossen!",
+                          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF3E2723), fontFamily: 'Courier'),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          "Bereit für die nächste Gehirnregion?",
+                          style: TextStyle(fontSize: 20, color: Color(0xFF3E2723), fontFamily: 'Courier'),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
                   ),
+                ],
+              ),
+            ),
+          ),
+
+          // 3. Schild Oben
+          Positioned(
+            top: 0, left: 0, right: 0,
+            child: Center(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.7,
+                height: 120,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Image.asset("assets/images/woodPlank.png", width: double.infinity, fit: BoxFit.fill),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 30.0),
+                      child: Text(
+                        "Geschafft!",
+                        style: handStyle.copyWith(fontSize: 28, color: const Color(0xFF3E2723), fontWeight: FontWeight.w900),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 50),
-                WoodButton(
-                  text: "Zur Karte",
-                  onPressed: () {
-                    Navigator.of(context, rootNavigator: true).pop(true);
-                  },
-                ),
-              ],
+              ),
+            ),
+          ),
+
+          // 4. Button
+          Positioned(
+            bottom: 30,
+            left: 0, right: 0,
+            child: Center(
+              child: WoodButton(
+                text: "Zur Karte",
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => BrainMapScreen()),
+                  );
+                },
+              ),
             ),
           ),
         ],

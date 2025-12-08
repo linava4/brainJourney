@@ -116,7 +116,7 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
                       width: width, height: height,
                       x: 0.10,  // 5% von links (ganz links)
                       y: 0.55,  // 28% von oben
-                      label: 'Wald der\nKlänge\n(Temporal)',
+                      label: 'Wald der\nSprache',
                       id: 'temporal',
                       completed: _completed.contains('temporal'),
                       onTap: () async {
