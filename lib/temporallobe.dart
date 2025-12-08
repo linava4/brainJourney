@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
+import 'package:brainjourney/home.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
@@ -19,6 +20,44 @@ class TemporalLobeFlow extends StatelessWidget {
 }
 
 // ------------------------------------------------------
+// HELPER WIDGET: WOOD BUTTON (Planks.png)
+// ------------------------------------------------------
+class WoodButton extends StatelessWidget {
+  final String text;
+  final VoidCallback onPressed;
+
+  const WoodButton({super.key, required this.text, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        width: 220,
+        height: 70,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/Planks.png"),
+            fit: BoxFit.fill,
+          ),
+        ),
+        alignment: Alignment.center,
+        padding: const EdgeInsets.only(bottom: 5), // Text optisch mittig auf dem Holz
+        child: Text(
+          text,
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF3E2723), // Dunkelbraun
+            fontFamily: 'Courier',
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ------------------------------------------------------
 // INTRO SCREEN
 // ------------------------------------------------------
 class TemporalLobeIntro extends StatefulWidget {
@@ -29,66 +68,213 @@ class TemporalLobeIntro extends StatefulWidget {
 }
 
 class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
-  int step = 0;
+  int textStep = 0;
 
-  final List<String> text = [
+  final List<String> explanationText = [
     "Das ist der Temporallappen, der coole Alleskönner in deinem Kopf.",
     "Er verarbeitet Geräusche, Musik und hilft dir, Sprache zu verstehen.",
     "Er speichert neue Erinnerungen.",
     "Er erkennt Gesichter, Gegenstände und Wörter.",
-    "Zeit, seine Wort-Such-Skills zu testen!",
-    "Los geht's!"
+    "Zeit, seine Wort-Such-Skills zu testen!"
   ];
 
-  void next() {
-    if (step < text.length - 1) {
-      setState(() => step++);
-    } else {
-      Navigator.push(context, MaterialPageRoute(builder: (_) => const WordSearchGame()));
-    }
+  bool get isTaskPhase => textStep == explanationText.length;
+
+  void nextStep() {
+    setState(() {
+      if (textStep < explanationText.length) {
+        textStep++;
+      }
+    });
+  }
+
+  void startGame() {
+    Navigator.push(context, MaterialPageRoute(builder: (_) => const WordSearchGame()));
   }
 
   @override
   Widget build(BuildContext context) {
+    final TextStyle handStyle = TextStyle(
+      fontFamily: 'Courier',
+      color: Colors.brown[900],
+      fontWeight: FontWeight.bold,
+    );
+
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('Temporallappen'),
-        backgroundColor: const Color(0xFF3F9067),
-        foregroundColor: Colors.white,
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/images/braintemporallobe1.png', errorBuilder: (c, o, s) => const Icon(Icons.psychology, size: 100, color: Colors.green)),
-              const SizedBox(height: 24),
-              Text(
-                text[step],
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 20),
+      body: Stack(
+        children: [
+          // 1. HINTERGRUND
+          Positioned.fill(
+            child: Image.asset(
+              "assets/images/WoodBackground.jpg",
+              fit: BoxFit.cover,
+            ),
+          ),
+
+          // 3. GROSSE PAPIERROLLE (Mitte)
+          Center(
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: MediaQuery.of(context).size.height * 0.65,
+              margin: const EdgeInsets.only(top: 40),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    width: double.infinity, height: double.infinity,
+                    child: Image.asset("assets/images/paperRoll.png", fit: BoxFit.fill),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 60.0),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      child: isTaskPhase
+                          ? _buildTaskContent(handStyle)
+                          : _buildExplanationContent(handStyle),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: next,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF3F9067),
-                  foregroundColor: Colors.white,
+            ),
+          ),
+
+          // 4. SCHILD (Oben drauf) - DYNAMISCHE BREITE (70%)
+          Positioned(
+            left: 0,
+            right: 0,
+            child: Center(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.7, // 70% der Breite
+                height: 120, // Höhe fixiert, damit es gut aussieht
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Image.asset(
+                        "assets/images/woodPlank.png",
+                        width: double.infinity, // Füllt die 70% Box
+                        fit: BoxFit.fill // Streckt das Holz auf die Box
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 30.0), // TEXT NACH UNTEN GESCHOBEN
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            isTaskPhase ? "Wort-Suchspiel:" : "Die Gehirn-Region:",
+                            style: handStyle.copyWith(fontSize: 18, color: const Color(0xFF3E2723)),
+                          ),
+                          Text(
+                            isTaskPhase ? "Die Aufgabe" : "Temporallappen",
+                            style: handStyle.copyWith(fontSize: 24, color: const Color(0xFF3E2723), fontWeight: FontWeight.w900),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                child: Text(step < text.length - 1 ? "Weiter" : "Start"),
               ),
-            ],
+            ),
+          ),
+
+          // 5. BRAIN AVATAR
+          Positioned(
+            bottom: 40,
+            left: 5,
+            child: Image.asset("assets/images/brainPointing.png", width: 180),
+          ),
+
+          // 6. ACTION BUTTON - JETZT MITTIG & PLANKS DESIGN
+          Positioned(
+            bottom: 30,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: WoodButton(
+                text: isTaskPhase ? "Los geht's!" : "Weiter",
+                onPressed: isTaskPhase ? startGame : nextStep,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExplanationContent(TextStyle handStyle) {
+    return Column(
+      key: ValueKey<int>(textStep),
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset(
+            'assets/images/braintemporallobe1.png',
+            height: 180,
+            fit: BoxFit.contain,
+            errorBuilder: (c, o, s) => const Icon(Icons.psychology, size: 100, color: Colors.green)
+        ),
+        const SizedBox(height: 30),
+        Text(
+          explanationText[textStep],
+          textAlign: TextAlign.center,
+          style: handStyle.copyWith(fontSize: 20, height: 1.3),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTaskContent(TextStyle handStyle) {
+    return Column(
+      key: const ValueKey<String>("task"),
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          "Finde aus den Buchstaben eines Wortes so viele neue Wörter wie möglich!",
+          textAlign: TextAlign.center,
+          style: handStyle.copyWith(fontSize: 18, height: 1.3),
+        ),
+        const SizedBox(height: 30),
+        Container(
+          padding: const EdgeInsets.only(bottom: 5),
+          decoration: BoxDecoration(
+              border: Border(bottom: BorderSide(color: Colors.brown[900]!, width: 3))
+          ),
+          child: Text(
+            "VERSTANDEN",
+            style: handStyle.copyWith(fontSize: 32, letterSpacing: 2),
           ),
         ),
-      ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildArrowWord("STAND", -0.3, handStyle),
+            _buildArrowWord("TEE", 0, handStyle),
+            _buildArrowWord("SAND", 0.3, handStyle),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildArrowWord(String word, double rotation, TextStyle style) {
+    return Column(
+      children: [
+        Transform.rotate(
+          angle: rotation,
+          child: Icon(Icons.arrow_downward, size: 40, color: Colors.brown[800]),
+        ),
+        const SizedBox(height: 5),
+        Text(
+          word,
+          style: style.copyWith(fontSize: 20),
+        ),
+      ],
     );
   }
 }
 
 // ------------------------------------------------------
-// WORT-SUCHSPIEL (UPDATED DESIGN)
+// WORT-SUCHSPIEL
 // ------------------------------------------------------
 class WordSearchGame extends StatefulWidget {
   const WordSearchGame({super.key});
@@ -98,8 +284,7 @@ class WordSearchGame extends StatefulWidget {
 }
 
 class _WordSearchGameState extends State<WordSearchGame> {
-  // Timer-Variablen
-  static const int _timerDurationSeconds = 5 * 60; // 5 Minuten
+  static const int _timerDurationSeconds = 5 * 60;
   late Timer _timer;
   int _timeRemaining = _timerDurationSeconds;
   bool _gameActive = true;
@@ -225,44 +410,41 @@ class _WordSearchGameState extends State<WordSearchGame> {
   Widget build(BuildContext context) {
     final Set<String> missingWords = _getMissingWords();
 
-    // Style für Texte auf Holzschildern
     const TextStyle woodTextStyle = TextStyle(
-      color: Color(0xFF3E2723), // Dunkelbraun
+      color: Color(0xFF3E2723),
       fontWeight: FontWeight.bold,
       fontSize: 18,
       fontFamily: "Courier",
     );
 
     return Scaffold(
-      extendBodyBehindAppBar: false, // true, damit Appbar transparent über dem Hintergrund liegt
+      extendBodyBehindAppBar: false,
       appBar: AppBar(
-        backgroundColor: Colors.brown, // Transparent
+        backgroundColor: Colors.brown,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.brown[900], size: 40,),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => BrainMapScreen()),
+            );
+          },
         ),
         title: Text("Wort-Suchspiel", style: TextStyle(color: Colors.brown[900], fontWeight: FontWeight.bold, fontSize: 28, fontFamily: 'Cursive')),
         centerTitle: true,
       ),
       body: Stack(
         children: [
-          // ------------------------------------------------
-          // LAYER 1: WALD HINTERGRUND (Ganz unten)
-          // ------------------------------------------------
           Positioned.fill(
             child: Image.asset(
               "assets/images/WoodBackground.jpg",
               fit: BoxFit.cover,
             ),
           ),
-
-          // ------------------------------------------------
-          // LAYER 2: PAPIER HINTERGRUND (Darüber)
-          // ------------------------------------------------
           Positioned.fill(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(12.0, 60.0, 12.0, 12.0), // Oben mehr Platz lassen für Holz-Look
+              padding: const EdgeInsets.fromLTRB(12.0, 60.0, 12.0, 12.0),
               child: Container(
                 decoration: const BoxDecoration(
                   image: DecorationImage(
@@ -276,204 +458,193 @@ class _WordSearchGameState extends State<WordSearchGame> {
               ),
             ),
           ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                width: 280,
+                height: 60,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/woodPlank.png"),
+                    fit: BoxFit.fill,
+                  ),
+                ),
+                alignment: const Alignment(0.0, 0.6),
+                child: Text(
+                  _gameActive
+                      ? "Verbleibende Zeit: ${_formatTime(_timeRemaining)}"
+                      : "Zeit abgelaufen!",
+                  style: woodTextStyle.copyWith(fontSize: 20),
+                ),
+              ),
 
-          // ------------------------------------------------
-          // LAYER 3: SPIEL INHALT (Ganz oben)
-          // ------------------------------------------------
-          SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-
-                      // --- ZEIT BALKEN (woodPlank.png) ---
-                      Container(
-                        width: 280,
-                        height: 60,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage("assets/images/woodPlank.png"),
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                        // ÄNDERUNG: Alignment(0.0, 0.3) schiebt den Text etwas tiefer als Center
-                        alignment: const Alignment(0.0, 0.6),
-                        child: Text(
-                          _gameActive
-                              ? "Verbleibende Zeit: ${_formatTime(_timeRemaining)}"
-                              : "Zeit abgelaufen!",
-                          style: woodTextStyle.copyWith(fontSize: 20),
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // --- ZIELWORT BRETT (Planks.png) ---
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage("assets/images/Planks.png"),
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              "Aus dem Wort: $baseWord",
-                              style: woodTextStyle.copyWith(fontSize: 22),
-                              textAlign: TextAlign.center,
+              Expanded(
+                child: Center(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            margin: const EdgeInsets.symmetric(horizontal: 30),
+                            padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 10),
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage("assets/images/Planks.png"),
+                                fit: BoxFit.fill,
+                              ),
                             ),
-                            const SizedBox(height: 5),
-                            Text(
-                              "Finde so viele neue Wörter wie möglich!",
-                              style: woodTextStyle.copyWith(fontSize: 14, fontWeight: FontWeight.normal),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 10),
-
-                      // --- EINGABE ---
-                      // ÄNDERUNG: margin horizontal hinzugefügt, damit es schmaler ist
-                      Container(
-                        height: 55, // Höhe fixiert für kompakteren Look
-                        margin: const EdgeInsets.symmetric(horizontal: 30), // Macht das Feld schmaler
-                        decoration: BoxDecoration(
-                            color: const Color(0xFFFDF5E6), // Papierfarbe
-                            borderRadius: const BorderRadius.all(Radius.circular(10)),
-                            border: Border.all(color: Colors.brown, width: 2),
-                            boxShadow: const [
-                              BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(2,2))
-                            ]
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: controller,
-                                focusNode: _focusNode,
-                                enabled: _gameActive,
-                                textInputAction: TextInputAction.done,
-                                onSubmitted: (_) => checkWord(),
-                                style: const TextStyle(fontSize: 20, color: Colors.black87, fontWeight: FontWeight.bold),
-                                decoration: InputDecoration(
-                                  hintText: _gameActive ? "Wort..." : "Ende",
-                                  border: InputBorder.none,
-                                  contentPadding: const EdgeInsets.only(bottom: 5), // Text vertikal zentrieren
+                            child: Column(
+                              children: [
+                                Text(
+                                  "Aus dem Wort: $baseWord",
+                                  style: woodTextStyle.copyWith(fontSize: 22),
+                                  textAlign: TextAlign.center,
                                 ),
-                              ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  "Finde so viele neue Wörter wie möglich!",
+                                  style: woodTextStyle.copyWith(fontSize: 14, fontWeight: FontWeight.normal),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
                             ),
-                            IconButton(
-                              icon: const Icon(Icons.edit, color: Colors.black54),
-                              onPressed: _gameActive ? checkWord : null,
-                              padding: EdgeInsets.zero,
-                            ),
-                            if (_gameActive)
-                              IconButton(
-                                icon: const Icon(Icons.check_circle, color: Colors.green),
-                                onPressed: checkWord,
-                                padding: EdgeInsets.zero,
-                              ),
-                          ],
-                        ),
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0, bottom: 0),
-                        child: Text(
-                          feedback,
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.brown[900],
-                            fontWeight: FontWeight.bold,
                           ),
-                        ),
-                      ),
 
+                          const SizedBox(height: 10),
 
-
-                      // --- LISTE (paperRoll.png) ---
-                      // ÄNDERUNG: Padding um den Stack, damit die Rolle kleiner/schmaler wirkt
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Stack(
-                          alignment: Alignment.topCenter,
-                          children: [
-                            Image.asset(
-                              "assets/images/paperRoll.png",
-                              width: double.infinity,
-                              fit: BoxFit.fitWidth,
+                          Container(
+                            height: 55,
+                            margin: const EdgeInsets.symmetric(horizontal: 30),
+                            decoration: BoxDecoration(
+                                color: const Color(0xFFFDF5E6),
+                                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                border: Border.all(color: Colors.brown, width: 2),
+                                boxShadow: const [
+                                  BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(2,2))
+                                ]
                             ),
-                            Positioned.fill(
-                              child: Padding(
-                                // Padding anpassen (oben etwas mehr wegen Rolle, seitlich wegen schmaler)
-                                padding: const EdgeInsets.fromLTRB(60, 75, 60, 40),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      "Gefundene Wörter: (${foundWords.length}/${validWords.length})",
-                                      style: const TextStyle(
-                                          fontSize: 16, // Etwas kleiner, damit es passt
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black87
-                                      ),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    controller: controller,
+                                    focusNode: _focusNode,
+                                    enabled: _gameActive,
+                                    textInputAction: TextInputAction.done,
+                                    onSubmitted: (_) => checkWord(),
+                                    style: const TextStyle(fontSize: 20, color: Colors.black87, fontWeight: FontWeight.bold),
+                                    decoration: InputDecoration(
+                                      hintText: _gameActive ? "Wort..." : "Ende",
+                                      border: InputBorder.none,
+                                      contentPadding: const EdgeInsets.only(bottom: 5),
                                     ),
-                                    const Divider(color: Colors.black54, height: 10),
-                                    Expanded(
-                                      child: SingleChildScrollView(
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                              foundWords.isEmpty ? "..." : foundWords.join(', '),
-                                              textAlign: TextAlign.center,
-                                              style: const TextStyle(
-                                                fontSize: 15,
-                                                color: Colors.black87,
-                                                fontStyle: FontStyle.italic,
-                                                height: 1.4,
-                                              ),
-                                            ),
-                                            if (!_gameActive && missingWords.isNotEmpty) ...[
-                                              const SizedBox(height: 15),
-                                              const Text(
-                                                "Fehlende Wörter:",
-                                                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 14),
-                                              ),
-                                              Text(
-                                                missingWords.join(', '),
-                                                textAlign: TextAlign.center,
-                                                style: const TextStyle(fontSize: 13, color: Colors.red),
-                                              ),
-                                            ]
-                                          ],
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.edit, color: Colors.black54),
+                                  onPressed: _gameActive ? checkWord : null,
+                                  padding: EdgeInsets.zero,
+                                ),
+                                if (_gameActive)
+                                  IconButton(
+                                    icon: const Icon(Icons.check_circle, color: Colors.green),
+                                    onPressed: checkWord,
+                                    padding: EdgeInsets.zero,
+                                  ),
+                              ],
+                            ),
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0, bottom: 0),
+                            child: Text(
+                              feedback,
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.brown[900],
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
+                            child: Stack(
+                              alignment: Alignment.topCenter,
+                              children: [
+                                Container(
+                                  height: MediaQuery.of(context).size.height * 0.40,
+                                  width: double.infinity,
+                                  child: Image.asset(
+                                    "assets/images/paperRoll.png",
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                                Positioned.fill(
+                                  child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(40, 75, 40, 40),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          "Gefundene Wörter: (${foundWords.length}/${validWords.length})",
+                                          style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black87
+                                          ),
                                         ),
-                                      ),
+                                        const Divider(color: Colors.black54, height: 10),
+                                        Expanded(
+                                          child: SingleChildScrollView(
+                                            child: Column(
+                                              children: [
+                                                Text(
+                                                  foundWords.isEmpty ? "..." : foundWords.join(', '),
+                                                  textAlign: TextAlign.center,
+                                                  style: const TextStyle(
+                                                    fontSize: 15,
+                                                    color: Colors.black87,
+                                                    fontStyle: FontStyle.italic,
+                                                    height: 1.4,
+                                                  ),
+                                                ),
+                                                if (!_gameActive && missingWords.isNotEmpty) ...[
+                                                  const SizedBox(height: 15),
+                                                  const Text(
+                                                    "Fehlende Wörter:",
+                                                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 14),
+                                                  ),
+                                                  Text(
+                                                    missingWords.join(', '),
+                                                    textAlign: TextAlign.center,
+                                                    style: const TextStyle(fontSize: 13, color: Colors.red),
+                                                  ),
+                                                ]
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-
-                      const SizedBox(height: 80),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
 
-          // --- AVATAR (Ganz oben, rechts unten) ---
           Positioned(
             bottom: 10,
             right: 10,
@@ -487,16 +658,13 @@ class _WordSearchGameState extends State<WordSearchGame> {
           if (_showContinueButton)
             Positioned(
               bottom: 30,
-              left: 20,
-              child: ElevatedButton(
-                onPressed: _continueToGlitch,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF3F9067),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  elevation: 10,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: WoodButton(
+                  text: "Weiter",
+                  onPressed: _continueToGlitch,
                 ),
-                child: const Text("Weiter", style: TextStyle(fontSize: 20)),
               ),
             ),
         ],
@@ -536,8 +704,9 @@ class PreGlitchDialog extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF3F9067), foregroundColor: Colors.white),
+              // Button mittig und Planks
+              WoodButton(
+                text: "Oh oh…",
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
@@ -546,7 +715,6 @@ class PreGlitchDialog extends StatelessWidget {
                     ),
                   );
                 },
-                child: const Text("Oh oh…"),
               )
             ],
           ),
@@ -557,7 +725,7 @@ class PreGlitchDialog extends StatelessWidget {
 }
 
 // ------------------------------------------------------
-// GLITCH SCENE
+// GLITCH SCENE (MONOLOG NUN IM INTRO-STYLE)
 // ------------------------------------------------------
 class _WordData {
   final Offset pos;
@@ -672,20 +840,20 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
   Widget build(BuildContext context) {
     final ready = wordData != null && wordData!.length == words.length;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFF3F9067).withOpacity(0.1),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: ImageFiltered(
-              imageFilter: ImageFilter.blur(sigmaX: glitchActive ? 7.0 : 0.0, sigmaY: glitchActive ? 7.0 : 0.0),
-              child: Container(color: const Color(0xFF3F9067).withOpacity(0.1)),
-            ),
-          ),
-          if (glitchActive)
+    // Wenn Glitch aktiv ist: Zeige Glitch-Screen
+    if (glitchActive) {
+      return Scaffold(
+        backgroundColor: const Color(0xFF3F9067).withOpacity(0.1),
+        body: Stack(
+          children: [
             Positioned.fill(
-              child: ready
-                  ? LayoutBuilder(builder: (_, constraints) {
+              child: ImageFiltered(
+                imageFilter: ImageFilter.blur(sigmaX: 7.0, sigmaY: 7.0),
+                child: Container(color: const Color(0xFF3F9067).withOpacity(0.1)),
+              ),
+            ),
+            if (ready)
+              LayoutBuilder(builder: (_, constraints) {
                 final count = math.min(words.length, wordData!.length);
                 return Stack(
                   children: [
@@ -729,43 +897,125 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
                   ],
                 );
               })
-                  : const Center(child: CircularProgressIndicator()),
-            )
-          else
+            else
+              const Center(child: CircularProgressIndicator()),
+          ],
+        ),
+      );
+    }
+
+    // --- MONOLOG IM GLEICHEN STIL WIE DAS INTRO ---
+    else {
+      final TextStyle handStyle = TextStyle(
+        fontFamily: 'Courier',
+        color: Colors.brown[900],
+        fontWeight: FontWeight.bold,
+      );
+
+      return Scaffold(
+        body: Stack(
+          children: [
+            // 1. Hintergrund
+            Positioned.fill(
+              child: Image.asset(
+                "assets/images/WoodBackground.jpg",
+                fit: BoxFit.cover,
+              ),
+            ),
+
+            // 2. Papierrolle Mitte
             Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: MediaQuery.of(context).size.height * 0.7,
+                margin: const EdgeInsets.only(top: 80),
+                child: Stack(
+                  alignment: Alignment.center,
                   children: [
-                    Image.asset('assets/images/braintemporallobe1.png', errorBuilder: (c,o,s) => const SizedBox()),
-                    const SizedBox(height: 20),
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10)],
-                      ),
-                      child: Text(
-                        dialogAfterGlitch[dialogIndex],
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 20),
+                    SizedBox(
+                      width: double.infinity, height: double.infinity,
+                      child: Image.asset("assets/images/paperRoll.png", fit: BoxFit.fill),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 60.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                              'assets/images/braintemporallobe1.png',
+                              height: 180,
+                              fit: BoxFit.contain,
+                              errorBuilder: (c, o, s) => const Icon(Icons.psychology, size: 100, color: Colors.green)
+                          ),
+                          const SizedBox(height: 30),
+                          Text(
+                            dialogAfterGlitch[dialogIndex],
+                            textAlign: TextAlign.center,
+                            style: handStyle.copyWith(fontSize: 20, height: 1.3),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: nextDialog,
-                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF3F9067), foregroundColor: Colors.white),
-                      child: const Text('Weiter'),
-                    )
                   ],
                 ),
               ),
             ),
-        ],
-      ),
-    );
+
+            // 3. Schild Oben (Dynamisch 70%)
+            Positioned(
+              top: 40, left: 0, right: 0,
+              child: Center(
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  height: 120,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Image.asset("assets/images/woodPlank.png", width: double.infinity, fit: BoxFit.fill),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 15.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "Die Diagnose:",
+                              style: handStyle.copyWith(fontSize: 18, color: const Color(0xFF3E2723)),
+                            ),
+                            Text(
+                              "Schizophrenie",
+                              style: handStyle.copyWith(fontSize: 24, color: const Color(0xFF3E2723), fontWeight: FontWeight.w900),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // 4. Brain Avatar
+            Positioned(
+              bottom: 10,
+              left: 10,
+              child: Image.asset("assets/images/brainPointing.png", width: 180),
+            ),
+
+            // 5. Button Mittig
+            Positioned(
+              bottom: 30,
+              left: 0, right: 0,
+              child: Center(
+                child: WoodButton(
+                  text: "Weiter",
+                  onPressed: nextDialog,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
 }
 
@@ -777,33 +1027,58 @@ class TemporalLobeEndScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Auch der Endscreen wird an den Style angepasst
+    final TextStyle handStyle = TextStyle(
+      fontFamily: 'Courier',
+      color: Colors.brown[900],
+      fontWeight: FontWeight.bold,
+    );
+
     return Scaffold(
-      backgroundColor: const Color(0xFF3F9067).withOpacity(0.1),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              "Temporallappen-Quest abgeschlossen!",
-              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset("assets/images/WoodBackground.jpg", fit: BoxFit.cover),
+          ),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  padding: const EdgeInsets.all(30),
+                  decoration: BoxDecoration(
+                      color: const Color(0xFFFDF5E6),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: const [BoxShadow(color: Colors.black45, blurRadius: 10)]
+                  ),
+                  child: Column(
+                    children: [
+                      const Text(
+                        "Temporallappen-Quest abgeschlossen!",
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF3E2723)),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        "Bereit für die nächste Gehirnregion?",
+                        style: TextStyle(fontSize: 20, color: Color(0xFF3E2723)),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 50),
+                WoodButton(
+                  text: "Zur Karte",
+                  onPressed: () {
+                    Navigator.of(context, rootNavigator: true).pop(true);
+                  },
+                ),
+              ],
             ),
-            const SizedBox(height: 20),
-            const Text(
-              "Bereit für die nächste Gehirnregion?",
-              style: TextStyle(fontSize: 20),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 40),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF3F9067), foregroundColor: Colors.white),
-              onPressed: () {
-                Navigator.of(context, rootNavigator: true).pop(true);
-              },
-              child: const Text("Zurück zur Gehirn-Karte"),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
