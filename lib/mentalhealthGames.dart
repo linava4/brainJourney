@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:brainjourney/cerebellum.dart';
+import 'package:brainjourney/homeMentalHealth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainjourney/MentalHealthIntro.dart';
 
@@ -135,7 +136,7 @@ class QuizData {
 
 class QuizScreen extends StatefulWidget {
   final List<QuizData> questions;
-  final VoidCallback onQuizCompleted;
+  final void Function(BuildContext) onQuizCompleted;
 
   const QuizScreen({super.key, required this.questions, required this.onQuizCompleted});
 
@@ -164,7 +165,7 @@ class _QuizScreenState extends State<QuizScreen> {
         wasCorrect = false;
       });
     } else {
-      widget.onQuizCompleted();
+      widget.onQuizCompleted(context);
     }
   }
 
@@ -196,7 +197,7 @@ class _QuizScreenState extends State<QuizScreen> {
                     const SizedBox(height: 20),
                     Text(question.question,
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 20, fontFamily: 'Courier', fontWeight: FontWeight.bold)),
+                        style: TextStyle(fontSize: 18, fontFamily: 'Courier', fontWeight: FontWeight.bold)),
                     const SizedBox(height: 30),
 
                     if (!answered) ...allAnswers.map((ans) => Padding(
@@ -296,19 +297,23 @@ class _DepressionGameState extends State<DepressionGame> {
       questions: [
         QuizData(
             question: "Wie fühlt sich Depression oft an?",
-            correctAnswer: "Wie ein schwerer Nebel",
-            wrongAnswers: ["Wie ein sonniger Tag", "Wie zu viel Energie"],
+            correctAnswer: "schwerer Nebel",
+            wrongAnswers: ["sonniger Tag", "zu viel Energie"],
             explanation: "Antriebslosigkeit ist ein Kernsymptom."
         ),
         QuizData(
             question: "Was hilft oft als erster Schritt?",
-            correctAnswer: "Kleine Lichtblicke suchen",
-            wrongAnswers: ["Sich isolieren", "Alles auf einmal lösen"],
+            correctAnswer: "Lichtblicke suchen",
+            wrongAnswers: ["Sich isolieren", "Alles gleichzeitg lösen"],
             explanation: "Kleine positive Aktivitäten (Verhaltensaktivierung) helfen."
         )
       ],
-      onQuizCompleted: () => Navigator.pop(context), // Zurück zur Map
-    )));
+      onQuizCompleted: (quizContext) {
+      Navigator.pushReplacement(
+      quizContext, // <--- WICHTIG: Nicht mehr 'context', sondern 'quizContext'
+      MaterialPageRoute(builder: (_) => const MentalMapScreen()) // Oder wie deine Home-Klasse heißt
+      );
+    })));
   }
 
   @override
@@ -358,11 +363,11 @@ class _DepressionGameState extends State<DepressionGame> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const SizedBox(height: 5),
-                          Text("Licht: $_score / 10", style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold)),
+                          Text("Licht: $_score / 10", style: TextStyle(color: Colors.black, fontSize: 18,fontFamily: 'Courier', fontWeight: FontWeight.bold)),
                           const SizedBox(height: 5),
                           Text(
                             "Sammle Lichtpunkte",
-                            style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                            style: TextStyle(color: Colors.black, fontSize: 14,fontFamily: 'Courier', fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -470,8 +475,12 @@ class _AnxietyGameState extends State<AnxietyGame> with SingleTickerProviderStat
             explanation: "Langes Ausatmen aktiviert den Parasympathikus (Beruhigung)."
         )
       ],
-      onQuizCompleted: () => Navigator.pop(context),
-    )));
+        onQuizCompleted: (quizContext) {
+          Navigator.pushReplacement(
+              quizContext, // <--- WICHTIG: Nicht mehr 'context', sondern 'quizContext'
+              MaterialPageRoute(builder: (_) => const MentalMapScreen()) // Oder wie deine Home-Klasse heißt
+          );
+        })));
   }
 
   @override
@@ -517,11 +526,11 @@ class _AnxietyGameState extends State<AnxietyGame> with SingleTickerProviderStat
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const SizedBox(height: 5),
-                            Text("Beruhige den Kreis", style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold)),
+                            Text("Beruhige den Kreis", style: TextStyle(color: Colors.black, fontSize: 18,fontFamily: 'Courier', fontWeight: FontWeight.bold)),
                             const SizedBox(height: 5),
                             Text(
                               "Ruhe-Level: ${_calmPoints.toInt()}%",
-                              style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                              style: TextStyle(color: Colors.black, fontSize: 14, fontFamily: 'Courier',fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                             ),
                           ],
@@ -611,19 +620,23 @@ class _AdhsGameState extends State<AdhsGame> with SingleTickerProviderStateMixin
       questions: [
         QuizData(
             question: "Was ist typisch für ADHS?",
-            correctAnswer: "Schwierigkeiten bei der Reizfilterung",
+            correctAnswer: "gestörte Reizfilterung",
             wrongAnswers: ["Mangelnde Intelligenz", "Nur Faulheit"],
             explanation: "Das Gehirn kann wichtige von unwichtigen Reizen schwer unterscheiden."
         ),
         QuizData(
             question: "Was symbolisierte das Goldene Blatt?",
-            correctAnswer: "Den einen Fokus-Gedanken",
+            correctAnswer: "Fokus-Gedanken",
             wrongAnswers: ["Reichtum", "Herbst"],
             explanation: "Es kostet Kraft, den Fokus auf einer Sache zu halten, wenn alles andere 'laut' ist."
         )
       ],
-      onQuizCompleted: () => Navigator.pop(context),
-    )));
+        onQuizCompleted: (quizContext) {
+          Navigator.pushReplacement(
+              quizContext, // <--- WICHTIG: Nicht mehr 'context', sondern 'quizContext'
+              MaterialPageRoute(builder: (_) => const MentalMapScreen()) // Oder wie deine Home-Klasse heißt
+          );
+        })));
   }
 
   @override
@@ -668,11 +681,11 @@ class _AdhsGameState extends State<AdhsGame> with SingleTickerProviderStateMixin
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const SizedBox(height: 5),
-                          Text("Halte das goldene Blatt!", style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold)),
+                          Text("Halte das goldene Blatt!", style: TextStyle(color: Colors.black, fontSize: 18,fontFamily: 'Courier', fontWeight: FontWeight.bold)),
                           const SizedBox(height: 5),
                           Text(
                             "Fokus: ${_score.toInt()}%",
-                            style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                            style: TextStyle(color: Colors.black, fontSize: 14,fontFamily: 'Courier', fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -798,19 +811,23 @@ class _AddictionGameState extends State<AddictionGame> {
           questions: [
             QuizData(
                 question: "Warum ist Sucht so schwer zu stoppen?",
-                correctAnswer: "Das Belohnungssystem ist 'gehackt'",
+                correctAnswer: "'gehacktes' \nBelohnungssystem",
                 wrongAnswers: ["Man hat keine Lust", "Es schmeckt zu gut"],
                 explanation: "Dopamin wird künstlich ausgeschüttet, natürliche Reize (Äpfel) wirken langweilig."
             ),
             QuizData(
                 question: "Was stärkt die 'Willenskraft'?",
-                correctAnswer: "Gesunde Ressourcen aufbauen",
+                correctAnswer: "Gesunde\nRessourcen aufbauen",
                 wrongAnswers: ["Sich selbst bestrafen", "Verdrängung"],
                 explanation: "Freunde, Sport und Hobbys füllen den Speicher wieder auf."
             )
           ],
-          onQuizCompleted: () => Navigator.pop(context),
-        )));
+            onQuizCompleted: (quizContext) {
+              Navigator.pushReplacement(
+                  quizContext, // <--- WICHTIG: Nicht mehr 'context', sondern 'quizContext'
+                  MaterialPageRoute(builder: (_) => const MentalMapScreen()) // Oder wie deine Home-Klasse heißt
+              );
+            })));
   }
 
   @override
@@ -859,6 +876,7 @@ class _AddictionGameState extends State<AddictionGame> {
                             style: TextStyle(
                                 color: Color(0xFF5D4037), // Dunkelbraun für Text auf Papier
                                 fontSize: 20,
+                                fontFamily: 'Courier',
                                 fontWeight: FontWeight.bold
                             ),
                             textAlign: TextAlign.center,
@@ -916,11 +934,15 @@ class _AddictionGameState extends State<AddictionGame> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const SizedBox(height: 5),
-                          Text("Tippe auf die Ressourcen", style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold)),
+                          Text("Tippe auf die Ressourcen", style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: 'Courier',
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold)),
                           const SizedBox(height: 5),
                           Text(
                             "Ressourcen: $_resources / 10",
-                            style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                            style: TextStyle(color: Colors.black,fontFamily: 'Courier', fontSize: 14, fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -993,6 +1015,7 @@ class PtbsGame extends StatefulWidget {
 class _PtbsGameState extends State<PtbsGame> {
   // Wir machen ein 3x3 Raster = 9 Teile
   final int gridSize = 3;
+
   // Speichert die Rotation für jedes Teil (0 = korrekt, 1 = 90°, 2 = 180°, 3 = 270°)
   late List<int> pieceRotations;
   bool isWon = false;
@@ -1004,7 +1027,7 @@ class _PtbsGameState extends State<PtbsGame> {
   }
 
   void _initializePuzzle() {
-    // Zufällige Rotationen setzen, aber sicherstellen, dass nicht alles schon auf 0 steht
+    // Zufällige Rotationen setzen
     pieceRotations = List.generate(gridSize * gridSize, (index) {
       return Random().nextInt(3) + 1; // Generiert 1, 2 oder 3 (also immer verdreht am Anfang)
     });
@@ -1014,7 +1037,7 @@ class _PtbsGameState extends State<PtbsGame> {
     if (isWon) return;
 
     setState(() {
-      // Dreht das Teil um 90 Grad weiter (Modulp 4, damit es 0-3 bleibt)
+      // Dreht das Teil um 90 Grad weiter (Modulo 4, damit es 0-3 bleibt)
       pieceRotations[index] = (pieceRotations[index] + 1) % 4;
       _checkWin();
     });
@@ -1032,35 +1055,41 @@ class _PtbsGameState extends State<PtbsGame> {
   }
 
   void _finishGame() {
+    // Navigiert zum QuizScreen (Code aus deiner Vorlage übernommen)
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => QuizScreen(
-      questions: [
-        QuizData(
-            question: "Was sind Flashbacks?",
-            correctAnswer: "Ungefragtes Wiedererleben",
-            wrongAnswers: ["Schöne Träume", "Vergesslichkeit"],
-            explanation: "Das Trauma ist nicht als 'Vergangenheit' abgespeichert, sondern fühlt sich an wie 'jetzt'."
-        ),
-        QuizData(
-            question: "Was war das Ziel des Puzzles?",
-            correctAnswer: "Integration der Erinnerung",
-            wrongAnswers: ["Verdrängung", "Ablenkung"],
-            explanation: "In der Therapie werden die 'Splitter' der Erinnerung geordnet, damit sie ein Bild der Vergangenheit werden."
-        )
-      ],
-      onQuizCompleted: () => Navigator.pop(context),
+        questions: [
+          QuizData(
+              question: "Was sind Flashbacks?",
+              correctAnswer: "Ungefragtes Wiedererleben",
+              wrongAnswers: ["Schöne Träume", "Vergesslichkeit"],
+              explanation: "Das Trauma ist nicht als 'Vergangenheit' abgespeichert, sondern fühlt sich an wie 'jetzt'."
+          ),
+          QuizData(
+              question: "Was war das Ziel des Puzzles?",
+              correctAnswer: "Erinnerungsintegration",
+              wrongAnswers: ["Verdrängung", "Ablenkung"],
+              explanation: "In der Therapie werden die 'Splitter' der Erinnerung geordnet, damit sie ein Bild der Vergangenheit werden."
+          )
+        ],
+        onQuizCompleted: (quizContext) {
+          Navigator.pushReplacement(
+              quizContext,
+              MaterialPageRoute(builder: (_) => const MentalMapScreen())
+          );
+        }
     )));
   }
 
   // Hilfsfunktion: Berechnet den Bildausschnitt für das Grid
   Alignment _getAlignment(int index) {
-    int row = index ~/ gridSize;
-    int col = index % gridSize;
+    int x = index % gridSize;
+    int y = index ~/ gridSize;
 
-    // Alignment geht von -1.0 bis 1.0
-    // Bei 3x3: -1.0, 0.0, 1.0
-    double x = -1.0 + (col * 1.0); // Vereinfacht für 3x3
-    double y = -1.0 + (row * 1.0);
-    return Alignment(x, y);
+    // Alignment geht von -1.0 bis +1.0
+    double alignX = -1.0 + (x * 2.0 / (gridSize - 1));
+    double alignY = -1.0 + (y * 2.0 / (gridSize - 1));
+
+    return Alignment(alignX, alignY);
   }
 
   @override
@@ -1071,6 +1100,7 @@ class _PtbsGameState extends State<PtbsGame> {
           // 1. Hintergrund
           Image.asset("assets/images/WoodBackgroundNight.jpg", fit: BoxFit.cover, height: double.infinity),
 
+          // Überschrift auf Holzbrett
           Positioned(
             top: 0.0,
             left: 0,
@@ -1095,17 +1125,18 @@ class _PtbsGameState extends State<PtbsGame> {
                           const SizedBox(height: 5),
                           Text(
                             isWon ? "Erinnerung integriert." : "Ordne die Erinnerung...",
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontFamily: 'Courier',
-                                fontSize: 22,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black
                             ),
                             textAlign: TextAlign.center,
-                          ),const SizedBox(height: 5),
+                          ),
+                          const SizedBox(height: 5),
                           const Text(
-                            "Tippe auf die Teile, um sie zu drehen.",
-                            style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                            "Tippe auf die Teile.",
+                            style: TextStyle(fontSize: 14, fontFamily: 'Courier', fontWeight: FontWeight.bold),
                           )
                         ],
                       ),
@@ -1117,7 +1148,6 @@ class _PtbsGameState extends State<PtbsGame> {
           ),
 
           // 2. Papierrolle als Rahmen
-
           Center(
             child: Padding(
               padding: const EdgeInsets.only(top: 100.0),
@@ -1131,64 +1161,68 @@ class _PtbsGameState extends State<PtbsGame> {
                   padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 60),
                   child: Column(
                     children: [
-
                       const SizedBox(height: 20),
 
                       // 3. Das PUZZLE GRID
                       Expanded(
                         child: Center(
                           child: AspectRatio(
-                            aspectRatio: 1, // Quadratisch halten
+                            aspectRatio: 1, // Erzwingt quadratische Form
                             child: Container(
                               decoration: BoxDecoration(
                                   border: Border.all(color: Colors.brown[800]!, width: 4),
                                   boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(4, 4))]
                               ),
-                              child: GridView.builder(
-                                physics: const NeverScrollableScrollPhysics(), // Kein Scrollen
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: gridSize,
-                                  mainAxisSpacing: 2,
-                                  crossAxisSpacing: 2,
-                                ),
-                                itemCount: gridSize * gridSize,
-                                itemBuilder: (context, index) {
-                                  return GestureDetector(
-                                    onTap: () => _rotatePiece(index),
-                                    child: AnimatedRotation(
-                                      turns: pieceRotations[index] / 4, // 1 = 90grad (0.25 turns)
-                                      duration: const Duration(milliseconds: 300),
-                                      curve: Curves.easeOutBack,
-                                      child: Container(
-                                        color: Colors.white,
-                                        child: ClipRect(
-                                          child: OverflowBox(
-                                            maxWidth: double.infinity,
-                                            maxHeight: double.infinity,
-                                            alignment: _getAlignment(index),
-                                            // HIER DEIN BILD EINFÜGEN (z.B. Waldszene)
-                                            // Nutze Alignment, um den Ausschnitt zu zeigen
-                                            child: Image.asset(
-                                              "assets/images/WoodBackground.jpg", // Platzhalter! Nutze besser ein Landschaftsbild.
-                                              fit: BoxFit.cover,
-                                              // Wir müssen das Bild skalieren, damit der Ausschnitt passt.
-                                              // Bei 3x3 muss das Bild theoretisch 3x so groß sein wie die Zelle.
-                                              width: (MediaQuery.of(context).size.width * 0.8),
-                                              height: (MediaQuery.of(context).size.width * 0.8),
+                              child: LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    double boardSize = constraints.maxWidth;
+
+                                    return GridView.builder(
+                                      // *** HIER IST DER FIX ***
+                                      padding: EdgeInsets.zero,
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: gridSize,
+                                        mainAxisSpacing: 2,
+                                        crossAxisSpacing: 2,
+                                      ),
+                                      itemCount: gridSize * gridSize,
+                                      itemBuilder: (context, index) {
+                                        return GestureDetector(
+                                          onTap: () => _rotatePiece(index),
+                                          child: AnimatedRotation(
+                                            turns: pieceRotations[index] / 4,
+                                            duration: const Duration(milliseconds: 300),
+                                            curve: Curves.easeOutBack,
+                                            child: Container(
+                                              color: Colors.white,
+                                              child: ClipRect(
+                                                child: OverflowBox(
+                                                  maxWidth: boardSize,
+                                                  maxHeight: boardSize,
+                                                  minWidth: boardSize,
+                                                  minHeight: boardSize,
+                                                  alignment: _getAlignment(index),
+                                                  child: Image.asset(
+                                                    "assets/images/WoodBackground.jpg", // Dein Puzzle-Bild
+                                                    fit: BoxFit.fill,
+                                                    width: boardSize,
+                                                    height: boardSize,
+                                                  ),
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
+                                        );
+                                      },
+                                    );
+                                  }
                               ),
                             ),
                           ),
                         ),
                       ),
                       const SizedBox(height: 20),
-
                     ],
                   ),
                 ),

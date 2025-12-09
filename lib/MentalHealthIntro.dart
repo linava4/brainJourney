@@ -83,9 +83,11 @@ class _MentalHealthIntroState extends State<MentalHealthIntro> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         // Kleines Icon/Bild der Region (optional)
-                        SizedBox(
-                          height: 100,
-                          child: Image.asset(widget.imageAsset, errorBuilder: (c,o,s) => Icon(Icons.psychology, size: 80, color: Colors.grey)),
+                        Image.asset(
+                            'assets/images/brainPointing.png',
+                            height: 160,
+                            fit: BoxFit.contain,
+                            errorBuilder: (c, o, s) => const Icon(Icons.psychology, size: 100, color: Colors.green)
                         ),
                         const SizedBox(height: 20),
 
@@ -134,12 +136,7 @@ class _MentalHealthIntroState extends State<MentalHealthIntro> {
             ),
           ),
 
-          // 4. Brain Avatar (unten links)
-          Positioned(
-            bottom: 20,
-            left: 10,
-            child: Image.asset("assets/images/brainPointing.png", width: 140),
-          ),
+
 
           // 5. Button (Weiter / Start)
           Positioned(

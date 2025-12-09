@@ -93,8 +93,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        Image.asset(
+                            'assets/images/brainCard.png',
+                            height: 80,
+                            fit: BoxFit.contain,
+                            errorBuilder: (c, o, s) => Icon(Icons.lock_outline, size: 50, color: Colors.brown[800])
+                        ),
                         // Kleines Icon oben auf dem Papier
-                        Icon(Icons.lock_outline, size: 50, color: Colors.brown[800]),
+
                         const SizedBox(height: 10),
 
                         Text(
@@ -139,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         if (_isLoading)
                           const Padding(
-                            padding: EdgeInsets.all(8.0),
+                            padding: EdgeInsets.all(0.0),
                             child: CircularProgressIndicator(color: Colors.brown),
                           ),
                       ],
@@ -158,7 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Center(
               child: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.7,
-                height: 80,
+
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -168,7 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         fit: BoxFit.fill
                     ),
                     Positioned(
-                      top: 30,
+                      top: 55,
                       child:
                         Text(
                           "Zugang",
@@ -189,14 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
 
-          // 4. BRAIN AVATAR (Deko unten links)
-          Positioned(
-            bottom: 30,
-            left: 10,
 
-             child: Image.asset("assets/images/brainPointing.png", width: 160),
-
-          ),
 
           // 5. LOGIN BUTTON (Unten Mitte)
           Positioned(

@@ -122,7 +122,7 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
                     // Amygdala
                     _brainMapSignResponsive(
                       width: width, height: height,
-                      x: 0.80, y: 0.30,
+                      x: 0.70, y: 0.30,
                       label: 'Höhle der\nGefühle\n(Amygdala)',
                       id: 'amygdala',
                       completed: _completed.contains('amygdala'),

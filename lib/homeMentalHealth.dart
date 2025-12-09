@@ -130,7 +130,7 @@ class MentalMapScreenState extends State<MentalMapScreen> {
                     // Amygdala
                     _brainMapSignResponsive(
                       width: width, height: height,
-                      x: 0.80, y: 0.30,
+                      x: 0.70, y: 0.30,
                       label: 'Die tanzenden\nBlätter',
                       id: 'adhs',
                       completed: _completed.contains('adhs'),

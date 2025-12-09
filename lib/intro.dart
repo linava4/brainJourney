@@ -84,10 +84,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             "Willkommen bei BrainJourney!",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 24, // Basisgröße, skaliert runter wenn nötig
+                              fontSize: 18, // Basisgröße, skaliert runter wenn nötig
                               fontWeight: FontWeight.bold,
                               color: Colors.black87,
-                              fontFamily: 'ComicSans',
+                              fontFamily: 'Courier',
                             ),
                           ),
                         ),
@@ -119,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               alignment: Alignment.center,
                               children: [
                                 Image.asset(
-                                  'assets/images/Speakingbubble.png',
+                                  'assets/images/SpeakingBubble.png',
                                   fit: BoxFit.contain,
                                 ),
                                 Padding(
@@ -178,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       alignment: Alignment.center,
                       children: [
                         Image.asset(
-                          'assets/images/planks.png',
+                          'assets/images/Planks.png',
                           fit: BoxFit.fill,
                           width: double.infinity,
                         ),
@@ -187,16 +187,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               ? "Weiter"
                               : "Starten wir die Reise!",
                           style: const TextStyle(
-                            fontSize: 22,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            shadows: [
-                              Shadow(
-                                offset: Offset(1, 1),
-                                blurRadius: 2,
-                                color: Colors.black45,
-                              ),
-                            ],
+                            color: Colors.black,
+                            fontFamily: 'Courier',
+
                           ),
                         ),
                       ],
@@ -226,9 +221,10 @@ class AutoSizeText extends StatelessWidget {
         text,
         textAlign: TextAlign.center,
         style: const TextStyle(
-          fontSize: 16, // Max Größe
+          fontSize: 14, // Max Größe
           fontWeight: FontWeight.w600,
           color: Colors.black,
+            fontFamily: 'Courier',
         ),
       ),
     );

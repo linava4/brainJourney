@@ -145,12 +145,7 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
             ),
           ),
 
-          // 5. BRAIN AVATAR
-          Positioned(
-            bottom: 40,
-            left: 5,
-            child: Image.asset("assets/images/brainPointing.png", width: 180),
-          ),
+
 
           // 6. ACTION BUTTON
           Positioned(
@@ -175,7 +170,7 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Image.asset(
-            'assets/images/braintemporallobe1.png',
+            'assets/images/brainPointing.png',
             height: 180,
             fit: BoxFit.contain,
             errorBuilder: (c, o, s) => const Icon(Icons.psychology, size: 100, color: Colors.green)
@@ -436,7 +431,8 @@ class _WordSearchGameState extends State<WordSearchGame> {
             );
           },
         ),
-        title: Text("Wort-Suchspiel", style: TextStyle(color: Colors.brown[900], fontWeight: FontWeight.bold, fontSize: 28, fontFamily: 'Cursive')),
+        title: Text("Wort-Suchspiel", style: TextStyle(color: Colors.brown[900], fontWeight: FontWeight.bold, fontSize: 28,
+            fontFamily: 'Courier')),
         centerTitle: true,
       ),
       body: Stack(
@@ -506,12 +502,17 @@ class _WordSearchGameState extends State<WordSearchGame> {
                               children: [
                                 Text(
                                   "Aus dem Wort: $baseWord",
-                                  style: woodTextStyle.copyWith(fontSize: 22),
+                                  style: woodTextStyle.copyWith(fontSize: 18),
                                   textAlign: TextAlign.center,
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
                                   "Finde mindestens $_minWordsToPass Wörter!",
+                                  style: woodTextStyle.copyWith(fontSize: 16),
+                                  textAlign: TextAlign.center,
+                                ),
+                                Text(
+                                  "Gefunden: ${foundWords.length} / ${validWords.length}",
                                   style: woodTextStyle.copyWith(fontSize: 16),
                                   textAlign: TextAlign.center,
                                 ),

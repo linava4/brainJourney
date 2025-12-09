@@ -46,7 +46,7 @@ class WoodButton extends StatelessWidget {
         child: Text(
           text,
           style: const TextStyle(
-            fontSize: 22,
+            fontSize: 18,
             fontWeight: FontWeight.bold,
             color: Color(0xFF3E2723),
             fontFamily: 'Courier',
@@ -84,7 +84,7 @@ class WoodButtonWide extends StatelessWidget {
         child: Text(
           text,
           style: const TextStyle(
-            fontSize: 22,
+            fontSize: 16,
             fontWeight: FontWeight.bold,
             color: Color(0xFF3E2723),
             fontFamily: 'Courier',
@@ -205,11 +205,7 @@ class _CerebellumIntroState extends State<CerebellumIntro> {
             ),
           ),
           // 5. BRAIN AVATAR
-          Positioned(
-            bottom: 40,
-            left: 5,
-            child: Image.asset("assets/images/brainPointing.png", width: 180),
-          ),
+
           Positioned(
             bottom: 30, left: 0, right: 0,
             child: Center(
@@ -230,7 +226,7 @@ class _CerebellumIntroState extends State<CerebellumIntro> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Image.asset(
-            'assets/images/brainBalancing.png',
+            'assets/images/brainPointing.png',
             height: 160,
             fit: BoxFit.contain,
             errorBuilder: (c, o, s) => const Icon(Icons.psychology, size: 100, color: Colors.green)
@@ -445,7 +441,6 @@ class _BalancingGameState extends State<BalancingGame> with SingleTickerProvider
               // 2. Der Avatar (Brain), der oben "herausschaut"
               Positioned(
                 top: 30,
-                left: 125,
                 child: Container(
                   width: 130, // Größe anpassen
                   height: 150,
@@ -497,7 +492,7 @@ class _BalancingGameState extends State<BalancingGame> with SingleTickerProvider
             );
           },
         ),
-        title: Text("Balance-Spiel", style: TextStyle(color: Colors.brown[900], fontWeight: FontWeight.bold, fontSize: 28, fontFamily: 'Cursive')),
+        title: Text("Balance-Spiel", style: TextStyle(color: Colors.brown[900], fontWeight: FontWeight.bold, fontSize: 28, fontFamily: 'Courier')),
         centerTitle: true,
       ),
       body: Stack(
@@ -512,7 +507,7 @@ class _BalancingGameState extends State<BalancingGame> with SingleTickerProvider
 
           // 2. Avatar (Brain) - Ohne Holzbalken
           Positioned(
-            bottom: 330, // Etwas vom Boden weg, damit es nicht am Rand klebt
+            bottom: 300, // Etwas vom Boden weg, damit es nicht am Rand klebt
             left: 0,
             right: 0,
             child: Center(
