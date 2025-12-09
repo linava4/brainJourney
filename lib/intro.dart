@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
+import 'package:brainjourney/login.dart';
 import 'package:brainjourney/start.dart';
 import 'package:flutter/material.dart';
 import 'home.dart'; // Deine Home/Map Datei
@@ -17,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<String> dialog = [
     "Hey!\nIch bin Herbert d. Braini!\nIch begleite dich auf deiner\nReise durch das Gehirn.\nBist du bereit?",
     "Wir entdecken gemeinsam,\nwie Gefühle und Gedanken\nfunktionieren!",
-    "Klicke unten,\num die Karte zu öffnen!"
+    "Bist du bereit,\nfür eine spannende Reise?"
   ];
 
   void _next() {
@@ -27,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
       } else {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const StartScreen()),
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
         );
       }
     });

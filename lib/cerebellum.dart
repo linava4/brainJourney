@@ -58,6 +58,44 @@ class WoodButton extends StatelessWidget {
 }
 
 // ------------------------------------------------------
+// HELPER WIDGET: WOOD BUTTON
+// ------------------------------------------------------
+class WoodButtonWide extends StatelessWidget {
+  final String text;
+  final VoidCallback onPressed;
+
+  const WoodButtonWide({super.key, required this.text, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        width: 320,
+        height: 70,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/Planks.png"),
+            fit: BoxFit.fill,
+          ),
+        ),
+        alignment: Alignment.center,
+        padding: const EdgeInsets.only(bottom: 5),
+        child: Text(
+          text,
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF3E2723),
+            fontFamily: 'Courier',
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ------------------------------------------------------
 // 1. INTRO SCREEN
 // ------------------------------------------------------
 class CerebellumIntro extends StatefulWidget {
@@ -339,20 +377,89 @@ class _BalancingGameState extends State<BalancingGame> with SingleTickerProvider
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFFFDF5E6),
-        title: const Text("Platsch!", style: TextStyle(fontFamily: 'Courier', fontWeight: FontWeight.bold)),
-        content: const Text("Gleichgewicht verloren. Versuch es noch einmal!"),
-        actions: [
-          TextButton(
-            child: const Text("Neustart", style: TextStyle(color: Colors.brown, fontWeight: FontWeight.bold)),
-            onPressed: () {
-              Navigator.pop(ctx);
-              _restartGame();
-            },
-          )
-        ],
-      ),
+      builder: (ctx) {
+        return Dialog(
+          backgroundColor: Colors.transparent, // Wichtig: Transparent, damit wir die Form des Papiers sehen
+          elevation: 0, // Kein Standardschatten, falls das Papier einen eigenen Schatten hat
+          child: Stack(
+            alignment: Alignment.topCenter,
+            children: [
+              // 1. Der Hintergrund (Papierrolle)
+              Container(
+                width: MediaQuery.of(context).size.width *0.7,
+                height: MediaQuery.of(context).size.height *0.6,
+                padding: const EdgeInsets.only(
+                    top: 170, // Platz für den Avatar oben lassen
+                    left: 20,
+                    right: 20,
+                    bottom: 20
+                ),
+
+                decoration: BoxDecoration(
+                  // Falls das Papier abgerundete Ecken hat, hier anpassen:
+                  // borderRadius: BorderRadius.circular(15),
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/paperRoll.png'), // Dein Hintergrundbild
+                    fit: BoxFit.fill, // Oder BoxFit.cover, je nach Bildformat
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min, // Dialog passt sich dem Inhalt an
+                  children: [
+                    // Titel
+                    const Text(
+                      "Platsch!",
+                      style: TextStyle(
+                        fontFamily: 'Courier',
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Inhaltstext
+                    const Text(
+                      "Gleichgewicht verloren.\nVersuch es noch einmal!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Courier',
+                        fontSize: 16,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // 3. Der Holz-Button (Custom Widget)
+                    WoodButton(
+                      text: "Neustart", // Ich nehme an, dein Widget nimmt Text entgegen
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                        _restartGame();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              // 2. Der Avatar (Brain), der oben "herausschaut"
+              Positioned(
+                top: 30,
+                left: 125,
+                child: Container(
+                  width: 130, // Größe anpassen
+                  height: 150,
+
+                  child: Image.asset(
+                    'assets/images/brainThinking.png',
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -377,6 +484,22 @@ class _BalancingGameState extends State<BalancingGame> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: false,
+      appBar: AppBar(
+        backgroundColor: Colors.brown,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.brown[900], size: 40,),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => BrainMapScreen()),
+            );
+          },
+        ),
+        title: Text("Balance-Spiel", style: TextStyle(color: Colors.brown[900], fontWeight: FontWeight.bold, fontSize: 28, fontFamily: 'Cursive')),
+        centerTitle: true,
+      ),
       body: Stack(
         children: [
           // 1. Hintergrund (Füllt den ganzen Screen)
@@ -389,7 +512,7 @@ class _BalancingGameState extends State<BalancingGame> with SingleTickerProvider
 
           // 2. Avatar (Brain) - Ohne Holzbalken
           Positioned(
-            bottom: 350, // Etwas vom Boden weg, damit es nicht am Rand klebt
+            bottom: 330, // Etwas vom Boden weg, damit es nicht am Rand klebt
             left: 0,
             right: 0,
             child: Center(
@@ -448,14 +571,6 @@ class _BalancingGameState extends State<BalancingGame> with SingleTickerProvider
             ),
           ),
 
-          // Back Button
-          Positioned(
-            top: 40, left: 10,
-            child: IconButton(
-              icon: Icon(Icons.arrow_back, size: 40, color: Colors.brown[900]),
-              onPressed: () => Navigator.pop(context),
-            ),
-          )
         ],
       ),
     );
@@ -503,7 +618,7 @@ class _CerebellumGlitchSceneState extends State<CerebellumGlitchScene> {
       } else {
         Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => BrainMapScreen())
+            MaterialPageRoute(builder: (context) => CerebellumEndScreen())
         );
       }
     });
@@ -618,6 +733,101 @@ class _CerebellumGlitchSceneState extends State<CerebellumGlitchScene> {
               child: WoodButton(
                 text: (dialogIndex == dialogAfterGlitch.length - 1) ? "Zur Karte" : "Weiter",
                 onPressed: nextDialog,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CerebellumEndScreen extends StatelessWidget {
+  const CerebellumEndScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final TextStyle handStyle = TextStyle(
+      fontFamily: 'Courier',
+      color: Colors.brown[900],
+      fontWeight: FontWeight.bold,
+    );
+
+    return Scaffold(
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset("assets/images/WoodBackground.jpg", fit: BoxFit.cover),
+          ),
+          Center(
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: MediaQuery.of(context).size.height * 0.50,
+              margin: const EdgeInsets.only(top: 20),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    width: double.infinity, height: double.infinity,
+                    child: Image.asset("assets/images/paperRoll.png", fit: BoxFit.fill),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 50.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Kleinhirn-Quest abgeschlossen!",
+                          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF3E2723), fontFamily: 'Courier'),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          "Bereit für die nächste Gehirnregion?",
+                          style: TextStyle(fontSize: 20, color: Color(0xFF3E2723), fontFamily: 'Courier'),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            top: 0, left: 0, right: 0,
+            child: Center(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.7,
+                height: 120,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Image.asset("assets/images/woodPlank.png", width: double.infinity, fit: BoxFit.fill),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 30.0),
+                      child: Text(
+                        "Geschafft!",
+                        style: handStyle.copyWith(fontSize: 28, color: const Color(0xFF3E2723), fontWeight: FontWeight.w900),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 30,
+            left: 0, right: 0,
+            child: Center(
+              child: WoodButton(
+                text: "Zur Karte",
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => BrainMapScreen()),
+                  );
+                },
               ),
             ),
           ),

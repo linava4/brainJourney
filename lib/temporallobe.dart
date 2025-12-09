@@ -22,9 +22,8 @@ class TemporalLobeFlow extends StatelessWidget {
 }
 
 // ------------------------------------------------------
-// HELPER WIDGET: WOOD BUTTON (Planks.png)
+// HELPER WIDGET: WOOD BUTTON
 // ------------------------------------------------------
-
 
 
 // ------------------------------------------------------
@@ -255,11 +254,18 @@ class WordSearchGame extends StatefulWidget {
 
 class _WordSearchGameState extends State<WordSearchGame> {
   static const int _timerDurationSeconds = 5 * 60;
+
+  // --- ZIEL DEFINITION ---
+  static const int _minWordsToPass = 45;
+
   late Timer _timer;
   int _timeRemaining = _timerDurationSeconds;
   bool _gameActive = true;
   bool _showGiveUpButton = false;
+
+  // Buttons Steuerung
   bool _showContinueButton = false;
+  bool _showRestartButton = false; // Neu für Neustart
 
   final String baseWord = "VERSTANDEN";
   final TextEditingController controller = TextEditingController();
@@ -273,8 +279,8 @@ class _WordSearchGameState extends State<WordSearchGame> {
     "raten", "reste", "erst", "erste", "ersten", "reden", "sterne", "stern",
     "vater", "sand", "ende", "dran", "erde", "nest", "nester", "nerv", "seen",
     "dann", "anden", "denn", "senden", "vers", "verse", "nerven", "star",
-    "rate", "see", "ast", "art", "arten", "ernten", "ernte", "tee", "rat",
-    "den", "der", "das", "an", "er", "da"
+    "rate", "see", "ast", "art", "arten", "ernten", "ernte", "vase", "nase", "tee", "rat",
+    "den", "der", "das", "an", "er", "da", "es"
   };
 
   String feedback = "";
@@ -298,6 +304,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
             _timer.cancel();
             _giveUpOrTimeOut(isTimeout: true);
           } else if (_timeRemaining <= _timerDurationSeconds - 5 * 60) {
+            // Button sofort zeigen (Logik aus Original: 5 Min - 5 Min = 0 Sek)
             _showGiveUpButton = true;
           }
         }
@@ -311,20 +318,42 @@ class _WordSearchGameState extends State<WordSearchGame> {
     return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 
+  // --- LOGIK GEÄNDERT: PRÜFUNG AUF 40 WÖRTER ---
   void _giveUpOrTimeOut({required bool isTimeout}) {
     if (!_gameActive) return;
     _timer.cancel();
     _gameActive = false;
+
+    // Prüfung
+    bool passed = foundWords.length >= _minWordsToPass;
+
     setState(() {
-      if (isTimeout) {
-        feedback = "Die Zeit ist abgelaufen!";
-        _timeRemaining = 0;
+      _timeRemaining = 0;
+      if (passed) {
+        // BESTANDEN
+        if (isTimeout) {
+          feedback = "Zeit um! Aber Ziel erreicht!";
+        } else {
+          feedback = "Super! Genug Wörter gefunden.";
+        }
+        _showContinueButton = true;
+        _showRestartButton = false;
       } else {
-        feedback = "Hier sind die fehlenden Wörter.";
+        // NICHT BESTANDEN
+        feedback = "Nicht bestanden! Es fehlen ${( _minWordsToPass - foundWords.length)} Wörter.";
+        _showContinueButton = false;
+        _showRestartButton = true;
       }
-      _showContinueButton = true;
     });
     _focusNode.unfocus();
+  }
+
+  // --- NEUE FUNKTION: SPIEL NEUSTARTEN ---
+  void _restartGame() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const WordSearchGame()),
+    );
   }
 
   void _continueToGlitch() {
@@ -387,6 +416,12 @@ class _WordSearchGameState extends State<WordSearchGame> {
       fontFamily: "Courier",
     );
 
+    // Farbe für den Status
+    Color statusColor = const Color(0xFF3E2723);
+    if (!_gameActive) {
+      statusColor = foundWords.length >= _minWordsToPass ? Colors.green[900]! : Colors.red[900]!;
+    }
+
     return Scaffold(
       extendBodyBehindAppBar: false,
       appBar: AppBar(
@@ -443,9 +478,9 @@ class _WordSearchGameState extends State<WordSearchGame> {
                 alignment: const Alignment(0.0, 0.6),
                 child: Text(
                   _gameActive
-                      ? "Verbleibende Zeit: ${_formatTime(_timeRemaining)}"
-                      : "Zeit abgelaufen!",
-                  style: woodTextStyle.copyWith(fontSize: 20),
+                      ? "Zeit: ${_formatTime(_timeRemaining)}"
+                      : (foundWords.length >= _minWordsToPass ? "Geschafft!" : "Gescheitert!"),
+                  style: woodTextStyle.copyWith(fontSize: 20, color: statusColor),
                 ),
               ),
 
@@ -476,8 +511,8 @@ class _WordSearchGameState extends State<WordSearchGame> {
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
-                                  "Finde so viele neue Wörter wie möglich!",
-                                  style: woodTextStyle.copyWith(fontSize: 14, fontWeight: FontWeight.normal),
+                                  "Finde mindestens $_minWordsToPass Wörter!",
+                                  style: woodTextStyle.copyWith(fontSize: 16),
                                   textAlign: TextAlign.center,
                                 ),
                               ],
@@ -536,7 +571,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
                               feedback,
                               style: TextStyle(
                                 fontSize: 18,
-                                color: Colors.brown[900],
+                                color: (!_gameActive && foundWords.length < _minWordsToPass) ? Colors.red : Colors.brown[900],
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -561,11 +596,11 @@ class _WordSearchGameState extends State<WordSearchGame> {
                                     child: Column(
                                       children: [
                                         Text(
-                                          "Gefundene Wörter: (${foundWords.length}/${validWords.length})",
-                                          style: const TextStyle(
+                                          "Gefunden: ${foundWords.length} / ${validWords.length}",
+                                          style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.black87
+                                              color: foundWords.length >= _minWordsToPass ? Colors.green[800] : Colors.black87
                                           ),
                                         ),
                                         const Divider(color: Colors.black54, height: 10),
@@ -624,6 +659,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
             ),
           ),
 
+          // --- Buttons ---
           if (_showContinueButton)
             Positioned(
               bottom: 30,
@@ -633,6 +669,32 @@ class _WordSearchGameState extends State<WordSearchGame> {
                 child: WoodButton(
                   text: "Weiter",
                   onPressed: _continueToGlitch,
+                ),
+              ),
+            ),
+
+          if (_showRestartButton)
+            Positioned(
+              bottom: 30,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: WoodButton(
+                  text: "Nochmal",
+                  onPressed: _restartGame,
+                ),
+              ),
+            ),
+
+          if (_gameActive && _showGiveUpButton)
+            Positioned(
+              bottom: 30,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: WoodButton(
+                  text: "Fertig / Aufgeben",
+                  onPressed: () => _giveUpOrTimeOut(isTimeout: false),
                 ),
               ),
             ),
@@ -690,7 +752,7 @@ class PreGlitchDialog extends StatelessWidget {
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          "Super! Du hast alle Wörter gefunden!",
+                          "Super! Du hast viele Wörter gefunden!",
                           style: handStyle.copyWith(fontSize: 22),
                           textAlign: TextAlign.center,
                         ),

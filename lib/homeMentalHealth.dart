@@ -1,6 +1,7 @@
 import 'dart:ui';
 // import 'package:brainjourney/temporallobe.dart';
 import 'package:brainjourney/cerebellum.dart';
+import 'package:brainjourney/mentalhealthGames.dart';
 import 'package:brainjourney/start.dart';
 import 'package:brainjourney/temporallobe.dart';
 import 'package:flutter/material.dart';
@@ -115,51 +116,76 @@ class MentalMapScreenState extends State<MentalMapScreen> {
                     _brainMapSignResponsive(
                       width: width, height: height,
                       x: 0.20, y: 0.15,
-                      label: 'Das dornige\nDickicht\n(Anxiety)',
+                      label: 'Das dornige\nDickicht',
                       id: 'anxiety',
                       completed: _completed.contains('anxiety'),
-                      onTap: () => _openPlaceholder(context, 'anxiety', 'anxiety'),
-                    ),
+                      onTap: () async {
+                        final completed = await Navigator.push<bool>(
+                          context,
+                          MaterialPageRoute(builder: (_) => const AnxietyIntro()),
+                        );
+                        if (completed == true) _markCompleted('anxiety');
+                      },),
 
                     // Amygdala
                     _brainMapSignResponsive(
                       width: width, height: height,
                       x: 0.80, y: 0.30,
-                      label: 'Die tanzenden\nBlätter\n(ADHS)',
+                      label: 'Die tanzenden\nBlätter',
                       id: 'adhs',
                       completed: _completed.contains('adhs'),
-                      onTap: () => _openPlaceholder(context, 'adhs', 'adhs'),
-                    ),
+                      onTap: () async {
+                        final completed = await Navigator.push<bool>(
+                          context,
+                          MaterialPageRoute(builder: (_) => const AdhsIntro()),
+                        );
+                        if (completed == true) _markCompleted('adhs');
+                      },),
 
                     // Temporallappen
                     _brainMapSignResponsive(
                       width: width, height: height,
                       x: 0.10, y: 0.55,
-                      label: 'Der dichte\nNebel\n(Depressionen)',
+                      label: 'Der dichte\nNebel',
                       id: 'depression',
                       completed: _completed.contains('depression'),
-                      onTap: () => _openPlaceholder(context, 'depression', 'depression'),
-                    ),
+                      onTap: () async {
+                        final completed = await Navigator.push<bool>(
+                          context,
+                          MaterialPageRoute(builder: (_) => const DepressionIntro()),
+                        );
+                        if (completed == true) _markCompleted('depression');
+                      },),
 
                     // Kleinhirn
                     _brainMapSignResponsive(
                       width: width, height: height,
                       x: 0.30, y: 0.35,
-                      label: 'der ausgetrocknete\nFluss\n(Burnout)',
-                      id: 'burnout',
-                      completed: _completed.contains('burnout'), // Achtung: Hier prüfst du temporal, evtl. kleinhirn ID nutzen?
-                      onTap: () => _openPlaceholder(context, 'burnout', 'burnout'),
-                    ),
+                      label: 'der ausgetrocknete\nFluss',
+                      id: 'addiction',
+                      completed: _completed.contains('addiction'), // Achtung: Hier prüfst du temporal, evtl. kleinhirn ID nutzen?
+                      onTap: () async {
+                        final completed = await Navigator.push<bool>(
+                          context,
+                          MaterialPageRoute(builder: (_) => const AddictionIntro()),
+                        );
+                        if (completed == true) _markCompleted('addiction');
+                      },),
 
                     // Hippocampus
                     _brainMapSignResponsive(
                       width: width, height: height,
                       x: 0.75, y: 0.75,
-                      label: 'Das echo\nTal \n (Trauma)',
+                      label: 'Das echo\nTal',
                       id: 'trauma',
                       completed: _completed.contains('trauma'),
-                      onTap: () => _openPlaceholder(context, 'trauma', 'trauma'),
-                    ),
+                      onTap: () async {
+                        final completed = await Navigator.push<bool>(
+                          context,
+                          MaterialPageRoute(builder: (_) => const PtbsIntro()),
+                        );
+                        if (completed == true) _markCompleted('addiction');
+                      },),
                   ],
                 );
               },
