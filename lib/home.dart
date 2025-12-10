@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'brain_bottom_navigation.dart';
+// In lib/home.dart
+import 'package:brainjourney/hippocampus.dart'; // NEU: Import Hippocampus
+
 
 // Falls du die NavigationBar in eine eigene Datei ausgelagert hast:
 // import 'brain_navigation_bar.dart';
@@ -168,7 +171,15 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
                       label: 'Pfad der\nErinnerung \n Hippocampus',
                       id: 'hippocampus',
                       completed: _completed.contains('hippocampus'),
-                      onTap: () => _openPlaceholder(context, 'Hippocampus', 'hippocampus'),
+                      onTap: () async {
+                        final completed = await Navigator.push<bool?>(
+                          context,
+                          // Starte den Hippocampus-Flow
+                          MaterialPageRoute(builder: (_) => const HippocampusFlow()),
+                        );
+                        // Markiert als abgeschlossen, wenn der Flow 'true' zurückgibt (im End-State)
+                        if (completed == true) _markCompleted('hippocampus');
+                      },
                     ),
                   ],
                 );
