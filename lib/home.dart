@@ -1,6 +1,8 @@
 import 'dart:ui';
 // import 'package:brainjourney/temporallobe.dart';
+import 'package:brainjourney/amygdala.dart';
 import 'package:brainjourney/cerebellum.dart';
+import 'package:brainjourney/prefrontal_cortex.dart';
 import 'package:brainjourney/start.dart';
 import 'package:brainjourney/temporallobe.dart';
 import 'package:flutter/material.dart';
@@ -119,7 +121,13 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
                       label: 'Lichtung der\nVernunft\n(PFC)',
                       id: 'pfc',
                       completed: _completed.contains('pfc'),
-                      onTap: () => _openPlaceholder(context, 'PFC', 'pfc'),
+                      onTap: () async {
+                        final completed = await Navigator.push<bool>(
+                          context,
+                          MaterialPageRoute(builder: (_) => const PrefrontalIntro()),
+                        );
+                        if (completed == true) _markCompleted('pfc'); // ID angepasst
+                      },
                     ),
 
                     // Amygdala
@@ -129,7 +137,13 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
                       label: 'Höhle der\nGefühle\n(Amygdala)',
                       id: 'amygdala',
                       completed: _completed.contains('amygdala'),
-                      onTap: () => _openPlaceholder(context, 'Amygdala', 'amygdala'),
+                      onTap: () async {
+                        final completed = await Navigator.push<bool>(
+                          context,
+                          MaterialPageRoute(builder: (_) => const AmygdalaIntro()),
+                        );
+                        if (completed == true) _markCompleted('amygdala');
+                      },
                     ),
 
                     // Temporallappen
