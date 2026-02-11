@@ -1,16 +1,20 @@
 import 'dart:ui';
-// import 'package:brainjourney/temporallobe.dart';
-import 'package:brainjourney/cerebellum.dart';
-import 'package:brainjourney/mentalhealthGames.dart';
-import 'package:brainjourney/start.dart';
-import 'package:brainjourney/temporallobe.dart';
+import 'package:brainjourney/hippocampus.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'brain_bottom_navigation.dart';
+// --- BESTEHENDE IMPORTS ---
+import 'package:brainjourney/cerebellum.dart';
+import 'package:brainjourney/start.dart';
+import 'package:brainjourney/mentalhealthGames.dart';
+import 'package:brainjourney/temporallobe.dart'; // Falls du das Temporallappen-Spiel hast
+import 'package:brainjourney/brain_bottom_navigation.dart';
 
-// Falls du die NavigationBar in eine eigene Datei ausgelagert hast:
-// import 'brain_navigation_bar.dart';
+// --- NEUE IMPORTS (WICHTIG!) ---
+// Damit dein Code die neuen Klassen auch wirklich findet:
+import 'package:brainjourney/amygdala.dart';
+//import 'package:brainjourney/hippocampus.dart';
+import 'package:brainjourney/prefrontal_cortex.dart';
 
 class MentalMapScreen extends StatefulWidget {
   const MentalMapScreen({super.key});
@@ -18,8 +22,6 @@ class MentalMapScreen extends StatefulWidget {
   @override
   State<MentalMapScreen> createState() => MentalMapScreenState();
 }
-
-
 
 class MentalMapScreenState extends State<MentalMapScreen> {
   final Set<String> _completed = {};
@@ -41,10 +43,12 @@ class MentalMapScreenState extends State<MentalMapScreen> {
   Future<void> _loadCompleted() async {
     _prefs = await SharedPreferences.getInstance();
     final list = _prefs.getStringList('completedLevels') ?? [];
-    setState(() {
-      _completed.addAll(list);
-      _loading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _completed.addAll(list);
+        _loading = false;
+      });
+    }
   }
 
   Future<void> _markCompleted(String id) async {
@@ -54,16 +58,20 @@ class MentalMapScreenState extends State<MentalMapScreen> {
     await _prefs.setStringList('completedLevels', _completed.toList());
   }
 
-  // --- NEU: Funktion zum Wechseln der Seiten ---
+  // --- Navigation über die Bottom Bar ---
   void _onNavTap(int index) {
-    if (index == _currentIndex) return; // Wenn wir schon auf der Karte sind, nichts tun.
+    if (index == _currentIndex) return;
 
-    // Beispielhafte Navigation (Du musst hier deine Ziel-Screens einfügen)
     if (index == 0) {
+      // Home / Start
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const StartScreen()));
     } else if (index == 3) {
+      // Sammelbuch (Platzhalter)
       print("Gehe zu Sammelbuch");
     } else if (index == 4) {
+      // Profil Seite
+      // Falls du profile.dart erstellt hast, entferne den Kommentar:
+      // Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfilePage()));
       print("Gehe zu Profil");
     }
   }
@@ -83,7 +91,23 @@ class MentalMapScreenState extends State<MentalMapScreen> {
         children: [
 
           // ------------------------------------------------
-          // HAUPTBEREICH: Karte + Schilder
+          // 1. HINTERGRUND
+          // ------------------------------------------------
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
+              ),
+              child: Image.asset(
+                'assets/images/MapBackgroundNight.png',
+                fit: BoxFit.fill,
+                errorBuilder: (c, o, s) => Container(color: Colors.grey), // Fallback
+              ),
+            ),
+          ),
+
+          // ------------------------------------------------
+          // 2. HAUPTBEREICH: Schilder auf der Karte
           // ------------------------------------------------
           Positioned(
             top: 60,
@@ -97,22 +121,8 @@ class MentalMapScreenState extends State<MentalMapScreen> {
 
                 return Stack(
                   children: [
-                    // Hintergrundbild
-                    Positioned.fill(
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
-                        ),
-                        child: Image.asset(
-                          'assets/images/MapBackgroundNight.png',
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                    ),
-
-                    // --- SCHILDER ---
-
-                    // PFC
+                    
+                    // --- AMYGDALA (Angst) ---
                     _brainMapSignResponsive(
                       width: width, height: height,
                       x: 0.20, y: 0.15,
@@ -120,14 +130,16 @@ class MentalMapScreenState extends State<MentalMapScreen> {
                       id: 'anxiety',
                       completed: _completed.contains('anxiety'),
                       onTap: () async {
+                        // Startet den Amygdala Flow
                         final completed = await Navigator.push<bool>(
                           context,
-                          MaterialPageRoute(builder: (_) => const AnxietyIntro()),
+                          MaterialPageRoute(builder: (_) => const AmygdalaFlow()),
                         );
                         if (completed == true) _markCompleted('anxiety');
-                      },),
+                      },
+                    ),
 
-                    // Amygdala
+                    // --- PRÄFRONTALER CORTEX (Fokus/ADHS) ---
                     _brainMapSignResponsive(
                       width: width, height: height,
                       x: 0.70, y: 0.30,
@@ -135,14 +147,16 @@ class MentalMapScreenState extends State<MentalMapScreen> {
                       id: 'adhs',
                       completed: _completed.contains('adhs'),
                       onTap: () async {
+                        // Startet das Prefrontal Game (früher AdhsIntro)
                         final completed = await Navigator.push<bool>(
                           context,
-                          MaterialPageRoute(builder: (_) => const AdhsIntro()),
+                          MaterialPageRoute(builder: (_) => const PrefrontalIntro()),
                         );
                         if (completed == true) _markCompleted('adhs');
-                      },),
+                      },
+                    ),
 
-                    // Temporallappen
+                    // --- HIPPOCAMPUS (Depression/Gedächtnis) ---
                     _brainMapSignResponsive(
                       width: width, height: height,
                       x: 0.10, y: 0.55,
@@ -150,33 +164,36 @@ class MentalMapScreenState extends State<MentalMapScreen> {
                       id: 'depression',
                       completed: _completed.contains('depression'),
                       onTap: () async {
+                        // Startet den Hippocampus Flow (früher DepressionIntro)
                         final completed = await Navigator.push<bool>(
                           context,
-                          MaterialPageRoute(builder: (_) => const DepressionIntro()),
+                          MaterialPageRoute(builder: (_) => const HippocampusFlow()),
                         );
                         if (completed == true) _markCompleted('depression');
-                      },),
+                      },
+                    ),
 
-                    // Kleinhirn
+                    // --- KLEINHIRN / SUCHT ---
                     _brainMapSignResponsive(
                       width: width, height: height,
                       x: 0.30, y: 0.35,
-                      label: 'der ausgetrocknete\nFluss',
+                      label: 'Der trockene\nFluss',
                       id: 'addiction',
-                      completed: _completed.contains('addiction'), // Achtung: Hier prüfst du temporal, evtl. kleinhirn ID nutzen?
+                      completed: _completed.contains('addiction'),
                       onTap: () async {
                         final completed = await Navigator.push<bool>(
                           context,
                           MaterialPageRoute(builder: (_) => const AddictionIntro()),
                         );
                         if (completed == true) _markCompleted('addiction');
-                      },),
+                      },
+                    ),
 
-                    // Hippocampus
+                    // --- TRAUMA (Platzhalter oder temporal lobe) ---
                     _brainMapSignResponsive(
                       width: width, height: height,
                       x: 0.75, y: 0.75,
-                      label: 'Das echo\nTal',
+                      label: 'Das Echo\nTal',
                       id: 'trauma',
                       completed: _completed.contains('trauma'),
                       onTap: () async {
@@ -184,8 +201,9 @@ class MentalMapScreenState extends State<MentalMapScreen> {
                           context,
                           MaterialPageRoute(builder: (_) => const PtbsIntro()),
                         );
-                        if (completed == true) _markCompleted('addiction');
-                      },),
+                        if (completed == true) _markCompleted('trauma');
+                      },
+                    ),
                   ],
                 );
               },
@@ -193,7 +211,7 @@ class MentalMapScreenState extends State<MentalMapScreen> {
           ),
 
           // ------------------------------------------------
-          // TOP BAR
+          // 3. TOP BAR
           // ------------------------------------------------
           Positioned(
             top: 0, left: 0, right: 0,
@@ -211,7 +229,11 @@ class MentalMapScreenState extends State<MentalMapScreen> {
                         color: _inkColor, letterSpacing: 1.0,
                       ),
                     ),
-                    Icon(Icons.settings, color: _inkColor, size: 28),
+                    // Kleines Icon für Profil-Zugriff
+                    GestureDetector(
+                      onTap: () => _onNavTap(4), // Ruft Profil auf
+                      child: Icon(Icons.settings, color: _inkColor, size: 28),
+                    ),
                   ],
                 ),
               ),
@@ -219,13 +241,13 @@ class MentalMapScreenState extends State<MentalMapScreen> {
           ),
 
           // ------------------------------------------------
-          // BOTTOM BAR (Hier ist jetzt das neue Widget!)
+          // 4. BOTTOM BAR
           // ------------------------------------------------
           Positioned(
             bottom: 0, left: 0, right: 0,
             child: BrainNavigationBar(
-              currentIndex: _currentIndex, // Hier übergeben wir 1 (für Karte)
-              onTap: _onNavTap,            // Die Funktion zum Umschalten
+              currentIndex: _currentIndex,
+              onTap: _onNavTap,
             ),
           ),
         ],
@@ -246,7 +268,7 @@ class MentalMapScreenState extends State<MentalMapScreen> {
     );
   }
 
-  // --- RESPONSIVE WIDGET ---
+  // --- RESPONSIVE WIDGET FÜR SCHILDER ---
   Widget _brainMapSignResponsive({
     required double width, required double height,
     required double x, required double y,
@@ -264,10 +286,13 @@ class MentalMapScreenState extends State<MentalMapScreen> {
             Stack(
               alignment: Alignment.center,
               children: [
+                // Schild-Bild
                 Image.asset(
                   'assets/images/SignMap.png',
                   width: 80, height: 60, fit: BoxFit.contain,
+                  errorBuilder: (c, o, s) => const Icon(Icons.location_on, size: 50, color: Colors.brown),
                 ),
+                // Grüner Haken wenn erledigt
                 if (completed)
                   const Positioned(
                     top: 5, right: 5,
@@ -275,6 +300,7 @@ class MentalMapScreenState extends State<MentalMapScreen> {
                   ),
               ],
             ),
+            // Text unter dem Schild
             Container(
               margin: const EdgeInsets.only(top: 4),
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -296,27 +322,4 @@ class MentalMapScreenState extends State<MentalMapScreen> {
       ),
     );
   }
-
-  void _openPlaceholder(BuildContext ctx, String title, String id) {
-    Navigator.push(ctx, MaterialPageRoute(builder: (_) => Scaffold(
-      // Optional: AppBar transparent machen, damit das Bild bis oben geht
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: Text(title),
-        backgroundColor: Colors.black54, // Halbtransparent für Lesbarkeit
-        elevation: 0,
-        foregroundColor: Colors.white24,
-      ),
-      body: Container(
-        // Hier wird das Hintergrundbild gesetzt
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/doNotEnter.png'),
-            fit: BoxFit.cover, // Bild füllt den ganzen Screen
-          ),
-        ),
-      ),
-    )));
-  }
 }
-
