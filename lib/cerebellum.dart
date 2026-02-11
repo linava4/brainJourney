@@ -818,10 +818,7 @@ class CerebellumEndScreen extends StatelessWidget {
               child: WoodButton(
                 text: "Zur Karte",
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => BrainMapScreen()),
-                  );
+                  Navigator.of(context, rootNavigator: true).pop(true);
                 },
               ),
             ),

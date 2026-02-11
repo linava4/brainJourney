@@ -168,7 +168,7 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
                       x: 0.30, y: 0.35,
                       label: 'Fluss der Bewegung',
                       id: 'kleinhirn',
-                      completed: _completed.contains('temporal'), // Achtung: Hier prüfst du temporal, evtl. kleinhirn ID nutzen?
+                      completed: _completed.contains('kleinhirn'),
                       onTap: () async {
                         final completed = await Navigator.push<bool>(
                           context,
@@ -234,7 +234,7 @@ class _BrainMapScreenState extends State<BrainMapScreen> {
             bottom: 0, left: 0, right: 0,
             child: BrainNavigationBar(
               currentIndex: _currentIndex, // Hier übergeben wir 1 (für Karte)
-              onTap: _onNavTap,            // Die Funktion zum Umschalten
+              mental: false,// Die Funktion zum Umschalten
             ),
           ),
         ],

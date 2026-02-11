@@ -667,11 +667,7 @@ class PrefrontalEndScreen extends StatelessWidget {
               child: WoodButton(
                 text: "Zur Karte",
                 onPressed: () {
-                  _markLevelComplete();
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const BrainMapScreen()),
-                  );
+                  Navigator.of(context, rootNavigator: true).pop(true);
                 },
               ),
             ),
@@ -679,15 +675,5 @@ class PrefrontalEndScreen extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  void _markLevelComplete() async {
-    final prefs = await SharedPreferences.getInstance();
-    List<String> completed = prefs.getStringList('completedLevels') ?? [];
-    // ID 'adhs' für Präfrontaler Cortex (siehe homeMentalHealth.dart)
-    if (!completed.contains('adhs')) {
-      completed.add('adhs');
-      await prefs.setStringList('completedLevels', completed);
-    }
   }
 }

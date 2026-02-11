@@ -647,11 +647,7 @@ class AmygdalaEndScreen extends StatelessWidget {
               child: WoodButton(
                 text: "Zur Karte",
                 onPressed: () {
-                  _markLevelComplete();
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const BrainMapScreen()),
-                  );
+                  Navigator.of(context, rootNavigator: true).pop(true);
                 },
               ),
             ),
@@ -659,15 +655,5 @@ class AmygdalaEndScreen extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  void _markLevelComplete() async {
-    final prefs = await SharedPreferences.getInstance();
-    List<String> completed = prefs.getStringList('completedLevels') ?? [];
-    // ID 'anxiety' für Amygdala (siehe homeMentalHealth.dart)
-    if (!completed.contains('anxiety')) {
-      completed.add('anxiety');
-      await prefs.setStringList('completedLevels', completed);
-    }
   }
 }

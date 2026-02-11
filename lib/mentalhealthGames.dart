@@ -4,6 +4,7 @@ import 'package:brainjourney/cerebellum.dart';
 import 'package:brainjourney/homeMentalHealth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainjourney/MentalHealthIntro.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // HINWEIS: Stelle sicher, dass du deine WoodButton Komponente importierst
 // oder die untenstehende Mock-Klasse verwendest.
@@ -308,12 +309,10 @@ class _DepressionGameState extends State<DepressionGame> {
             explanation: "Kleine positive Aktivitäten (Verhaltensaktivierung) helfen."
         )
       ],
-      onQuizCompleted: (quizContext) {
-      Navigator.pushReplacement(
-      quizContext, // <--- WICHTIG: Nicht mehr 'context', sondern 'quizContext'
-      MaterialPageRoute(builder: (_) => const MentalMapScreen()) // Oder wie deine Home-Klasse heißt
-      );
-    })));
+        onQuizCompleted: (quizContext) {
+          _markLevelComplete("depression");
+          Navigator.of(quizContext, rootNavigator: true).pop(true);
+        })));
   }
 
   @override
@@ -476,10 +475,8 @@ class _AnxietyGameState extends State<AnxietyGame> with SingleTickerProviderStat
         )
       ],
         onQuizCompleted: (quizContext) {
-          Navigator.pushReplacement(
-              quizContext, // <--- WICHTIG: Nicht mehr 'context', sondern 'quizContext'
-              MaterialPageRoute(builder: (_) => const MentalMapScreen()) // Oder wie deine Home-Klasse heißt
-          );
+          _markLevelComplete("anxiety");
+          Navigator.of(quizContext, rootNavigator: true).pop(true);
         })));
   }
 
@@ -632,10 +629,8 @@ class _AdhsGameState extends State<AdhsGame> with SingleTickerProviderStateMixin
         )
       ],
         onQuizCompleted: (quizContext) {
-          Navigator.pushReplacement(
-              quizContext, // <--- WICHTIG: Nicht mehr 'context', sondern 'quizContext'
-              MaterialPageRoute(builder: (_) => const MentalMapScreen()) // Oder wie deine Home-Klasse heißt
-          );
+          _markLevelComplete("adhs");
+          Navigator.of(quizContext, rootNavigator: true).pop(true);
         })));
   }
 
@@ -823,10 +818,8 @@ class _AddictionGameState extends State<AddictionGame> {
             )
           ],
             onQuizCompleted: (quizContext) {
-              Navigator.pushReplacement(
-                  quizContext, // <--- WICHTIG: Nicht mehr 'context', sondern 'quizContext'
-                  MaterialPageRoute(builder: (_) => const MentalMapScreen()) // Oder wie deine Home-Klasse heißt
-              );
+              _markLevelComplete("addiction");
+              Navigator.of(quizContext, rootNavigator: true).pop(true);
             })));
   }
 
@@ -1072,10 +1065,8 @@ class _PtbsGameState extends State<PtbsGame> {
           )
         ],
         onQuizCompleted: (quizContext) {
-          Navigator.pushReplacement(
-              quizContext,
-              MaterialPageRoute(builder: (_) => const MentalMapScreen())
-          );
+          _markLevelComplete("trauma");
+          Navigator.of(quizContext, rootNavigator: true).pop(true);
         }
     )));
   }
@@ -1234,3 +1225,13 @@ class _PtbsGameState extends State<PtbsGame> {
     );
   }
 }
+
+void _markLevelComplete(String name) async {
+  final prefs = await SharedPreferences.getInstance();
+  List<String> completed = prefs.getStringList('completedLevels') ?? [];
+  if (!completed.contains(name)) {
+    completed.add(name);
+    await prefs.setStringList('completedLevels', completed);
+  }
+}
+

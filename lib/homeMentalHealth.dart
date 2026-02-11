@@ -93,18 +93,7 @@ class MentalMapScreenState extends State<MentalMapScreen> {
           // ------------------------------------------------
           // 1. HINTERGRUND
           // ------------------------------------------------
-          Positioned.fill(
-            child: Container(
-              decoration: const BoxDecoration(
-                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
-              ),
-              child: Image.asset(
-                'assets/images/MapBackgroundNight.png',
-                fit: BoxFit.fill,
-                errorBuilder: (c, o, s) => Container(color: Colors.grey), // Fallback
-              ),
-            ),
-          ),
+
 
           // ------------------------------------------------
           // 2. HAUPTBEREICH: Schilder auf der Karte
@@ -121,7 +110,20 @@ class MentalMapScreenState extends State<MentalMapScreen> {
 
                 return Stack(
                   children: [
-                    
+
+                    Positioned.fill(
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
+                        ),
+                        child: Image.asset(
+                          'assets/images/MapBackgroundNight.png',
+                          fit: BoxFit.fill,
+                          errorBuilder: (c, o, s) => Container(color: Colors.grey), // Fallback
+                        ),
+                      ),
+                    ),
+
                     // --- AMYGDALA (Angst) ---
                     _brainMapSignResponsive(
                       width: width, height: height,
@@ -169,6 +171,8 @@ class MentalMapScreenState extends State<MentalMapScreen> {
                           context,
                           MaterialPageRoute(builder: (_) => const DepressionIntro()),
                         );
+                        print("test");
+                        print("$completed");
                         if (completed == true) _markCompleted('depression');
                       },
                     ),
@@ -247,7 +251,7 @@ class MentalMapScreenState extends State<MentalMapScreen> {
             bottom: 0, left: 0, right: 0,
             child: BrainNavigationBar(
               currentIndex: _currentIndex,
-              onTap: _onNavTap,
+              mental: true,
             ),
           ),
         ],
