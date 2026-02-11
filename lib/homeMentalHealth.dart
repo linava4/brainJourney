@@ -133,7 +133,7 @@ class MentalMapScreenState extends State<MentalMapScreen> {
                         // Startet den Amygdala Flow
                         final completed = await Navigator.push<bool>(
                           context,
-                          MaterialPageRoute(builder: (_) => const AmygdalaFlow()),
+                          MaterialPageRoute(builder: (_) => const AnxietyIntro()),
                         );
                         if (completed == true) _markCompleted('anxiety');
                       },
@@ -150,7 +150,7 @@ class MentalMapScreenState extends State<MentalMapScreen> {
                         // Startet das Prefrontal Game (früher AdhsIntro)
                         final completed = await Navigator.push<bool>(
                           context,
-                          MaterialPageRoute(builder: (_) => const PrefrontalIntro()),
+                          MaterialPageRoute(builder: (_) => const AdhsIntro()),
                         );
                         if (completed == true) _markCompleted('adhs');
                       },
@@ -167,7 +167,7 @@ class MentalMapScreenState extends State<MentalMapScreen> {
                         // Startet den Hippocampus Flow (früher DepressionIntro)
                         final completed = await Navigator.push<bool>(
                           context,
-                          MaterialPageRoute(builder: (_) => const HippocampusFlow()),
+                          MaterialPageRoute(builder: (_) => const DepressionIntro()),
                         );
                         if (completed == true) _markCompleted('depression');
                       },

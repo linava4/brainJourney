@@ -163,7 +163,8 @@ class _LoginScreenState extends State<LoginScreen> {
             right: 0,
             child: Center(
               child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.7,
+                width: MediaQuery.of(context).size.width * 0.5,
+                height:  MediaQuery.of(context).size.height * 0.16, // Nimmt 15% der verfügbaren Höhe ein (max ca 100-120px)
 
                 child: Stack(
                   alignment: Alignment.center,
