@@ -1,12 +1,9 @@
 import 'package:brainjourney/start.dart';
 import 'package:flutter/material.dart';
+import 'helpers.dart';
 import 'package:brainjourney/home.dart';
 
-import 'cerebellum.dart'; // Deine Home-Datei importieren
-
-// ------------------------------------------------------
 // LOGIN SCREEN
-// ------------------------------------------------------
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -35,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _errorMessage = "";
     });
 
-    // SIMULIERTER LOGIN (Hier später dein echtes Backend einfügen)
+    // simulierte login
     await Future.delayed(const Duration(seconds: 1, milliseconds: 500));
 
     // Einfache Validierung als Beispiel
@@ -49,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       setState(() {
         _isLoading = false;
-        _errorMessage = "Benutzername oder Code fehlt!";
+        _errorMessage = "User name or password is missing!";
       });
     }
   }
@@ -104,12 +101,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 10),
 
                         Text(
-                          "Identifiziere dich,",
+                          "Identify yourself,",
                           style: handStyle.copyWith(fontSize: 16),
                           textAlign: TextAlign.center,
                         ),
                         Text(
-                          "Reisender!",
+                          "traveller!",
                           style: handStyle.copyWith(fontSize: 20, fontWeight: FontWeight.w900),
                           textAlign: TextAlign.center,
                         ),
@@ -119,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         // USERNAME FELD
                         _buildRetroTextField(
                           controller: _userController,
-                          hint: "Name / Forscher-ID",
+                          hint: "Name / Explorer-ID",
                           icon: Icons.person,
                         ),
 
@@ -128,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         // PASSWORD FELD
                         _buildRetroTextField(
                           controller: _pwController,
-                          hint: "Geheimcode",
+                          hint: "Secret Code",
                           icon: Icons.vpn_key,
                           obscure: true,
                         ),
@@ -156,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
 
-          // 3. SCHILD (Header "ZUGANG")
+          // 3. SCHILD (Header)
           Positioned(
             top: 0,
             left: 0,
@@ -178,7 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       top: 55,
                       child:
                         Text(
-                          "Zugang",
+                          "Entrance",
                           style: handStyle.copyWith(
                               fontSize: 32,
                               color: const Color(0xFF3E2723),
@@ -198,14 +195,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
 
-          // 5. LOGIN BUTTON (Unten Mitte)
+          // 5. LOGIN BUTTON
           Positioned(
             bottom: 40,
             left: 0,
             right: 0,
             child: Center(
               child: WoodButton(
-                text: "Eintreten",
+                text: "Enter",
                 onPressed: _performLogin,
               ),
             ),

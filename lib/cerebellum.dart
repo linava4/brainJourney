@@ -4,100 +4,25 @@ import 'dart:ui';
 import 'package:brainjourney/home.dart'; // Pfad ggf. anpassen
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/material.dart';
+import 'helpers.dart';
 
-// ------------------------------------------------------
-// MAIN FLOW / ROUTER FÜR KLEINHIRN
-// ------------------------------------------------------
+// MAIN FLOW FÜR KLEINHIRN
 class CerebellumFlow extends StatelessWidget {
   const CerebellumFlow({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Navigator für internen Flow
     return Navigator(
       onGenerateRoute: (_) => MaterialPageRoute(builder: (_) => const CerebellumIntro()),
     );
   }
 }
 
-// ------------------------------------------------------
-// HELPER WIDGET: WOOD BUTTON
-// ------------------------------------------------------
-class WoodButton extends StatelessWidget {
-  final String text;
-  final VoidCallback onPressed;
 
-  const WoodButton({super.key, required this.text, required this.onPressed});
 
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        width: 220,
-        height: 70,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/Planks.png"),
-            fit: BoxFit.fill,
-          ),
-        ),
-        alignment: Alignment.center,
-        padding: const EdgeInsets.only(bottom: 5),
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF3E2723),
-            fontFamily: 'Courier',
-          ),
-        ),
-      ),
-    );
-  }
-}
 
-// ------------------------------------------------------
-// HELPER WIDGET: WOOD BUTTON
-// ------------------------------------------------------
-class WoodButtonWide extends StatelessWidget {
-  final String text;
-  final VoidCallback onPressed;
-
-  const WoodButtonWide({super.key, required this.text, required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        width: 320,
-        height: 70,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/Planks.png"),
-            fit: BoxFit.fill,
-          ),
-        ),
-        alignment: Alignment.center,
-        padding: const EdgeInsets.only(bottom: 5),
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF3E2723),
-            fontFamily: 'Courier',
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ------------------------------------------------------
 // 1. INTRO SCREEN
-// ------------------------------------------------------
 class CerebellumIntro extends StatefulWidget {
   const CerebellumIntro({super.key});
 
@@ -108,16 +33,19 @@ class CerebellumIntro extends StatefulWidget {
 class _CerebellumIntroState extends State<CerebellumIntro> {
   int textStep = 0;
 
+  // Erklärungstexte
   final List<String> explanationText = [
-    "Willkommen im Kleinhirn (Cerebellum)!",
-    "Es ist zwar klein, aber oho! Es steuert deine Balance.",
-    "Jede Bewegung, die du machst, wird hier fein abgestimmt.",
-    "Ohne das Kleinhirn würdest du torkeln wie ein Seemann bei Sturm.",
-    "Zeig uns, wie gut deine Reflexe sind!"
+    "Welcome to the Cerebellum!",
+    "It might be small, but it's mighty! It controls your balance.",
+    "Every move you make is fine-tuned right here.",
+    "Without the cerebellum, you'd stagger like a sailor in a storm.",
+    "Show us how good your reflexes are!"
   ];
 
+  // Prüft ob Erklärungsphase vorbei
   bool get isTaskPhase => textStep == explanationText.length;
 
+  // Nächster Textschritt
   void nextStep() {
     setState(() {
       if (textStep < explanationText.length) {
@@ -126,6 +54,7 @@ class _CerebellumIntroState extends State<CerebellumIntro> {
     });
   }
 
+  // Spiel starten
   void startGame() {
     Navigator.push(context, MaterialPageRoute(builder: (_) => const BalancingGame()));
   }
@@ -141,12 +70,14 @@ class _CerebellumIntroState extends State<CerebellumIntro> {
     return Scaffold(
       body: Stack(
         children: [
+          // Hintergrundbild
           Positioned.fill(
             child: Image.asset(
               "assets/images/WaterBackground.jpg",
               fit: BoxFit.cover,
             ),
           ),
+          // Papierrolle Inhalt
           Center(
             child: Container(
               width: MediaQuery.of(context).size.width * 0.9,
@@ -172,6 +103,7 @@ class _CerebellumIntroState extends State<CerebellumIntro> {
               ),
             ),
           ),
+          // Holzschild oben
           Positioned(
             left: 0, right: 0,
             child: Center(
@@ -188,11 +120,11 @@ class _CerebellumIntroState extends State<CerebellumIntro> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            isTaskPhase ? "Die Herausforderung:" : "Die Gehirn-Region:",
+                            isTaskPhase ? "The Challenge:" : "Brain Region:",
                             style: handStyle.copyWith(fontSize: 18, color: const Color(0xFF3E2723)),
                           ),
                           Text(
-                            isTaskPhase ? "Der Balance-Akt" : "Kleinhirn",
+                            isTaskPhase ? "Balancing Act" : "Cerebellum",
                             style: handStyle.copyWith(fontSize: 24, color: const Color(0xFF3E2723), fontWeight: FontWeight.w900),
                           ),
                         ],
@@ -201,16 +133,14 @@ class _CerebellumIntroState extends State<CerebellumIntro> {
                   ],
                 ),
               ),
-
             ),
           ),
-          // 5. BRAIN AVATAR
-
+          // Button unten
           Positioned(
             bottom: 30, left: 0, right: 0,
             child: Center(
               child: WoodButton(
-                text: isTaskPhase ? "Los geht's!" : "Weiter",
+                text: isTaskPhase ? "Let's go!" : "Next",
                 onPressed: isTaskPhase ? startGame : nextStep,
               ),
             ),
@@ -220,6 +150,7 @@ class _CerebellumIntroState extends State<CerebellumIntro> {
     );
   }
 
+  // Widget für Text-Erklärung
   Widget _buildExplanationContent(TextStyle handStyle) {
     return Column(
       key: ValueKey<int>(textStep),
@@ -241,13 +172,14 @@ class _CerebellumIntroState extends State<CerebellumIntro> {
     );
   }
 
+  // Widget für Spiel-Instruktion
   Widget _buildTaskContent(TextStyle handStyle) {
     return Column(
       key: const ValueKey<String>("task"),
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "Halte die Balance!",
+          "Keep your balance!",
           textAlign: TextAlign.center,
           style: handStyle.copyWith(fontSize: 18, height: 1.3),
         ),
@@ -258,21 +190,21 @@ class _CerebellumIntroState extends State<CerebellumIntro> {
             Column(
               children: [
                 const Icon(Icons.touch_app, size: 40, color: Colors.brown),
-                Text("Links", style: handStyle.copyWith(fontSize: 14)),
+                Text("Left", style: handStyle.copyWith(fontSize: 14)),
               ],
             ),
             Container(height: 50, width: 2, color: Colors.brown),
             Column(
               children: [
                 const Icon(Icons.touch_app, size: 40, color: Colors.brown),
-                Text("Rechts", style: handStyle.copyWith(fontSize: 14)),
+                Text("Right", style: handStyle.copyWith(fontSize: 14)),
               ],
             ),
           ],
         ),
         const SizedBox(height: 20),
         Text(
-          "Nicht ins Wasser fallen!",
+          "Don't fall into the water!",
           textAlign: TextAlign.center,
           style: handStyle.copyWith(fontSize: 16, fontStyle: FontStyle.italic),
         ),
@@ -281,9 +213,7 @@ class _CerebellumIntroState extends State<CerebellumIntro> {
   }
 }
 
-// ------------------------------------------------------
-// 2. DAS BALANCIER-SPIEL (NOCHMALS VEREINFACHT)
-// ------------------------------------------------------
+// 2. DAS BALANCIER-SPIEL
 class BalancingGame extends StatefulWidget {
   const BalancingGame({super.key});
 
@@ -298,12 +228,12 @@ class _BalancingGameState extends State<BalancingGame> with SingleTickerProvider
   bool _gameActive = true;
   late Ticker _ticker;
 
-  // --- NEUE PHYSIK EINSTELLUNGEN ( EINFACH) ---
-  final double _gravity = 0.005;     // Sehr geringe Schwerkraft
-  final double _pushStrength = 0.08; // Starker Push zum Korrigieren
-  final double _friction = 0.05;      // Hohe Reibung (bremst Bewegung stark ab)
-  final double _maxTilt = 0.9;        // Viel Toleranz bevor man fällt
-  final double _speed = 0.0005;       // Schnellerer Fortschritt (Spiel dauert kürzer)
+  // Physik Parameter
+  final double _gravity = 0.005;
+  final double _pushStrength = 0.08;
+  final double _friction = 0.05;
+  final double _maxTilt = 0.9;
+  final double _speed = 0.0005;
 
   final math.Random _rng = math.Random();
   double _windForce = 0.0;
@@ -311,6 +241,7 @@ class _BalancingGameState extends State<BalancingGame> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
+    // Ticker für Game Loop
     _ticker = createTicker(_gameLoop)..start();
   }
 
@@ -320,38 +251,38 @@ class _BalancingGameState extends State<BalancingGame> with SingleTickerProvider
     super.dispose();
   }
 
+  // Hauptberechnung Spielmechanik
   void _gameLoop(Duration elapsed) {
     if (!_gameActive) return;
 
     setState(() {
-      // Sehr sanfter Wind
+      // Wind-Zufall
       if (_rng.nextDouble() < 0.02) {
         _windForce = (_rng.nextDouble() - 0.5) * 0.02;
       }
 
-      // Physik Berechnung
+      // Winkel-Physik
       double instability = _tiltAngle * _gravity;
       _velocity += instability + _windForce;
-
-      // Update Winkel
       _tiltAngle += _velocity;
 
-      // Reibung anwenden (Das ist der Schlüssel zur Stabilisierung)
+      // Dämpfung
       _velocity *= _friction;
 
-      // Fortschritt
+      // Fortschrittsbalken
       _progress += _speed;
 
+      // Sieg/Niederlage Prüfung
       if (_progress >= 1.0) {
         _gameWin();
       }
-
       if (_tiltAngle.abs() > _maxTilt) {
         _gameOver();
       }
     });
   }
 
+  // Steuerung Links
   void _onTapLeft() {
     if (!_gameActive) return;
     setState(() {
@@ -359,6 +290,7 @@ class _BalancingGameState extends State<BalancingGame> with SingleTickerProvider
     });
   }
 
+  // Steuerung Rechts
   void _onTapRight() {
     if (!_gameActive) return;
     setState(() {
@@ -366,6 +298,7 @@ class _BalancingGameState extends State<BalancingGame> with SingleTickerProvider
     });
   }
 
+  // Verloren Dialog
   void _gameOver() {
     _gameActive = false;
     _ticker.stop();
@@ -375,36 +308,26 @@ class _BalancingGameState extends State<BalancingGame> with SingleTickerProvider
       barrierDismissible: false,
       builder: (ctx) {
         return Dialog(
-          backgroundColor: Colors.transparent, // Wichtig: Transparent, damit wir die Form des Papiers sehen
-          elevation: 0, // Kein Standardschatten, falls das Papier einen eigenen Schatten hat
+          backgroundColor: Colors.transparent,
+          elevation: 0,
           child: Stack(
             alignment: Alignment.topCenter,
             children: [
-              // 1. Der Hintergrund (Papierrolle)
               Container(
-                width: MediaQuery.of(context).size.width *0.7,
-                height: MediaQuery.of(context).size.height *0.6,
-                padding: const EdgeInsets.only(
-                    top: 170, // Platz für den Avatar oben lassen
-                    left: 20,
-                    right: 20,
-                    bottom: 20
-                ),
-
-                decoration: BoxDecoration(
-                  // Falls das Papier abgerundete Ecken hat, hier anpassen:
-                  // borderRadius: BorderRadius.circular(15),
+                width: MediaQuery.of(context).size.width * 0.7,
+                height: MediaQuery.of(context).size.height * 0.6,
+                padding: const EdgeInsets.only(top: 170, left: 20, right: 20, bottom: 20),
+                decoration: const BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage('assets/images/paperRoll.png'), // Dein Hintergrundbild
-                    fit: BoxFit.fill, // Oder BoxFit.cover, je nach Bildformat
+                    image: AssetImage('assets/images/paperRoll.png'),
+                    fit: BoxFit.fill,
                   ),
                 ),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min, // Dialog passt sich dem Inhalt an
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Titel
                     const Text(
-                      "Platsch!",
+                      "Splash!",
                       style: TextStyle(
                         fontFamily: 'Courier',
                         fontSize: 28,
@@ -413,10 +336,8 @@ class _BalancingGameState extends State<BalancingGame> with SingleTickerProvider
                       ),
                     ),
                     const SizedBox(height: 16),
-
-                    // Inhaltstext
                     const Text(
-                      "Gleichgewicht verloren.\nVersuch es noch einmal!",
+                      "Balance lost.\nTry again!",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'Courier',
@@ -425,10 +346,8 @@ class _BalancingGameState extends State<BalancingGame> with SingleTickerProvider
                       ),
                     ),
                     const SizedBox(height: 24),
-
-                    // 3. Der Holz-Button (Custom Widget)
                     WoodButton(
-                      text: "Neustart", // Ich nehme an, dein Widget nimmt Text entgegen
+                      text: "Restart",
                       onPressed: () {
                         Navigator.pop(ctx);
                         _restartGame();
@@ -437,14 +356,11 @@ class _BalancingGameState extends State<BalancingGame> with SingleTickerProvider
                   ],
                 ),
               ),
-
-              // 2. Der Avatar (Brain), der oben "herausschaut"
               Positioned(
                 top: 30,
-                child: Container(
-                  width: 130, // Größe anpassen
+                child: SizedBox(
+                  width: 130,
                   height: 150,
-
                   child: Image.asset(
                     'assets/images/brainThinking.png',
                     fit: BoxFit.contain,
@@ -458,6 +374,7 @@ class _BalancingGameState extends State<BalancingGame> with SingleTickerProvider
     );
   }
 
+  // Sieg Übergang
   void _gameWin() {
     _gameActive = false;
     _ticker.stop();
@@ -466,6 +383,7 @@ class _BalancingGameState extends State<BalancingGame> with SingleTickerProvider
     });
   }
 
+  // Werte zurücksetzen
   void _restartGame() {
     setState(() {
       _tiltAngle = 0.0;
@@ -492,38 +410,35 @@ class _BalancingGameState extends State<BalancingGame> with SingleTickerProvider
             );
           },
         ),
-        title: Text("Balance-Spiel", style: TextStyle(color: Colors.brown[900], fontWeight: FontWeight.bold, fontSize: 28, fontFamily: 'Courier')),
+        title: Text("Balancing Game", style: TextStyle(color: Colors.brown[900], fontWeight: FontWeight.bold, fontSize: 28, fontFamily: 'Courier')),
         centerTitle: true,
       ),
       body: Stack(
         children: [
-          // 1. Hintergrund (Füllt den ganzen Screen)
           Positioned.fill(
             child: Image.asset(
               "assets/images/WaterBackground.jpg",
               fit: BoxFit.cover,
             ),
           ),
-
-          // 2. Avatar (Brain) - Ohne Holzbalken
+          // Balancierender Avatar
           Positioned(
-            bottom: 300, // Etwas vom Boden weg, damit es nicht am Rand klebt
+            bottom: 300,
             left: 0,
             right: 0,
             child: Center(
               child: Transform.rotate(
                 angle: _tiltAngle * (math.pi / 2),
-                alignment: Alignment.bottomCenter, // Dreht sich um die Füße
+                alignment: Alignment.bottomCenter,
                 child: Image.asset(
                   "assets/images/brainBalancing.png",
-                  width: 180, // Etwas größer
+                  width: 180,
                   height: 180,
                 ),
               ),
             ),
           ),
-
-          // 3. Touch Zonen (Unsichtbar über dem ganzen Screen)
+          // Touch-Steuerung
           Row(
             children: [
               Expanded(
@@ -542,22 +457,20 @@ class _BalancingGameState extends State<BalancingGame> with SingleTickerProvider
               ),
             ],
           ),
-
-          // 4. Fortschrittsbalken
+          // Fortschritt
           Positioned(
             top: 60,
             left: 40,
             right: 40,
             child: Column(
               children: [
-                // Balken
                 SizedBox(
                   height: 25,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(15),
                     child: LinearProgressIndicator(
                       value: _progress,
-                      backgroundColor: Colors.white24, // Leicht transparent weiß im Hintergrund
+                      backgroundColor: Colors.white24,
                       valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF81C784)),
                     ),
                   ),
@@ -565,16 +478,13 @@ class _BalancingGameState extends State<BalancingGame> with SingleTickerProvider
               ],
             ),
           ),
-
         ],
       ),
     );
   }
 }
 
-// ------------------------------------------------------
-// 3. GLITCH / DIAGNOSE SCENE
-// ------------------------------------------------------
+// 3. DIAGNOSE SCENE
 class CerebellumGlitchScene extends StatefulWidget {
   const CerebellumGlitchScene({super.key});
 
@@ -583,12 +493,13 @@ class CerebellumGlitchScene extends StatefulWidget {
 }
 
 class _CerebellumGlitchSceneState extends State<CerebellumGlitchScene> {
+  // Info-Texte zur Störung
   final List<String> dialogAfterGlitch = [
-    "Das war knapp! Hast du das Schwanken bemerkt?",
-    "Wenn das Kleinhirn gestört ist, nennt man das 'Ataxie'.",
-    "Menschen mit Ataxie haben Probleme, Bewegungen flüssig auszuführen.",
-    "Sie wirken oft betrunken, obwohl sie es nicht sind (Schwankschwindel).",
-    "Präzises Greifen oder gerade Gehen wird zur großen Herausforderung."
+    "That was close! Did you notice the swaying?",
+    "When the cerebellum is impaired, it's called 'Ataxia'.",
+    "People with ataxia struggle to perform fluid movements.",
+    "They often appear drunk, even when they aren't (unsteady gait).",
+    "Precise reaching or walking straight becomes a huge challenge."
   ];
 
   int dialogIndex = 0;
@@ -597,6 +508,7 @@ class _CerebellumGlitchSceneState extends State<CerebellumGlitchScene> {
   @override
   void initState() {
     super.initState();
+    // Kurzer Glitch-Effekt am Anfang
     Future.delayed(const Duration(seconds: 2), () {
       if(mounted) {
         setState(() {
@@ -606,6 +518,7 @@ class _CerebellumGlitchSceneState extends State<CerebellumGlitchScene> {
     });
   }
 
+  // Dialog-Navigation
   void nextDialog() {
     setState(() {
       if (dialogIndex < dialogAfterGlitch.length - 1) {
@@ -613,7 +526,7 @@ class _CerebellumGlitchSceneState extends State<CerebellumGlitchScene> {
       } else {
         Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => CerebellumEndScreen())
+            MaterialPageRoute(builder: (context) => const CerebellumEndScreen())
         );
       }
     });
@@ -627,6 +540,7 @@ class _CerebellumGlitchSceneState extends State<CerebellumGlitchScene> {
       fontWeight: FontWeight.bold,
     );
 
+    // Glitch-Screen Darstellung
     if (showGlitchEffect) {
       return Scaffold(
         backgroundColor: Colors.black,
@@ -640,7 +554,7 @@ class _CerebellumGlitchSceneState extends State<CerebellumGlitchScene> {
               ),
               const Center(
                 child: Text(
-                    "VERBINDUNG GESTÖRT...",
+                    "CONNECTION INTERRUPTED...",
                     style: TextStyle(color: Colors.white, fontFamily: 'Courier', fontSize: 30, letterSpacing: 5)
                 ),
               )
@@ -650,6 +564,7 @@ class _CerebellumGlitchSceneState extends State<CerebellumGlitchScene> {
       );
     }
 
+    // Diagnose Screen Darstellung
     return Scaffold(
       body: Stack(
         children: [
@@ -707,11 +622,11 @@ class _CerebellumGlitchSceneState extends State<CerebellumGlitchScene> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            "Die Störung:",
+                            "The Disorder:",
                             style: handStyle.copyWith(fontSize: 18, color: const Color(0xFF3E2723)),
                           ),
                           Text(
-                            "Ataxie",
+                            "Ataxia",
                             style: handStyle.copyWith(fontSize: 26, color: Colors.red[900], fontWeight: FontWeight.w900),
                           ),
                         ],
@@ -726,7 +641,7 @@ class _CerebellumGlitchSceneState extends State<CerebellumGlitchScene> {
             bottom: 30, left: 0, right: 0,
             child: Center(
               child: WoodButton(
-                text: (dialogIndex == dialogAfterGlitch.length - 1) ? "Zur Karte" : "Weiter",
+                text: (dialogIndex == dialogAfterGlitch.length - 1) ? "To Map" : "Next",
                 onPressed: nextDialog,
               ),
             ),
@@ -737,6 +652,7 @@ class _CerebellumGlitchSceneState extends State<CerebellumGlitchScene> {
   }
 }
 
+// END SCREEN
 class CerebellumEndScreen extends StatelessWidget {
   const CerebellumEndScreen({super.key});
 
@@ -772,13 +688,13 @@ class CerebellumEndScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          "Kleinhirn-Quest abgeschlossen!",
+                          "Cerebellum Quest Complete!",
                           style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF3E2723), fontFamily: 'Courier'),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 20),
                         const Text(
-                          "Bereit für die nächste Gehirnregion?",
+                          "Ready for the next brain region?",
                           style: TextStyle(fontSize: 20, color: Color(0xFF3E2723), fontFamily: 'Courier'),
                           textAlign: TextAlign.center,
                         ),
@@ -802,7 +718,7 @@ class CerebellumEndScreen extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 30.0),
                       child: Text(
-                        "Geschafft!",
+                        "Success!",
                         style: handStyle.copyWith(fontSize: 28, color: const Color(0xFF3E2723), fontWeight: FontWeight.w900),
                       ),
                     ),
@@ -816,8 +732,9 @@ class CerebellumEndScreen extends StatelessWidget {
             left: 0, right: 0,
             child: Center(
               child: WoodButton(
-                text: "Zur Karte",
+                text: "To Map",
                 onPressed: () {
+                  // Zurück zur Karte
                   Navigator.of(context, rootNavigator: true).pop(true);
                 },
               ),

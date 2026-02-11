@@ -3,7 +3,8 @@ import 'dart:ui';
 import 'package:brainjourney/login.dart';
 import 'package:brainjourney/start.dart';
 import 'package:flutter/material.dart';
-import 'home.dart'; // Deine Home/Map Datei
+import 'helpers.dart';
+import 'home.dart'; // Import Home/Map
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,14 +14,16 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _dialogStep = 0;
+  int _dialogStep = 0; // Aktueller Dialogschritt
 
+  // Dialogtexte
   final List<String> dialog = [
-    "Hey!\nIch bin Herbert d. Braini!\nIch begleite dich auf deiner\nReise durch das Gehirn.\nBist du bereit?",
-    "Wir entdecken gemeinsam,\nwie Gefühle und Gedanken\nfunktionieren!",
-    "Bist du bereit,\nfür eine spannende Reise?"
+    "Hey!\nI'm Herbert d. Braini!\nI will accompany you on your\njourney through the brain.\nAre you ready?",
+    "Together we will discover\nhow feelings and thoughts\nwork!",
+    "Are you ready\nfor an exciting journey?"
   ];
 
+  // Logik für den nächsten Schritt
   void _next() {
     setState(() {
       if (_dialogStep < dialog.length - 1) {
@@ -36,20 +39,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Bildschirmgröße abfragen
+    // Bildschirmmaße
     final size = MediaQuery.of(context).size;
 
-    // Hilfsvariablen für responsive Skalierung
+    // Responsive Abstände
     final double topPadding = MediaQuery.of(context).padding.top;
     final double bottomPadding = MediaQuery.of(context).padding.bottom;
 
-    // Verfügbare Höhe berechnen (Screen - SafeAreas)
+    // Nutzbare Höhe
     final double availableHeight = size.height - topPadding - bottomPadding;
 
     return Scaffold(
       body: Stack(
         children: [
-          // Hintergrundbild (füllt alles aus)
+          // Hintergrund
           Positioned.fill(
             child: Image.asset(
               'assets/images/WoodBackground.jpg',
@@ -60,13 +63,11 @@ class _HomeScreenState extends State<HomeScreen> {
           SafeArea(
             child: Column(
               children: [
-                // ------------------------------------------
-                // OBERER BEREICH: TITEL
-                // ------------------------------------------
-                SizedBox(height: availableHeight * 0.0), // 2% Abstand oben
+                // Titelbereich
+                SizedBox(height: availableHeight * 0.0),
                 SizedBox(
                   width: size.width * 0.9,
-                  height: availableHeight * 0.15, // Nimmt 15% der verfügbaren Höhe ein (max ca 100-120px)
+                  height: availableHeight * 0.15,
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
@@ -77,14 +78,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(right: 12.0, top: 30.0),
-                        // FittedBox sorgt dafür, dass der Text kleiner wird, wenn der Platz nicht reicht
                         child: FittedBox(
                           fit: BoxFit.scaleDown,
                           child: const Text(
-                            "Willkommen bei BrainJourney!",
+                            "Welcome to BrainJourney!",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 18, // Basisgröße, skaliert runter wenn nötig
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: Colors.black87,
                               fontFamily: 'Courier',
@@ -96,25 +96,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
-                // ------------------------------------------
-                // MITTLERER BEREICH: BRAINI & BLASE
-                // ------------------------------------------
-                // Expanded sorgt dafür, dass dieser Bereich allen Platz nimmt, der übrig ist.
+                // Hauptbereich mit Charakter
                 Expanded(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
-                      // constraints.maxHeight ist die exakte Höhe dieses freien Bereichs
                       final areaHeight = constraints.maxHeight;
                       final areaWidth = constraints.maxWidth;
 
                       return Stack(
                         children: [
-                          // SPRECHBLASE (Oben Rechts im Bereich)
+                          // Sprechblase
                           Positioned(
-                            top: areaHeight * 0.05, // 5% von oben
-                            right: areaWidth * 0.05, // 5% von rechts
-                            width: areaWidth * 0.65, // Breite der Blase
-                            height: areaHeight * 0.45, // Darf max 45% der Höhe einnehmen
+                            top: areaHeight * 0.05,
+                            right: areaWidth * 0.05,
+                            width: areaWidth * 0.65,
+                            height: areaHeight * 0.45,
                             child: Stack(
                               alignment: Alignment.center,
                               children: [
@@ -124,9 +120,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.fromLTRB(25, 10, 25, 45),
-                                  // Center Widget hilft hier bei der Ausrichtung im Bild
                                   child: Center(
-                                    child: AutoSizeText( // Optional: Wenn Text zu lang, lieber FittedBox nutzen
+                                    child: AutoSizeText(
                                       dialog[_dialogStep],
                                     ),
                                   ),
@@ -135,17 +130,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
 
-                          // BRAINI CHARAKTER (Unten Links im Bereich)
-                          // Wir verankern ihn am BOTTOM (0), damit er nicht schwebt.
+                          // Charakter Bild
                           Positioned(
                             bottom: 0,
-                            left: areaWidth * 0.1, // 10% von links
-                            height: areaHeight * 0.5, // Braini ist halb so hoch wie der mittlere Bereich
-                            width: areaWidth * 0.5,   // Braini darf 50% der Breite nehmen
+                            left: areaWidth * 0.1,
+                            height: areaHeight * 0.5,
+                            width: areaWidth * 0.5,
                             child: Image.asset(
                               'assets/images/brainMain.png',
-                              fit: BoxFit.contain, // Verhindert Verzerren
-                              alignment: Alignment.bottomCenter, // Wichtig: Bild sitzt unten am Rand
+                              fit: BoxFit.contain,
+                              alignment: Alignment.bottomCenter,
                             ),
                           ),
                         ],
@@ -154,16 +148,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
-                // ------------------------------------------
-                // UNTERER BEREICH: BUTTON
-                // ------------------------------------------
+                // Interaktions-Button
                 GestureDetector(
                   onTap: _next,
                   child: Container(
                     width: size.width * 0.8,
-                    height: 80, // Feste Höhe für Button ist okay, oder relativ machen (z.B. availableHeight * 0.1)
+                    height: 80,
                     margin: EdgeInsets.only(
-                        bottom: availableHeight * 0.05 // 5% Abstand vom unteren Rand
+                        bottom: availableHeight * 0.05
                     ),
                     decoration: const BoxDecoration(
                       boxShadow: [
@@ -184,8 +176,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         Text(
                           _dialogStep < dialog.length - 1
-                              ? "Weiter"
-                              : "Starten wir die Reise!",
+                              ? "Next"
+                              : "Start the journey!",
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -207,26 +199,3 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// Kleines Hilfs-Widget um den Text in der Blase sicher anzuzeigen
-// ohne extra Packages zu benötigen
-class AutoSizeText extends StatelessWidget {
-  final String text;
-  const AutoSizeText(this.text, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return FittedBox(
-      fit: BoxFit.scaleDown,
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: const TextStyle(
-          fontSize: 14, // Max Größe
-          fontWeight: FontWeight.w600,
-          color: Colors.black,
-            fontFamily: 'Courier',
-        ),
-      ),
-    );
-  }
-}

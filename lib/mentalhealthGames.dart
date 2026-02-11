@@ -5,13 +5,9 @@ import 'package:brainjourney/homeMentalHealth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainjourney/MentalHealthIntro.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'helpers.dart';
 
-// HINWEIS: Stelle sicher, dass du deine WoodButton Komponente importierst
-// oder die untenstehende Mock-Klasse verwendest.
-// import 'package:brainjourney/home.dart';
-// ---------------------------------------------------------------------------
-// INTRO WRAPPER (Diese startest du jetzt statt der Games direkt)
-// ---------------------------------------------------------------------------
+// INTRO WRAPPER
 
 class AnxietyIntro extends StatelessWidget {
   const AnxietyIntro({super.key});
@@ -19,16 +15,16 @@ class AnxietyIntro extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MentalHealthIntro(
-      title: "Der Atem-Anker",
-      conditionName: "Angst & Emotion",
+      title: "The Breath Anchor",
+      conditionName: "Anxiety & Emotion",
       imageAsset: "assets/images/brain_amygdala.png",
-      gameWidget: const AnxietyGame(), // Dein Atem-Spiel
+      gameWidget: const AnxietyGame(), // Atem-Spiel
       texts: const [
-        "Angst fühlt sich oft eng, schnell und flach an.",
-        "Wenn der innere Alarm losgeht, vergessen wir oft, richtig zu atmen.",
-        "Wir wollen dem Körper signalisieren: Du bist sicher.",
-        "Nutze deinen Atem als Anker gegen die Unruhe.",
-        "Deine Aufgabe: Tippe und halte beim Einatmen – und lass beim Ausatmen los."
+        "Anxiety often feels tight, fast, and shallow.",
+        "When the inner alarm goes off, we often forget to breathe properly.",
+        "We want to signal to the body: You are safe.",
+        "Use your breath as an anchor against restlessness.",
+        "Your task: Tap and hold while inhaling – and let go while exhaling."
       ],
     );
   }
@@ -40,16 +36,16 @@ class DepressionIntro extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MentalHealthIntro(
-      title: "Der Lichtfänger",
+      title: "The Light Catcher",
       conditionName: "Depression",
       imageAsset: "assets/images/brain_hippocampus.png",
-      gameWidget: const DepressionGame(), // Dein Sammel-Spiel
+      gameWidget: const DepressionGame(), // Sammel-Spiel
       texts: const [
-        "Bei einer Depression legt sich oft ein grauer Nebel über die Welt.",
-        "Es fällt schwer, Freude oder Hoffnung wahrzunehmen.",
-        "Doch selbst im dichtesten Nebel gibt es kleine Funken.",
-        "Wir üben, den Blick wieder auf das Leuchten zu richten.",
-        "Deine Aufgabe: Bewege dich durch das Dunkel und sammle jeden Lichtblick ein."
+        "In depression, a grey fog often settles over the world.",
+        "It is hard to perceive joy or hope.",
+        "But even in the densest fog, there are small sparks.",
+        "We practice turning our gaze back to the glow.",
+        "Your task: Move through the darkness and collect every glimmer of light."
       ],
     );
   }
@@ -61,38 +57,36 @@ class AdhsIntro extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MentalHealthIntro(
-      title: "Das Goldene Blatt",
-      conditionName: "Konzentration",
+      title: "The Golden Leaf",
+      conditionName: "Concentration",
       imageAsset: "assets/images/brain_frontal.png",
-      gameWidget: const AdhsGame(), // Dein Fokus-Spiel
+      gameWidget: const AdhsGame(), // Fokus-Spiel
       texts: const [
-        "In deinem Kopf herrscht oft ein kreativer Sturm.",
-        "Tausend Gedanken und Reize wollen gleichzeitig deine Aufmerksamkeit.",
-        "Die Kunst ist nicht, den Sturm zu stoppen, sondern im Auge des Sturms ruhig zu bleiben.",
-        "Lass die Ablenkungen an dir vorbeiziehen.",
-        "Deine Aufgabe: Fixiere das goldene Blatt und lass es nicht aus den Augen."
+        "A creative storm often reigns in your head.",
+        "A thousand thoughts and stimuli want your attention at the same time.",
+        "The art is not to stop the storm, but to remain calm in the eye of the storm.",
+        "Let the distractions pass you by.",
+        "Your task: Fixate on the golden leaf and don't lose sight of it."
       ],
     );
   }
 }
-
-// Falls du Sucht und Trauma auch noch brauchst (angepasst ohne Regionen):
 
 class AddictionIntro extends StatelessWidget {
   const AddictionIntro({super.key});
   @override
   Widget build(BuildContext context) {
     return MentalHealthIntro(
-      title: "Der Widerstand",
-      conditionName: "Sucht",
+      title: "The Resistance",
+      conditionName: "Addiction",
       imageAsset: "assets/images/brain_reward.png",
       gameWidget: const AddictionGame(),
       texts: const [
-        "Sucht täuscht unserem Gehirn vor, dass wir eine bestimmte Substanz zum Überleben brauchen.",
-        "Das Verlangen (Craving) kann sich übermächtig anfühlen.",
-        "Andere, kleine Freuden des Alltags werden dabei oft übersehen.",
-        "Es geht darum, diesem starken Impuls nicht sofort nachzugeben.",
-        "Deine Aufgabe: Weiche den Verlockungen aus und sammle stattdessen gesunde Ressourcen."
+        "Addiction tricks our brain into thinking we need a certain substance to survive.",
+        "The craving can feel overwhelming.",
+        "Other small joys of everyday life are often overlooked.",
+        "It's about not giving in to this strong impulse immediately.",
+        "Your task: Evade the temptations(glasses) and collect healthy resources(apples) instead."
       ],
     );
   }
@@ -103,29 +97,27 @@ class PtbsIntro extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MentalHealthIntro(
-      title: "Das Zeit-Puzzle",
+      title: "The Time Puzzle",
       conditionName: "Trauma",
       imageAsset: "assets/images/brain_hippocampus.png",
       gameWidget: const PtbsGame(),
       texts: const [
-        "Nach einem Trauma fühlen sich Erinnerungen oft an, als würden sie jetzt gerade passieren.",
-        "Vergangenheit und Gegenwart vermischen sich.",
-        "Das Erlebnis wurde noch nicht richtig als 'vergangen' einsortiert.",
-        "Wir helfen dem Kopf, Ordnung in die Bilder zu bringen.",
-        "Deine Aufgabe: Setze die Bruchstücke zusammen, um das Bild zu vervollständigen."
+        "After a trauma, memories often feel like they are happening right now.",
+        "Past and present blur together.",
+        "The experience hasn't been properly sorted as 'past' yet.",
+        "We help the mind bring order to the images.",
+        "Your task: Put the fragments together to complete the picture."
       ],
     );
   }
 }
 
-// ---------------------------------------------------------------------------
-// 1. DAS QUIZ-MODUL (Der "Loot" nach dem Kampf)
-// ---------------------------------------------------------------------------
+// 1. QUIZ MODULE
 class QuizData {
   final String question;
   final String correctAnswer;
   final List<String> wrongAnswers;
-  final String explanation; // Kurzer Lern-Effekt nach Antwort
+  final String explanation; // Lern-Effekt
 
   QuizData({
     required this.question,
@@ -146,9 +138,9 @@ class QuizScreen extends StatefulWidget {
 }
 
 class _QuizScreenState extends State<QuizScreen> {
-  int currentQuestionIndex = 0;
-  bool answered = false;
-  bool wasCorrect = false;
+  int currentQuestionIndex = 0; // Aktueller Index
+  bool answered = false; // Beantwortet-Status
+  bool wasCorrect = false; // Korrekt-Status
 
   void _checkAnswer(String answer) {
     if (answered) return;
@@ -178,7 +170,7 @@ class _QuizScreenState extends State<QuizScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Hintergrund (Wood Style reuse)
+          // Hintergrund
           Positioned.fill(child: Image.asset("assets/images/WoodBackgroundNight.jpg", fit: BoxFit.cover)),
 
           Center(
@@ -193,7 +185,7 @@ class _QuizScreenState extends State<QuizScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Erkenntnis ${currentQuestionIndex + 1}",
+                    Text("Insight ${currentQuestionIndex + 1}",
                         style: TextStyle(fontFamily: 'Courier', fontWeight: FontWeight.bold, color: Colors.brown[900])),
                     const SizedBox(height: 20),
                     Text(question.question,
@@ -213,15 +205,15 @@ class _QuizScreenState extends State<QuizScreen> {
                           size: 60, color: wasCorrect ? Colors.green : Colors.orange),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(wasCorrect ? "Richtig! ${question.explanation}" : "Nicht ganz. ${question.explanation}",
+                        child: Text(wasCorrect ? "Correct! ${question.explanation}" : "Not quite. ${question.explanation}",
                             textAlign: TextAlign.center, style: TextStyle(fontSize: 16)),
                       ),
                       const SizedBox(height: 20),
                       WoodButtonWide(
                         onPressed: _nextQuestion,
                         text: currentQuestionIndex < widget.questions.length - 1
-                            ? "Nächste Frage"
-                            : "Abschließen",
+                            ? "Next Question"
+                            : "Finish",
                       ),
                     ],
                   ],
@@ -235,9 +227,7 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 }
 
-// ---------------------------------------------------------------------------
-// A. DEPRESSION ("Der Lichtfänger")
-// ---------------------------------------------------------------------------
+// A. DEPRESSION
 class DepressionGame extends StatefulWidget {
   const DepressionGame({super.key});
   @override
@@ -245,11 +235,11 @@ class DepressionGame extends StatefulWidget {
 }
 
 class _DepressionGameState extends State<DepressionGame> {
-  final List<Offset> _sparks = [];
+  final List<Offset> _sparks = []; // Licht-Punkte
   final Random _rnd = Random();
   Timer? _gameLoop;
-  int _score = 0;
-  double _opacity = 0.8; // Der "Nebel"
+  int _score = 0; // Punktestand
+  double _opacity = 0.8; // Nebel-Stärke
 
   @override
   void initState() {
@@ -260,25 +250,24 @@ class _DepressionGameState extends State<DepressionGame> {
   void _startGame() {
     _gameLoop = Timer.periodic(Duration(milliseconds: 800), (timer) {
       if (!mounted) return;
-      if (_score >= 10) { // WIN CONDITION
+      if (_score >= 10) { // Sieg-Bedingung
         timer.cancel();
         _finishGame();
       }
       setState(() {
-        // Neuen Funken spawnen
+        // Funken-Spawn
         double x = _rnd.nextDouble() * (MediaQuery.of(context).size.width - 50);
         _sparks.add(Offset(x, 0));
       });
     });
 
-    // Fall-Logik (Simulation)
+    // Fall-Simulation
     Timer.periodic(Duration(milliseconds: 50), (timer) {
       if (!mounted || _score >= 10) { timer.cancel(); return; }
       setState(() {
         for (int i = 0; i < _sparks.length; i++) {
-          _sparks[i] = Offset(_sparks[i].dx, _sparks[i].dy + 3); // Geschwindigkeit
+          _sparks[i] = Offset(_sparks[i].dx, _sparks[i].dy + 3);
         }
-        // Entferne Funken die unten rausfallen
         _sparks.removeWhere((pos) => pos.dy > MediaQuery.of(context).size.height);
       });
     });
@@ -288,29 +277,28 @@ class _DepressionGameState extends State<DepressionGame> {
     setState(() {
       _sparks.removeAt(index);
       _score++;
-      // Je mehr Licht man fängt, desto heller wird der Bildschirm (Nebel lichtet sich)
       _opacity = (_opacity - 0.08).clamp(0.0, 0.8);
     });
   }
 
   void _finishGame() {
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => QuizScreen(
-      questions: [
-        QuizData(
-            question: "Wie fühlt sich Depression oft an?",
-            correctAnswer: "schwerer Nebel",
-            wrongAnswers: ["sonniger Tag", "zu viel Energie"],
-            explanation: "Antriebslosigkeit ist ein Kernsymptom."
-        ),
-        QuizData(
-            question: "Was hilft oft als erster Schritt?",
-            correctAnswer: "Lichtblicke suchen",
-            wrongAnswers: ["Sich isolieren", "Alles gleichzeitg lösen"],
-            explanation: "Kleine positive Aktivitäten (Verhaltensaktivierung) helfen."
-        )
-      ],
+        questions: [
+          QuizData(
+              question: "How does depression often feel?",
+              correctAnswer: "heavy fog",
+              wrongAnswers: ["sunny day", "too much energy"],
+              explanation: "Lack of drive is a core symptom."
+          ),
+          QuizData(
+              question: "What is often a helpful first step?",
+              correctAnswer: "searching for glimmers of light",
+              wrongAnswers: ["isolating yourself", "solving everything at once"],
+              explanation: "Small positive activities (behavioral activation) help."
+          )
+        ],
         onQuizCompleted: (quizContext) {
-          _markLevelComplete("depression");
+          markLevelComplete("depression");
           Navigator.of(quizContext, rootNavigator: true).pop(true);
         })));
   }
@@ -327,8 +315,7 @@ class _DepressionGameState extends State<DepressionGame> {
       body: Stack(
         children: [
           Image.asset("assets/images/WoodBackgroundNight.jpg", fit: BoxFit.cover, height: double.infinity),
-          // Der Nebel (Overlay)
-          Container(color: Colors.grey[900]!.withOpacity(_opacity)),
+          Container(color: Colors.grey[900]!.withOpacity(_opacity)), // Nebel-Layer
 
           ..._sparks.asMap().entries.map((entry) {
             return Positioned(
@@ -362,10 +349,10 @@ class _DepressionGameState extends State<DepressionGame> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const SizedBox(height: 5),
-                          Text("Licht: $_score / 10", style: TextStyle(color: Colors.black, fontSize: 18,fontFamily: 'Courier', fontWeight: FontWeight.bold)),
+                          Text("Light: $_score / 10", style: TextStyle(color: Colors.black, fontSize: 18,fontFamily: 'Courier', fontWeight: FontWeight.bold)),
                           const SizedBox(height: 5),
                           Text(
-                            "Sammle Lichtpunkte",
+                            "Collect light points",
                             style: TextStyle(color: Colors.black, fontSize: 14,fontFamily: 'Courier', fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
                           ),
@@ -377,18 +364,13 @@ class _DepressionGameState extends State<DepressionGame> {
               ),
             ),
           ),
-
-
-
         ],
       ),
     );
   }
 }
 
-// ---------------------------------------------------------------------------
-// B. ANGST ("Das Dornen-Dickicht" / Atem-Kreis)
-// ---------------------------------------------------------------------------
+// B. ANXIETY
 class AnxietyGame extends StatefulWidget {
   const AnxietyGame({super.key});
   @override
@@ -397,11 +379,10 @@ class AnxietyGame extends StatefulWidget {
 
 class _AnxietyGameState extends State<AnxietyGame> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  bool _isHolding = false;
+  bool _isHolding = false; // Druck-Status
 
-  // WICHTIG: double statt int für weiche Animation
-  double _calmPoints = 0.0;
-  String _instruction = "Warte...";
+  double _calmPoints = 0.0; // Fortschritt
+  String _instruction = "Wait...";
 
   @override
   void initState() {
@@ -411,46 +392,33 @@ class _AnxietyGameState extends State<AnxietyGame> with SingleTickerProviderStat
     _controller.addListener(() {
       bool growing = _controller.status == AnimationStatus.forward;
 
-      // Text-Optimierung: Nur updaten, wenn sich der Text ändert
-      String newInstruction = growing ? "EINATMEN (Halten)" : "AUSATMEN (Loslassen)";
+      String newInstruction = growing ? "INHALE (Hold)" : "EXHALE (Release)";
       if (_instruction != newInstruction) {
         setState(() {
           _instruction = newInstruction;
         });
       }
 
-      // --- LOGIK ---
       bool isSuccess = false;
 
       if (growing && _isHolding) {
-        // Richtig: Einatmen & Halten
         isSuccess = true;
       } else if (!growing && !_isHolding) {
-        // Richtig: Ausatmen & Loslassen
         isSuccess = true;
       }
 
-      // Punkte Logik
       if (isSuccess) {
         setState(() {
-          // HIER ANPASSEN FÜR GESCHWINDIGKEIT:
-          // += 0.1 -> sehr langsam (ca. 16 Sek bis voll)
-          // += 0.2 -> mittel (ca. 8 Sek bis voll)
-          // += 0.5 -> schnell (ca. 3 Sek bis voll)
           _calmPoints += 0.1;
-
-          // Sicherheitshalber deckeln, damit es nicht über 100 geht
           if (_calmPoints > 100) _calmPoints = 100.0;
         });
       } else {
-        // Bei Fehler langsam abziehen (optional)
         setState(() {
           if (_calmPoints > 0) _calmPoints -= 0.1;
           if (_calmPoints < 0) _calmPoints = 0.0;
         });
       }
 
-      // Win Condition: Jetzt wieder glatt 100, da wir double nutzen
       if (_calmPoints >= 100) {
         _controller.stop();
         _finishGame();
@@ -460,22 +428,22 @@ class _AnxietyGameState extends State<AnxietyGame> with SingleTickerProviderStat
 
   void _finishGame() {
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => QuizScreen(
-      questions: [
-        QuizData(
-            question: "Was passiert körperlich bei Angst?",
-            correctAnswer: "Der Puls steigt",
-            wrongAnswers: ["Man wird müde", "Der Hunger steigt"],
-            explanation: "Der Körper geht in den 'Fight or Flight' Modus."
-        ),
-        QuizData(
-            question: "Was hilft akut gegen Panik?",
-            correctAnswer: "Kontrollierte Atmung",
-            wrongAnswers: ["Schnell rennen", "Luft anhalten"],
-            explanation: "Langes Ausatmen aktiviert den Parasympathikus (Beruhigung)."
-        )
-      ],
+        questions: [
+          QuizData(
+              question: "What happens physically during anxiety?",
+              correctAnswer: "Heart rate increases",
+              wrongAnswers: ["You get tired", "Hunger increases"],
+              explanation: "The body goes into 'Fight or Flight' mode."
+          ),
+          QuizData(
+              question: "What helps acutely against panic?",
+              correctAnswer: "Controlled breathing",
+              wrongAnswers: ["Running fast", "Holding breath"],
+              explanation: "Long exhalation activates the parasympathetic nervous system (calming)."
+          )
+        ],
         onQuizCompleted: (quizContext) {
-          _markLevelComplete("anxiety");
+          markLevelComplete("anxiety");
           Navigator.of(quizContext, rootNavigator: true).pop(true);
         })));
   }
@@ -492,13 +460,10 @@ class _AnxietyGameState extends State<AnxietyGame> with SingleTickerProviderStat
       onTapDown: (_) => setState(() => _isHolding = true),
       onTapUp: (_) => setState(() => _isHolding = false),
       child: Scaffold(
-
         body: Stack(
           alignment: Alignment.center,
           children: [
-
             Image.asset("assets/images/WoodBackgroundNight.jpg", fit: BoxFit.cover, height: double.infinity),
-            // Dornen-Hintergrund (Symbolisch)
             Positioned.fill(child: Opacity(opacity: 0.3, child: Container(color: Colors.brown[900]))),
 
             Positioned(
@@ -523,10 +488,10 @@ class _AnxietyGameState extends State<AnxietyGame> with SingleTickerProviderStat
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const SizedBox(height: 5),
-                            Text("Beruhige den Kreis", style: TextStyle(color: Colors.black, fontSize: 18,fontFamily: 'Courier', fontWeight: FontWeight.bold)),
+                            Text("Calm the circle", style: TextStyle(color: Colors.black, fontSize: 18,fontFamily: 'Courier', fontWeight: FontWeight.bold)),
                             const SizedBox(height: 5),
                             Text(
-                              "Ruhe-Level: ${_calmPoints.toInt()}%",
+                              "Calm Level: ${_calmPoints.toInt()}%",
                               style: TextStyle(color: Colors.black, fontSize: 14, fontFamily: 'Courier',fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                             ),
@@ -539,7 +504,6 @@ class _AnxietyGameState extends State<AnxietyGame> with SingleTickerProviderStat
               ),
             ),
 
-
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -551,7 +515,7 @@ class _AnxietyGameState extends State<AnxietyGame> with SingleTickerProviderStat
                       height: 100 + (_controller.value * 150),
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: _isHolding ? Colors.blue[300] : Colors.blue[100], // Feedback Farbe
+                          color: _isHolding ? Colors.blue[300] : Colors.blue[100],
                           boxShadow: [BoxShadow(blurRadius: 20, color: Colors.blueAccent, spreadRadius: 5)]
                       ),
                       child: Center(child: Text(_instruction, style: TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.center,)),
@@ -567,9 +531,7 @@ class _AnxietyGameState extends State<AnxietyGame> with SingleTickerProviderStat
   }
 }
 
-// ---------------------------------------------------------------------------
-// C. ADHS ("Der Fokus-Sturm")
-// ---------------------------------------------------------------------------
+// C. ADHD
 class AdhsGame extends StatefulWidget {
   const AdhsGame({super.key});
   @override
@@ -578,12 +540,11 @@ class AdhsGame extends StatefulWidget {
 
 class _AdhsGameState extends State<AdhsGame> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  double _targetX = 150;
-  double _targetY = 300;
-  double _score = 0;
-  bool _isFocusing = false; // Hat der User den Finger drauf?
+  double _targetX = 150; // Blatt Position X
+  double _targetY = 300; // Blatt Position Y
+  double _score = 0; // Fortschritt
+  bool _isFocusing = false; // Fokus-Status
 
-  // Background clutter
   final List<Offset> _clutter = List.generate(20, (index) => Offset(Random().nextDouble()*300, Random().nextDouble()*600));
 
   @override
@@ -592,7 +553,6 @@ class _AdhsGameState extends State<AdhsGame> with SingleTickerProviderStateMixin
     _controller = AnimationController(vsync: this, duration: Duration(seconds: 10))..repeat();
     _controller.addListener(() {
       setState(() {
-        // Das "Goldene Blatt" bewegt sich chaotisch (Lissajous-Kurve ähnlich)
         final t = _controller.value * 2 * pi;
         _targetX = (MediaQuery.of(context).size.width / 2) + sin(t * 3) * 120;
         _targetY = (MediaQuery.of(context).size.height / 2) + cos(t * 2) * 200;
@@ -600,7 +560,7 @@ class _AdhsGameState extends State<AdhsGame> with SingleTickerProviderStateMixin
         if (_isFocusing) {
           _score += 0.5;
         } else {
-          _score -= 0.1; // Strafe fürs Loslassen
+          _score -= 0.1;
           if (_score < 0) _score = 0;
         }
 
@@ -614,22 +574,22 @@ class _AdhsGameState extends State<AdhsGame> with SingleTickerProviderStateMixin
 
   void _finishGame() {
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => QuizScreen(
-      questions: [
-        QuizData(
-            question: "Was ist typisch für ADHS?",
-            correctAnswer: "gestörte Reizfilterung",
-            wrongAnswers: ["Mangelnde Intelligenz", "Nur Faulheit"],
-            explanation: "Das Gehirn kann wichtige von unwichtigen Reizen schwer unterscheiden."
-        ),
-        QuizData(
-            question: "Was symbolisierte das Goldene Blatt?",
-            correctAnswer: "Fokus-Gedanken",
-            wrongAnswers: ["Reichtum", "Herbst"],
-            explanation: "Es kostet Kraft, den Fokus auf einer Sache zu halten, wenn alles andere 'laut' ist."
-        )
-      ],
+        questions: [
+          QuizData(
+              question: "What is typical for ADHD?",
+              correctAnswer: "impaired stimulus filtering",
+              wrongAnswers: ["lack of intelligence", "just laziness"],
+              explanation: "The brain has difficulty distinguishing important from unimportant stimuli."
+          ),
+          QuizData(
+              question: "What did the Golden Leaf symbolize?",
+              correctAnswer: "Focus thoughts",
+              wrongAnswers: ["Wealth", "Autumn"],
+              explanation: "It takes effort to stay focused on one thing when everything else is 'loud'."
+          )
+        ],
         onQuizCompleted: (quizContext) {
-          _markLevelComplete("adhs");
+          markLevelComplete("adhs");
           Navigator.of(quizContext, rootNavigator: true).pop(true);
         })));
   }
@@ -647,7 +607,6 @@ class _AdhsGameState extends State<AdhsGame> with SingleTickerProviderStateMixin
         children: [
           Image.asset("assets/images/WoodBackgroundNight.jpg", fit: BoxFit.cover, height: double.infinity),
 
-          // Hintergrund-Ablenkungen (Clutter)
           ..._clutter.map((pos) => Positioned(
             left: pos.dx + sin(_controller.value * 20 + pos.dy)*20,
             top: pos.dy + cos(_controller.value * 10)*20,
@@ -676,10 +635,10 @@ class _AdhsGameState extends State<AdhsGame> with SingleTickerProviderStateMixin
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const SizedBox(height: 5),
-                          Text("Halte das goldene Blatt!", style: TextStyle(color: Colors.black, fontSize: 18,fontFamily: 'Courier', fontWeight: FontWeight.bold)),
+                          Text("Hold the golden leaf!", style: TextStyle(color: Colors.black, fontSize: 18,fontFamily: 'Courier', fontWeight: FontWeight.bold)),
                           const SizedBox(height: 5),
                           Text(
-                            "Fokus: ${_score.toInt()}%",
+                            "Focus: ${_score.toInt()}%",
                             style: TextStyle(color: Colors.black, fontSize: 14,fontFamily: 'Courier', fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
                           ),
@@ -691,21 +650,17 @@ class _AdhsGameState extends State<AdhsGame> with SingleTickerProviderStateMixin
               ),
             ),
           ),
-          // Anleitung
 
-          // Das Ziel (Goldenes Blatt)
           Positioned(
-            left: _targetX - 40, // Zentrieren (Größe 80)
+            left: _targetX - 40,
             top: _targetY - 40,
             child: GestureDetector(
               onPanStart: (_) => setState(() => _isFocusing = true),
               onPanEnd: (_) => setState(() => _isFocusing = false),
-              // Hier wichtig: Der User muss den Finger BEWEGEN, um drauf zu bleiben.
-              // Wir nutzen einen Container mit HitTestBehavior
               child: Container(
                 width: 80, height: 80,
                 decoration: BoxDecoration(
-                    color: _isFocusing ? Colors.amberAccent : Colors.amber, // Feedback
+                    color: _isFocusing ? Colors.amberAccent : Colors.amber,
                     shape: BoxShape.circle,
                     boxShadow: [BoxShadow(color: Colors.amber, blurRadius: 15)]
                 ),
@@ -719,12 +674,10 @@ class _AdhsGameState extends State<AdhsGame> with SingleTickerProviderStateMixin
   }
 }
 
-// ---------------------------------------------------------------------------
-// D. SUCHT ("Der schillernde Sumpf")
-// ---------------------------------------------------------------------------
+// D. ADDICTION
 class AddictionItem {
-  final String iconAsset; // oder IconData
-  final bool isBad; // True = Suchtmittel
+  final String iconAsset;
+  final bool isBad; // Schädlich oder nicht
   final Offset position;
   final int id;
 
@@ -738,9 +691,9 @@ class AddictionGame extends StatefulWidget {
 }
 
 class _AddictionGameState extends State<AddictionGame> {
-  final List<AddictionItem> _items = [];
+  final List<AddictionItem> _items = []; // Items Liste
   Timer? _spawner;
-  int _willpower = 3; // Lebensbalken
+  int _willpower = 3; // Leben
   int _resources = 0; // Score
   int _idCounter = 0;
 
@@ -751,11 +704,9 @@ class _AddictionGameState extends State<AddictionGame> {
   }
 
   void _startGame() {
-    // ÄNDERUNG 1: Timer von 900ms auf 1600ms erhöht (langsamer)
     _spawner = Timer.periodic(const Duration(milliseconds: 1600), (t) {
       if (!mounted) return;
 
-      // Win/Lose Logic wie zuvor...
       if (_willpower <= 0) {
         t.cancel();
       } else if (_resources >= 10) {
@@ -764,21 +715,13 @@ class _AddictionGameState extends State<AddictionGame> {
       }
 
       setState(() {
-        double x = Random().nextDouble() * (MediaQuery
-            .of(context)
-            .size
-            .width - 80);
-        // Etwas tiefer starten, damit es nicht im Header hängt
-        double y = Random().nextDouble() * (MediaQuery
-            .of(context)
-            .size
-            .height * 0.5) + 120;
+        double x = Random().nextDouble() * (MediaQuery.of(context).size.width - 80);
+        double y = Random().nextDouble() * (MediaQuery.of(context).size.height * 0.5) + 120;
 
         bool isBad = Random().nextBool();
         _items.add(AddictionItem(
-            isBad ? "Flasche" : "Apfel", isBad, Offset(x, y), _idCounter++));
+            isBad ? "Bottle" : "Apple", isBad, Offset(x, y), _idCounter++));
 
-        // ÄNDERUNG 2: Items bleiben 4 Sekunden statt 2 (mehr Zeit zum Reagieren)
         Future.delayed(const Duration(seconds: 4), () {
           if (mounted) {
             setState(() => _items.removeWhere((it) => it.id == _idCounter - 1));
@@ -792,10 +735,9 @@ class _AddictionGameState extends State<AddictionGame> {
     setState(() {
       _items.remove(item);
       if (item.isBad) {
-        _willpower--; // Schaden
-
+        _willpower--;
       } else {
-        _resources++; // Score
+        _resources++;
       }
     });
   }
@@ -803,22 +745,22 @@ class _AddictionGameState extends State<AddictionGame> {
   void _finishGame() {
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) =>
         QuizScreen(
-          questions: [
-            QuizData(
-                question: "Warum ist Sucht so schwer zu stoppen?",
-                correctAnswer: "'gehacktes' \nBelohnungssystem",
-                wrongAnswers: ["Man hat keine Lust", "Es schmeckt zu gut"],
-                explanation: "Dopamin wird künstlich ausgeschüttet, natürliche Reize (Äpfel) wirken langweilig."
-            ),
-            QuizData(
-                question: "Was stärkt die 'Willenskraft'?",
-                correctAnswer: "Gesunde\nRessourcen aufbauen",
-                wrongAnswers: ["Sich selbst bestrafen", "Verdrängung"],
-                explanation: "Freunde, Sport und Hobbys füllen den Speicher wieder auf."
-            )
-          ],
+            questions: [
+              QuizData(
+                  question: "Why is addiction so hard to stop?",
+                  correctAnswer: "'hacked' \nreward system",
+                  wrongAnswers: ["No desire", "It tastes too good"],
+                  explanation: "Dopamine is released artificially, making natural stimuli (apples) seem boring."
+              ),
+              QuizData(
+                  question: "What strengthens 'willpower'?",
+                  correctAnswer: "Building healthy\nresources",
+                  wrongAnswers: ["Self-punishment", "Repression"],
+                  explanation: "Friends, sports, and hobbies refill the reserves."
+              )
+            ],
             onQuizCompleted: (quizContext) {
-              _markLevelComplete("addiction");
+              markLevelComplete("addiction");
               Navigator.of(quizContext, rootNavigator: true).pop(true);
             })));
   }
@@ -831,60 +773,39 @@ class _AddictionGameState extends State<AddictionGame> {
 
   @override
   Widget build(BuildContext context) {
-    // --- FAIL SCREEN / GAME OVER ---
     if (_willpower <= 0) {
       return Scaffold(
         body: Stack(
           children: [
-            // 1. Hintergrund (Wald)
-            Image.asset(
-              "assets/images/WoodBackgroundNight.jpg",
-              fit: BoxFit.cover,
-              height: double.infinity,
-              width: double.infinity,
-            ),
-
-            // 2. Inhalt auf Paperroll
+            Image.asset("assets/images/WoodBackgroundNight.jpg", fit: BoxFit.cover, height: double.infinity, width: double.infinity),
             Center(
               child: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.85,
-                // Höhe automatisch oder fest, je nach Grafik
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    // Die Papierrolle
-                    Image.asset(
-                      "assets/images/paperRoll.png",
-                      fit: BoxFit.contain,
-                    ),
-
-                    // Der Text und Button auf dem Papier
+                    Image.asset("assets/images/paperRoll.png", fit: BoxFit.contain),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 60.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Text(
-                            "Der Sumpf hat dich verschlungen.",
-                            style: TextStyle(
-                                color: Color(0xFF5D4037), // Dunkelbraun für Text auf Papier
-                                fontSize: 20,
-                                fontFamily: 'Courier',
-                                fontWeight: FontWeight.bold
-                            ),
+                            "The swamp has swallowed you.",
+                            style: TextStyle(color: Color(0xFF5D4037), fontSize: 20, fontFamily: 'Courier', fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 20),
                           WoodButtonWide(
                             onPressed: () {
                               setState(() {
-                                _willpower = 3; // ÄNDERUNG: Reset auf 3
+                                _willpower = 3;
                                 _resources = 0;
                                 _items.clear();
                                 _startGame();
                               });
                             },
-                            text: 'Nochmal versuchen',
+                            text: 'Try Again',
                           ),
                         ],
                       ),
@@ -901,9 +822,7 @@ class _AddictionGameState extends State<AddictionGame> {
     return Scaffold(
       body: Stack(
         children: [
-          Image.asset("assets/images/WoodBackgroundNight.jpg", fit: BoxFit.cover,
-              height: double.infinity),
-
+          Image.asset("assets/images/WoodBackgroundNight.jpg", fit: BoxFit.cover, height: double.infinity),
 
           Positioned(
             top: 0.0,
@@ -916,25 +835,17 @@ class _AddictionGameState extends State<AddictionGame> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    Image.asset(
-                        "assets/images/woodPlank.png",
-                        width: double.infinity,
-                        fit: BoxFit.fill
-                    ),
+                    Image.asset("assets/images/woodPlank.png", width: double.infinity, fit: BoxFit.fill),
                     Padding(
                       padding: const EdgeInsets.only(top: 30.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const SizedBox(height: 5),
-                          Text("Tippe auf die Ressourcen", style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: 'Courier',
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold)),
+                          Text("Tap on the resources", style: TextStyle(color: Colors.black, fontFamily: 'Courier', fontSize: 18, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 5),
                           Text(
-                            "Ressourcen: $_resources / 10",
+                            "Resources: $_resources / 10",
                             style: TextStyle(color: Colors.black,fontFamily: 'Courier', fontSize: 14, fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
                           ),
@@ -949,69 +860,47 @@ class _AddictionGameState extends State<AddictionGame> {
 
           Positioned(
             top: 130,
-            left: 0,  // Wichtig: Streckt den Bereich von links...
-            right: 0, // ...nach rechts, damit die Mitte berechnet werden kann.
+            left: 0,
+            right: 0,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center, // Zentriert die Herzen in der Zeile
-              children: List.generate(3, (i) =>
-                  Icon(
-                    Icons.favorite,
-                    color: i < _willpower ? Colors.red : Colors.grey,
-                    size: 30, // Optional: Größe anpassen
-                  )
-              ),
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(3, (i) => Icon(Icons.favorite, color: i < _willpower ? Colors.red : Colors.grey, size: 30)),
             ),
           ),
 
-
-          ..._items.map((item) =>
-              Positioned(
-                left: item.position.dx,
-                top: item.position.dy,
-                child: GestureDetector(
-                  onTap: () => _onTapItem(item),
-                  child: Container(
-                    width: 70, height: 70,
-                    decoration: BoxDecoration(
-                        color: item.isBad
-                            ? Colors.brown.withOpacity(0.8)
-                            : Colors.brown,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                              color: item.isBad ? Colors.brown : Colors.brown,
-                              blurRadius: 10)
-                        ]
-                    ),
-                    child: Icon(
-                        item.isBad ? Icons.wine_bar : Icons.apple, size: 40,
-                        color: Colors.white),
-                  ),
+          ..._items.map((item) => Positioned(
+            left: item.position.dx,
+            top: item.position.dy,
+            child: GestureDetector(
+              onTap: () => _onTapItem(item),
+              child: Container(
+                width: 70, height: 70,
+                decoration: BoxDecoration(
+                    color: item.isBad ? Colors.brown.withOpacity(0.8) : Colors.brown,
+                    shape: BoxShape.circle,
+                    boxShadow: [BoxShadow(color: Colors.brown, blurRadius: 10)]
                 ),
-              )),
+                child: Icon(item.isBad ? Icons.wine_bar : Icons.apple, size: 40, color: Colors.white),
+              ),
+            ),
+          )),
         ],
       ),
     );
   }
 }
 
-// ---------------------------------------------------------------------------
-// E. PTBS ("Das Echo-Tal" / Rotations-Puzzle)
-// ---------------------------------------------------------------------------
+// E. PTSD
 class PtbsGame extends StatefulWidget {
   const PtbsGame({super.key});
-
   @override
   State<PtbsGame> createState() => _PtbsGameState();
 }
 
 class _PtbsGameState extends State<PtbsGame> {
-  // Wir machen ein 3x3 Raster = 9 Teile
-  final int gridSize = 3;
-
-  // Speichert die Rotation für jedes Teil (0 = korrekt, 1 = 90°, 2 = 180°, 3 = 270°)
-  late List<int> pieceRotations;
-  bool isWon = false;
+  final int gridSize = 3; // Rastergröße
+  late List<int> pieceRotations; // Rotations-Liste
+  bool isWon = false; // Sieg-Status
 
   @override
   void initState() {
@@ -1020,66 +909,56 @@ class _PtbsGameState extends State<PtbsGame> {
   }
 
   void _initializePuzzle() {
-    // Zufällige Rotationen setzen
     pieceRotations = List.generate(gridSize * gridSize, (index) {
-      return Random().nextInt(3) + 1; // Generiert 1, 2 oder 3 (also immer verdreht am Anfang)
+      return Random().nextInt(3) + 1; // Zufälliger Start
     });
   }
 
   void _rotatePiece(int index) {
     if (isWon) return;
-
     setState(() {
-      // Dreht das Teil um 90 Grad weiter (Modulo 4, damit es 0-3 bleibt)
       pieceRotations[index] = (pieceRotations[index] + 1) % 4;
       _checkWin();
     });
   }
 
   void _checkWin() {
-    // Wenn ALLE Rotationen 0 sind, ist das Bild heil
     if (pieceRotations.every((r) => r == 0)) {
       setState(() {
         isWon = true;
       });
-      // Kurze Verzögerung, damit der Spieler das fertige Bild sieht
       Future.delayed(const Duration(seconds: 1), _finishGame);
     }
   }
 
   void _finishGame() {
-    // Navigiert zum QuizScreen (Code aus deiner Vorlage übernommen)
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => QuizScreen(
         questions: [
           QuizData(
-              question: "Was sind Flashbacks?",
-              correctAnswer: "Ungefragtes Wiedererleben",
-              wrongAnswers: ["Schöne Träume", "Vergesslichkeit"],
-              explanation: "Das Trauma ist nicht als 'Vergangenheit' abgespeichert, sondern fühlt sich an wie 'jetzt'."
+              question: "What are flashbacks?",
+              correctAnswer: "Unwanted re-experiencing",
+              wrongAnswers: ["Beautiful dreams", "Forgetfulness"],
+              explanation: "The trauma is not stored as 'past', but feels like 'now'."
           ),
           QuizData(
-              question: "Was war das Ziel des Puzzles?",
-              correctAnswer: "Erinnerungsintegration",
-              wrongAnswers: ["Verdrängung", "Ablenkung"],
-              explanation: "In der Therapie werden die 'Splitter' der Erinnerung geordnet, damit sie ein Bild der Vergangenheit werden."
+              question: "What was the goal of the puzzle?",
+              correctAnswer: "Memory integration",
+              wrongAnswers: ["Repression", "Distraction"],
+              explanation: "In therapy, 'fragments' of memory are ordered so they become a picture of the past."
           )
         ],
         onQuizCompleted: (quizContext) {
-          _markLevelComplete("trauma");
+          markLevelComplete("trauma");
           Navigator.of(quizContext, rootNavigator: true).pop(true);
         }
     )));
   }
 
-  // Hilfsfunktion: Berechnet den Bildausschnitt für das Grid
   Alignment _getAlignment(int index) {
     int x = index % gridSize;
     int y = index ~/ gridSize;
-
-    // Alignment geht von -1.0 bis +1.0
     double alignX = -1.0 + (x * 2.0 / (gridSize - 1));
     double alignY = -1.0 + (y * 2.0 / (gridSize - 1));
-
     return Alignment(alignX, alignY);
   }
 
@@ -1088,10 +967,8 @@ class _PtbsGameState extends State<PtbsGame> {
     return Scaffold(
       body: Stack(
         children: [
-          // 1. Hintergrund
           Image.asset("assets/images/WoodBackgroundNight.jpg", fit: BoxFit.cover, height: double.infinity),
 
-          // Überschrift auf Holzbrett
           Positioned(
             top: 0.0,
             left: 0,
@@ -1103,11 +980,7 @@ class _PtbsGameState extends State<PtbsGame> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    Image.asset(
-                        "assets/images/woodPlank.png",
-                        width: double.infinity,
-                        fit: BoxFit.fill
-                    ),
+                    Image.asset("assets/images/woodPlank.png", width: double.infinity, fit: BoxFit.fill),
                     Padding(
                       padding: const EdgeInsets.only(top: 30.0),
                       child: Column(
@@ -1115,20 +988,12 @@ class _PtbsGameState extends State<PtbsGame> {
                         children: [
                           const SizedBox(height: 5),
                           Text(
-                            isWon ? "Erinnerung integriert." : "Ordne die Erinnerung...",
-                            style: const TextStyle(
-                                fontFamily: 'Courier',
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black
-                            ),
+                            isWon ? "Memory integrated." : "Arrange the memory...",
+                            style: const TextStyle(fontFamily: 'Courier', fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 5),
-                          const Text(
-                            "Tippe auf die Teile.",
-                            style: TextStyle(fontSize: 14, fontFamily: 'Courier', fontWeight: FontWeight.bold),
-                          )
+                          const Text("Tap on the pieces.", style: TextStyle(fontSize: 14, fontFamily: 'Courier', fontWeight: FontWeight.bold))
                         ],
                       ),
                     ),
@@ -1138,7 +1003,6 @@ class _PtbsGameState extends State<PtbsGame> {
             ),
           ),
 
-          // 2. Papierrolle als Rahmen
           Center(
             child: Padding(
               padding: const EdgeInsets.only(top: 100.0),
@@ -1153,12 +1017,10 @@ class _PtbsGameState extends State<PtbsGame> {
                   child: Column(
                     children: [
                       const SizedBox(height: 20),
-
-                      // 3. Das PUZZLE GRID
                       Expanded(
                         child: Center(
                           child: AspectRatio(
-                            aspectRatio: 1, // Erzwingt quadratische Form
+                            aspectRatio: 1,
                             child: Container(
                               decoration: BoxDecoration(
                                   border: Border.all(color: Colors.brown[800]!, width: 4),
@@ -1167,9 +1029,7 @@ class _PtbsGameState extends State<PtbsGame> {
                               child: LayoutBuilder(
                                   builder: (context, constraints) {
                                     double boardSize = constraints.maxWidth;
-
                                     return GridView.builder(
-                                      // *** HIER IST DER FIX ***
                                       padding: EdgeInsets.zero,
                                       physics: const NeverScrollableScrollPhysics(),
                                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -1195,7 +1055,7 @@ class _PtbsGameState extends State<PtbsGame> {
                                                   minHeight: boardSize,
                                                   alignment: _getAlignment(index),
                                                   child: Image.asset(
-                                                    "assets/images/WoodBackground.jpg", // Dein Puzzle-Bild
+                                                    "assets/images/WoodBackground.jpg",
                                                     fit: BoxFit.fill,
                                                     width: boardSize,
                                                     height: boardSize,
@@ -1223,15 +1083,6 @@ class _PtbsGameState extends State<PtbsGame> {
         ],
       ),
     );
-  }
-}
-
-void _markLevelComplete(String name) async {
-  final prefs = await SharedPreferences.getInstance();
-  List<String> completed = prefs.getStringList('completedLevels') ?? [];
-  if (!completed.contains(name)) {
-    completed.add(name);
-    await prefs.setStringList('completedLevels', completed);
   }
 }
 

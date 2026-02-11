@@ -1,28 +1,27 @@
+
 import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'helpers.dart';
 import 'home.dart'; // Für BrainMapScreen
-import 'cerebellum.dart'; // Für WoodButton
 
-// ------------------------------------------------------
-// MAIN FLOW / ROUTER FÜR AMYGDALA
-// ------------------------------------------------------
+
+// MAIN FLOW FÜR AMYGDALA
 class AmygdalaFlow extends StatelessWidget {
   const AmygdalaFlow({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Navigator(
+      // Navigation innerhalb der Amygdala-Region
       onGenerateRoute: (_) => MaterialPageRoute(builder: (_) => const AmygdalaIntro()),
     );
   }
 }
 
-// ------------------------------------------------------
 // 1. INTRO SCREEN
-// ------------------------------------------------------
 class AmygdalaIntro extends StatefulWidget {
   const AmygdalaIntro({super.key});
 
@@ -31,17 +30,17 @@ class AmygdalaIntro extends StatefulWidget {
 }
 
 class _AmygdalaIntroState extends State<AmygdalaIntro> {
-  int textStep = 0;
+  int textStep = 0; // Aktueller Textschritt
 
   final List<String> explanationText = [
-    "Willkommen in der Amygdala!",
-    "Sie ist der 'Rauchmelder' deines Gehirns.",
-    "Ihre Aufgabe ist es, Gefahren sofort zu erkennen.",
-    "Manchmal ist sie aber zu empfindlich und schlägt Fehlalarm.",
-    "Deine Aufgabe: Finde alle echten Gefahren (Blitze)!"
+    "Welcome to the Amygdala!",
+    "It is the 'smoke detector' of your brain.",
+    "Its task is to recognize dangers immediately.",
+    "But sometimes it's too sensitive and gives a false alarm.",
+    "Your task: Find all real dangers (lightning bolts)!"
   ];
 
-  bool get isTaskPhase => textStep == explanationText.length;
+  bool get isTaskPhase => textStep == explanationText.length; // Prüft ob Intro fertig
 
   void nextStep() {
     setState(() {
@@ -52,6 +51,7 @@ class _AmygdalaIntroState extends State<AmygdalaIntro> {
   }
 
   void startGame() {
+    // Spielstart
     Navigator.push(context, MaterialPageRoute(builder: (_) => const AmygdalaGame()));
   }
 
@@ -66,15 +66,15 @@ class _AmygdalaIntroState extends State<AmygdalaIntro> {
     return Scaffold(
       body: Stack(
         children: [
-          // Hintergrund
+          // Hintergrundbild
           Positioned.fill(
             child: Image.asset(
-              "assets/images/WoodBackgroundNight.jpg", // Etwas dunkler für Amygdala
+              "assets/images/WoodBackground.jpg",
               fit: BoxFit.cover,
               errorBuilder: (c, o, s) => Image.asset("assets/images/WoodBackground.jpg", fit: BoxFit.cover),
             ),
           ),
-          // Papierrolle
+          // Papierrollen-Container
           Center(
             child: Container(
               width: MediaQuery.of(context).size.width * 0.9,
@@ -100,7 +100,7 @@ class _AmygdalaIntroState extends State<AmygdalaIntro> {
               ),
             ),
           ),
-          // Header Planke
+          // Holz-Header
           Positioned(
             left: 0, right: 0,
             child: Center(
@@ -117,11 +117,11 @@ class _AmygdalaIntroState extends State<AmygdalaIntro> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            isTaskPhase ? "Die Mission:" : "Die Gehirn-Region:",
+                            isTaskPhase ? "The Mission:" : "The Brain Region:",
                             style: handStyle.copyWith(fontSize: 18, color: const Color(0xFF3E2723)),
                           ),
                           Text(
-                            isTaskPhase ? "Gefahrensucher" : "Amygdala",
+                            isTaskPhase ? "Danger Finder" : "Amygdala",
                             style: handStyle.copyWith(fontSize: 24, color: const Color(0xFF3E2723), fontWeight: FontWeight.w900),
                           ),
                         ],
@@ -132,12 +132,12 @@ class _AmygdalaIntroState extends State<AmygdalaIntro> {
               ),
             ),
           ),
-          // Button
+          // Steuerungs-Button
           Positioned(
             bottom: 30, left: 0, right: 0,
             child: Center(
               child: WoodButton(
-                text: isTaskPhase ? "Starten" : "Weiter",
+                text: isTaskPhase ? "Start" : "Next",
                 onPressed: isTaskPhase ? startGame : nextStep,
               ),
             ),
@@ -153,7 +153,7 @@ class _AmygdalaIntroState extends State<AmygdalaIntro> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Image.asset(
-            'assets/images/brainDetective.png', // Detektiv passt zum Suchen
+            'assets/images/brainDetective.png',
             height: 160,
             fit: BoxFit.contain,
             errorBuilder: (c, o, s) => const Icon(Icons.search, size: 100, color: Colors.brown)
@@ -174,7 +174,7 @@ class _AmygdalaIntroState extends State<AmygdalaIntro> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "Finde die 8 Blitze!",
+          "Find the 8 lightning bolts!",
           textAlign: TextAlign.center,
           style: handStyle.copyWith(fontSize: 18, height: 1.3),
         ),
@@ -182,7 +182,7 @@ class _AmygdalaIntroState extends State<AmygdalaIntro> {
         const Icon(Icons.flash_on, size: 60, color: Colors.amber),
         const SizedBox(height: 20),
         Text(
-          "Tippe nur auf die Gefahren. Lass dich nicht ablenken.",
+          "Only tap on the dangers. Don't be distracted.",
           textAlign: TextAlign.center,
           style: handStyle.copyWith(fontSize: 16, fontStyle: FontStyle.italic),
         ),
@@ -191,9 +191,7 @@ class _AmygdalaIntroState extends State<AmygdalaIntro> {
   }
 }
 
-// ------------------------------------------------------
-// 2. DAS SUCHBILD SPIEL (AMYGDALA)
-// ------------------------------------------------------
+// 2. DAS SUCHBILD SPIEL
 class AmygdalaGame extends StatefulWidget {
   const AmygdalaGame({super.key});
 
@@ -201,12 +199,12 @@ class AmygdalaGame extends StatefulWidget {
   State<AmygdalaGame> createState() => _AmygdalaGameState();
 }
 
-// Hilfsklasse für die Objekte auf dem Bildschirm
+// Hilfsklasse für Spielobjekte
 class _GameItem {
   final int id;
-  double x; // 0.0 bis 1.0 (Prozent der Breite)
-  double y; // 0.0 bis 1.0 (Prozent der Höhe)
-  final bool isTarget; // Ist es ein Blitz?
+  double x; // Position 0.0 - 1.0
+  double y; // Position 0.0 - 1.0
+  final bool isTarget; // Treffertyp
   final IconData icon;
   final Color color;
 
@@ -215,10 +213,10 @@ class _GameItem {
 
 class _AmygdalaGameState extends State<AmygdalaGame> {
   final List<_GameItem> _items = [];
-  final int _totalTargets = 8; // Anzahl der zu findenden Blitze
+  final int _totalTargets = 8;
   int _foundTargets = 0;
-  
-  // Ablenkungen
+
+  // Ablenkungselemente
   final List<IconData> _distractions = [
     Icons.cloud, Icons.wb_sunny, Icons.favorite, Icons.star, Icons.pets, Icons.music_note
   ];
@@ -234,19 +232,19 @@ class _AmygdalaGameState extends State<AmygdalaGame> {
     _foundTargets = 0;
     final rng = Random();
 
-    // 1. Erzeuge die Ziele (Blitze)
+    // Ziele generieren
     for (int i = 0; i < _totalTargets; i++) {
       _items.add(_GameItem(
         i,
-        rng.nextDouble() * 0.8 + 0.1, // Randabstand halten (10% - 90%)
-        rng.nextDouble() * 0.6 + 0.1, // Oben/Unten Abstand (10% - 70%)
+        rng.nextDouble() * 0.8 + 0.1,
+        rng.nextDouble() * 0.6 + 0.1,
         true,
         Icons.flash_on,
         Colors.amber,
       ));
     }
 
-    // 2. Erzeuge Ablenkungen (ca. 10 Stück)
+    // Ablenkungen generieren
     for (int i = 0; i < 10; i++) {
       _items.add(_GameItem(
         i + 100,
@@ -258,16 +256,15 @@ class _AmygdalaGameState extends State<AmygdalaGame> {
       ));
     }
 
-    // Mischen, damit die Blitze nicht zuerst gezeichnet werden (Z-Order)
-    _items.shuffle(); 
+    _items.shuffle(); // Reihenfolge mischen
     setState(() {});
   }
 
   void _onItemTap(_GameItem item) {
     if (item.isTarget) {
-      // Treffer!
+      // Treffer-Logik
       setState(() {
-        _items.remove(item); // Item verschwindet
+        _items.remove(item);
         _foundTargets++;
       });
 
@@ -275,10 +272,10 @@ class _AmygdalaGameState extends State<AmygdalaGame> {
         _gameWin();
       }
     } else {
-      // Fehlklick (Ablenkung)
+      // Fehlalarm-Logik
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Das ist keine Gefahr! Nur ein Fehlalarm."),
+          content: Text("That is not dangerous! False alarm."),
           duration: Duration(milliseconds: 600),
           backgroundColor: Colors.brown,
         ),
@@ -295,10 +292,10 @@ class _AmygdalaGameState extends State<AmygdalaGame> {
   @override
   Widget build(BuildContext context) {
     const TextStyle headerStyle = TextStyle(
-      color: Color(0xFF3E2723), 
-      fontWeight: FontWeight.bold, 
-      fontSize: 18, 
-      fontFamily: "Courier"
+        color: Color(0xFF3E2723),
+        fontWeight: FontWeight.bold,
+        fontSize: 18,
+        fontFamily: "Courier"
     );
 
     return Scaffold(
@@ -315,32 +312,30 @@ class _AmygdalaGameState extends State<AmygdalaGame> {
             );
           },
         ),
-        title: Text("Gefahren-Radar", style: TextStyle(color: Colors.brown[900], fontWeight: FontWeight.bold, fontSize: 24, fontFamily: 'Courier')),
+        title: Text("Danger Radar", style: TextStyle(color: Colors.brown[900], fontWeight: FontWeight.bold, fontSize: 24, fontFamily: 'Courier')),
         centerTitle: true,
-        // NEUSTART BUTTON OBEN RECHTS
         actions: [
-           Padding(
+          Padding(
             padding: const EdgeInsets.only(right: 10.0),
             child: IconButton(
               icon: Icon(Icons.refresh, color: Colors.brown[900], size: 35),
               onPressed: _spawnItems,
-              tooltip: "Neu mischen",
+              tooltip: "Reshuffle",
             ),
           )
         ],
       ),
       body: Stack(
         children: [
-          // 1. Hintergrund
+          // Hintergrund
           Positioned.fill(
             child: Image.asset(
-              "assets/images/WoodBackgroundNight.jpg", // Düsterer Hintergrund
+              "assets/images/WoodBackground.jpg",
               fit: BoxFit.cover,
               errorBuilder: (c, o, s) => Image.asset("assets/images/WoodBackground.jpg", fit: BoxFit.cover),
             ),
           ),
-
-          // 2. Info-Panel (Gefunden)
+          // Zähler
           Positioned(
             top: 20, left: 0, right: 0,
             child: Center(
@@ -351,13 +346,11 @@ class _AmygdalaGameState extends State<AmygdalaGame> {
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: Colors.brown, width: 2),
                 ),
-                child: Text("Gefunden: $_foundTargets / $_totalTargets", style: headerStyle),
+                child: Text("Found: $_foundTargets / $_totalTargets", style: headerStyle),
               ),
             ),
           ),
-
-          // 3. Spielfeld (Items)
-          // Wir nutzen einen LayoutBuilder um die Größe zu kennen für prozentuale Positionierung
+          // Spiel-Interaktionsfläche
           Positioned(
             top: 80, bottom: 0, left: 0, right: 0,
             child: LayoutBuilder(
@@ -373,8 +366,7 @@ class _AmygdalaGameState extends State<AmygdalaGame> {
                           padding: const EdgeInsets.all(8),
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
-                            // Leichtes Leuchten für targets damit sie fair zu finden sind? Nein, Suchbild.
-                            color: Colors.transparent, 
+                            color: Colors.transparent,
                           ),
                           child: Icon(
                             item.icon,
@@ -396,9 +388,7 @@ class _AmygdalaGameState extends State<AmygdalaGame> {
   }
 }
 
-// ------------------------------------------------------
 // 3. GLITCH / DIAGNOSE SCENE
-// ------------------------------------------------------
 class AmygdalaGlitchScene extends StatefulWidget {
   const AmygdalaGlitchScene({super.key});
 
@@ -408,12 +398,12 @@ class AmygdalaGlitchScene extends StatefulWidget {
 
 class _AmygdalaGlitchSceneState extends State<AmygdalaGlitchScene> {
   final List<String> dialogAfterGlitch = [
-    "Alarm beendet. Gefahr gebannt!",
-    "Die Amygdala reagiert extrem schnell auf Gefahren.",
-    "Das ist gut, wenn ein Säbelzahntiger vor dir steht.",
-    "Bei einer Angststörung ist dieser Alarm aber zu laut.",
-    "Sie feuert 'Gefahr!', obwohl du sicher bist (Fehlalarm).",
-    "Mut bedeutet nicht keine Angst zu haben, sondern sie zu überwinden."
+    "Alarm ended. Danger averted!",
+    "The amygdala reacts extremely quickly to threats.",
+    "That's good when a saber-toothed tiger is standing in front of you.",
+    "But with an anxiety disorder, this alarm is too loud.",
+    "It fires 'Danger!', even though you are safe (false alarm).",
+    "Courage does not mean not having fear, but overcoming it."
   ];
 
   int dialogIndex = 0;
@@ -422,6 +412,7 @@ class _AmygdalaGlitchSceneState extends State<AmygdalaGlitchScene> {
   @override
   void initState() {
     super.initState();
+    // Glitch-Dauer Timer
     Future.delayed(const Duration(seconds: 2), () {
       if(mounted) {
         setState(() {
@@ -453,6 +444,7 @@ class _AmygdalaGlitchSceneState extends State<AmygdalaGlitchScene> {
     );
 
     if (showGlitchEffect) {
+      // Alarm-Glitch Anzeige
       return Scaffold(
         backgroundColor: Colors.black,
         body: Center(
@@ -517,6 +509,7 @@ class _AmygdalaGlitchSceneState extends State<AmygdalaGlitchScene> {
               ),
             ),
           ),
+          // Diagnose Header
           Positioned(
             top: 0, left: 0, right: 0,
             child: Center(
@@ -533,11 +526,11 @@ class _AmygdalaGlitchSceneState extends State<AmygdalaGlitchScene> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            "Die Diagnose:",
+                            "The Diagnosis:",
                             style: handStyle.copyWith(fontSize: 18, color: const Color(0xFF3E2723)),
                           ),
                           Text(
-                            "Fehlalarm",
+                            "False Alarm",
                             style: handStyle.copyWith(fontSize: 26, color: Colors.red[900], fontWeight: FontWeight.w900),
                           ),
                         ],
@@ -552,7 +545,7 @@ class _AmygdalaGlitchSceneState extends State<AmygdalaGlitchScene> {
             bottom: 30, left: 0, right: 0,
             child: Center(
               child: WoodButton(
-                text: (dialogIndex == dialogAfterGlitch.length - 1) ? "Abschluss" : "Weiter",
+                text: (dialogIndex == dialogAfterGlitch.length - 1) ? "Finish" : "Next",
                 onPressed: nextDialog,
               ),
             ),
@@ -563,9 +556,7 @@ class _AmygdalaGlitchSceneState extends State<AmygdalaGlitchScene> {
   }
 }
 
-// ------------------------------------------------------
 // 4. END SCREEN
-// ------------------------------------------------------
 class AmygdalaEndScreen extends StatelessWidget {
   const AmygdalaEndScreen({super.key});
 
@@ -601,13 +592,13 @@ class AmygdalaEndScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          "Gefahr erkannt!",
+                          "Danger recognized!",
                           style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF3E2723), fontFamily: 'Courier'),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 20),
                         const Text(
-                          "Du hast gelernt, echte Gefahren von Fehlalarmen zu unterscheiden.",
+                          "You have learned to distinguish real dangers from false alarms.",
                           style: TextStyle(fontSize: 18, color: Color(0xFF3E2723), fontFamily: 'Courier'),
                           textAlign: TextAlign.center,
                         ),
@@ -618,6 +609,7 @@ class AmygdalaEndScreen extends StatelessWidget {
               ),
             ),
           ),
+          // Erfolgs-Header
           Positioned(
             top: 0, left: 0, right: 0,
             child: Center(
@@ -631,7 +623,7 @@ class AmygdalaEndScreen extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 30.0),
                       child: Text(
-                        "Mut bewiesen!",
+                        "Courage proven!",
                         style: handStyle.copyWith(fontSize: 24, color: const Color(0xFF3E2723), fontWeight: FontWeight.w900),
                       ),
                     ),
@@ -645,8 +637,9 @@ class AmygdalaEndScreen extends StatelessWidget {
             left: 0, right: 0,
             child: Center(
               child: WoodButton(
-                text: "Zur Karte",
+                text: "To the Map",
                 onPressed: () {
+                  // Zurück zur Karte
                   Navigator.of(context, rootNavigator: true).pop(true);
                 },
               ),

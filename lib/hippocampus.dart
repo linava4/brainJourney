@@ -2,13 +2,11 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'home.dart'; // Pfad ggf. anpassen (für BrainMapScreen)
-import 'cerebellum.dart'; // Wir nutzen den WoodButton von hier wieder
+import 'home.dart';
+import 'helpers.dart';
 
-// ------------------------------------------------------
 // MAIN FLOW / ROUTER FÜR HIPPOCAMPUS
-// ------------------------------------------------------
+// Hauptnavigation für den Hippocampus-Bereich
 class HippocampusFlow extends StatelessWidget {
   const HippocampusFlow({super.key});
 
@@ -20,9 +18,8 @@ class HippocampusFlow extends StatelessWidget {
   }
 }
 
-// ------------------------------------------------------
 // 1. INTRO SCREEN
-// ------------------------------------------------------
+// Startbildschirm mit Erklärungen
 class HippocampusIntro extends StatefulWidget {
   const HippocampusIntro({super.key});
 
@@ -31,14 +28,14 @@ class HippocampusIntro extends StatefulWidget {
 }
 
 class _HippocampusIntroState extends State<HippocampusIntro> {
-  int textStep = 0;
+  int textStep = 0; // Aktueller Textschritt
 
   final List<String> explanationText = [
-    "Willkommen im Hippocampus!",
-    "Das ist die Bibliothek deines Gehirns.",
-    "Hier werden Erinnerungen sortiert und abgelegt.",
-    "Ohne ihn wüsstest du nicht, was du gestern gegessen hast.",
-    "Zeig uns, wie gut dein Arbeitsgedächtnis funktioniert!"
+    "Welcome to the Hippocampus!",
+    "This is your brain's library.",
+    "Memories are sorted and stored here.",
+    "Without it, you wouldn't know what you ate yesterday.",
+    "Show us how well your working memory works!"
   ];
 
   bool get isTaskPhase => textStep == explanationText.length;
@@ -66,14 +63,14 @@ class _HippocampusIntroState extends State<HippocampusIntro> {
     return Scaffold(
       body: Stack(
         children: [
-          // Hintergrund
+          // Hintergrundbild
           Positioned.fill(
             child: Image.asset(
               "assets/images/WoodBackground.jpg",
               fit: BoxFit.cover,
             ),
           ),
-          // Papierrolle Container
+          // Papierrollen-Container
           Center(
             child: Container(
               width: MediaQuery.of(context).size.width * 0.9,
@@ -99,7 +96,7 @@ class _HippocampusIntroState extends State<HippocampusIntro> {
               ),
             ),
           ),
-          // Header Planke
+          // Holzplanken-Header
           Positioned(
             left: 0, right: 0,
             child: Center(
@@ -116,11 +113,11 @@ class _HippocampusIntroState extends State<HippocampusIntro> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            isTaskPhase ? "Die Herausforderung:" : "Die Gehirn-Region:",
+                            isTaskPhase ? "The Challenge:" : "The Brain Region:",
                             style: handStyle.copyWith(fontSize: 18, color: const Color(0xFF3E2723)),
                           ),
                           Text(
-                            isTaskPhase ? "Merk dir alles!" : "Hippocampus",
+                            isTaskPhase ? "Remember everything!" : "Hippocampus",
                             style: handStyle.copyWith(fontSize: 24, color: const Color(0xFF3E2723), fontWeight: FontWeight.w900),
                           ),
                         ],
@@ -131,12 +128,12 @@ class _HippocampusIntroState extends State<HippocampusIntro> {
               ),
             ),
           ),
-          // Button unten
+          // Unterer Button
           Positioned(
             bottom: 30, left: 0, right: 0,
             child: Center(
               child: WoodButton(
-                text: isTaskPhase ? "Starten" : "Weiter",
+                text: isTaskPhase ? "Start" : "Next",
                 onPressed: isTaskPhase ? startGame : nextStep,
               ),
             ),
@@ -146,6 +143,7 @@ class _HippocampusIntroState extends State<HippocampusIntro> {
     );
   }
 
+  // Baut den Inhalt der Erklärungsphase
   Widget _buildExplanationContent(TextStyle handStyle) {
     return Column(
       key: ValueKey<int>(textStep),
@@ -167,13 +165,14 @@ class _HippocampusIntroState extends State<HippocampusIntro> {
     );
   }
 
+  // Baut den Inhalt der Aufgabenbeschreibung
   Widget _buildTaskContent(TextStyle handStyle) {
     return Column(
       key: const ValueKey<String>("task"),
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "Finde alle Paare!",
+          "Find all pairs!",
           textAlign: TextAlign.center,
           style: handStyle.copyWith(fontSize: 18, height: 1.3),
         ),
@@ -181,7 +180,7 @@ class _HippocampusIntroState extends State<HippocampusIntro> {
         const Icon(Icons.grid_view, size: 60, color: Colors.brown),
         const SizedBox(height: 20),
         Text(
-          "Decke die Karten auf und merke dir die Positionen.",
+          "Flip the cards and memorize their positions.",
           textAlign: TextAlign.center,
           style: handStyle.copyWith(fontSize: 16, fontStyle: FontStyle.italic),
         ),
@@ -190,9 +189,9 @@ class _HippocampusIntroState extends State<HippocampusIntro> {
   }
 }
 
-// ------------------------------------------------------
-// 2. DAS MEMORY SPIEL (Optimiertes Layout)
-// ------------------------------------------------------
+
+// 2. DAS MEMORY SPIEL
+// Die eigentliche Memory-Spiellogik
 class MemoryGame extends StatefulWidget {
   const MemoryGame({super.key});
 
@@ -201,22 +200,23 @@ class MemoryGame extends StatefulWidget {
 }
 
 class _MemoryGameState extends State<MemoryGame> {
-  // --- SPIEL LOGIK ---
+  // Raster-Einstellungen
   static const int _gridSizeX = 4;
-  static const int _gridSizeY = 4; // 16 Karten = 8 Paare
-  
+  static const int _gridSizeY = 4;
+
+  // Verfügbare Icons
   static const List<IconData> _iconOptions = [
-    Icons.star, Icons.ac_unit, Icons.cake, Icons.cloud, 
+    Icons.star, Icons.ac_unit, Icons.cake, Icons.cloud,
     Icons.lightbulb, Icons.headphones, Icons.eco, Icons.anchor
   ];
 
-  late List<int> _cardValues;
-  late List<bool> _cardFlips;
-  late Set<int> _solvedIndices;
-  
-  int? _firstFlipIndex;
-  bool _isProcessing = false;
-  int _moves = 0;
+  late List<int> _cardValues; // Kartenwerte
+  late List<bool> _cardFlips; // Umdreh-Status
+  late Set<int> _solvedIndices; // Gelöste Paare
+
+  int? _firstFlipIndex; // Index der ersten Karte
+  bool _isProcessing = false; // Sperre während Prüfung
+  int _moves = 0; // Zugzähler
 
   @override
   void initState() {
@@ -224,6 +224,7 @@ class _MemoryGameState extends State<MemoryGame> {
     _initializeGame();
   }
 
+  // Spiel initialisieren und mischen
   void _initializeGame() {
     final List<int> baseValues = List.generate(_iconOptions.length, (index) => index)
       ..addAll(List.generate(_iconOptions.length, (index) => index));
@@ -239,6 +240,7 @@ class _MemoryGameState extends State<MemoryGame> {
     });
   }
 
+  // Logik bei Kartentipp
   void _onCardTap(int index) async {
     if (_cardFlips[index] || _isProcessing || _solvedIndices.contains(index)) return;
 
@@ -252,7 +254,7 @@ class _MemoryGameState extends State<MemoryGame> {
     } else {
       _isProcessing = true;
       final firstIndex = _firstFlipIndex!;
-      
+
       await Future.delayed(const Duration(milliseconds: 800));
 
       if (_cardValues[firstIndex] == _cardValues[index]) {
@@ -260,7 +262,7 @@ class _MemoryGameState extends State<MemoryGame> {
           _solvedIndices.add(firstIndex);
           _solvedIndices.add(index);
         });
-        
+
         if (_solvedIndices.length == _cardValues.length) {
           _gameWin();
         }
@@ -278,6 +280,7 @@ class _MemoryGameState extends State<MemoryGame> {
     }
   }
 
+  // Sieg-Navigation
   void _gameWin() {
     Future.delayed(const Duration(milliseconds: 500), () {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HippocampusGlitchScene()));
@@ -287,10 +290,10 @@ class _MemoryGameState extends State<MemoryGame> {
   @override
   Widget build(BuildContext context) {
     const TextStyle headerStyle = TextStyle(
-      color: Color(0xFF3E2723), 
-      fontWeight: FontWeight.bold, 
-      fontSize: 18, 
-      fontFamily: "Courier"
+        color: Color(0xFF3E2723),
+        fontWeight: FontWeight.bold,
+        fontSize: 18,
+        fontFamily: "Courier"
     );
 
     return Scaffold(
@@ -309,32 +312,29 @@ class _MemoryGameState extends State<MemoryGame> {
         ),
         title: Text("Memory", style: TextStyle(color: Colors.brown[900], fontWeight: FontWeight.bold, fontSize: 28, fontFamily: 'Courier')),
         centerTitle: true,
-        // --- HIER IST DER NEUE BUTTON OBEN RECHTS ---
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10.0),
             child: IconButton(
               icon: Icon(Icons.refresh, color: Colors.brown[900], size: 35),
               onPressed: _initializeGame,
-              tooltip: "Neues Spiel",
+              tooltip: "New Game",
             ),
           )
         ],
       ),
       body: Stack(
         children: [
-          // 1. Hintergrund
           Positioned.fill(
             child: Image.asset("assets/images/WoodBackground.jpg", fit: BoxFit.cover),
           ),
 
-          // 2. Inhalt in einer Column (verhindert Überlappen)
           SafeArea(
             child: Column(
               children: [
                 const SizedBox(height: 10),
-                
-                // Info-Panel (Züge)
+
+                // Zuganzeige
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   decoration: BoxDecoration(
@@ -342,20 +342,20 @@ class _MemoryGameState extends State<MemoryGame> {
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: Colors.brown, width: 2),
                   ),
-                  child: Text("Züge: $_moves", style: headerStyle),
+                  child: Text("Moves: $_moves", style: headerStyle),
                 ),
 
                 const SizedBox(height: 10),
 
-                // Das Spielfeld - nutzt den verfügbaren Platz optimal
+                // Karten-Gitter
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Center(
                       child: AspectRatio(
-                        aspectRatio: _gridSizeX / _gridSizeY, // Das Verhältnis halten
+                        aspectRatio: _gridSizeX / _gridSizeY,
                         child: GridView.builder(
-                          physics: const NeverScrollableScrollPhysics(), // Scrollt nicht
+                          physics: const NeverScrollableScrollPhysics(),
                           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: _gridSizeX,
                             childAspectRatio: 1.0,
@@ -369,8 +369,7 @@ class _MemoryGameState extends State<MemoryGame> {
                     ),
                   ),
                 ),
-                
-                // Unten etwas Abstand lassen
+
                 const SizedBox(height: 20),
               ],
             ),
@@ -380,6 +379,7 @@ class _MemoryGameState extends State<MemoryGame> {
     );
   }
 
+  // Einzelne Karte bauen
   Widget _buildCard(int index) {
     bool isSolved = _solvedIndices.contains(index);
     bool isFlipped = _cardFlips[index];
@@ -390,8 +390,8 @@ class _MemoryGameState extends State<MemoryGame> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         decoration: BoxDecoration(
-          color: (isFlipped || isSolved) 
-              ? (isSolved ? Colors.green[200] : const Color(0xFFFDF5E6)) 
+          color: (isFlipped || isSolved)
+              ? (isSolved ? Colors.green[200] : const Color(0xFFFDF5E6))
               : const Color(0xFF8D6E63),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: Colors.brown[900]!, width: 2),
@@ -407,9 +407,7 @@ class _MemoryGameState extends State<MemoryGame> {
   }
 }
 
-// ------------------------------------------------------
-// 3. GLITCH / DIAGNOSE SCENE
-// ------------------------------------------------------
+// 3. DIAGNOSE SCENE
 class HippocampusGlitchScene extends StatefulWidget {
   const HippocampusGlitchScene({super.key});
 
@@ -419,12 +417,12 @@ class HippocampusGlitchScene extends StatefulWidget {
 
 class _HippocampusGlitchSceneState extends State<HippocampusGlitchScene> {
   final List<String> dialogAfterGlitch = [
-    "Puh, das war viel Arbeit für den Speicher!",
-    "Wenn wir gestresst sind, schüttet der Körper Cortisol aus.",
-    "Zu viel Cortisol wirkt wie Gift für den Hippocampus.",
-    "Er kann dann keine neuen Informationen mehr speichern.",
-    "Das fühlt sich an wie ein Blackout in einer Prüfung.",
-    "Aber: Entspannung und Schlaf reparieren den Speicher wieder!"
+    "Phew, that was a lot of work for the storage!",
+    "When we are stressed, the body releases cortisol.",
+    "Too much cortisol acts like poison for the hippocampus.",
+    "It can then no longer store new information.",
+    "It feels like a blackout during an exam.",
+    "But: Relaxation and sleep repair the storage again!"
   ];
 
   int dialogIndex = 0;
@@ -433,6 +431,7 @@ class _HippocampusGlitchSceneState extends State<HippocampusGlitchScene> {
   @override
   void initState() {
     super.initState();
+    // Kurzer Glitch-Effekt zu Beginn
     Future.delayed(const Duration(seconds: 2), () {
       if(mounted) {
         setState(() {
@@ -463,6 +462,7 @@ class _HippocampusGlitchSceneState extends State<HippocampusGlitchScene> {
       fontWeight: FontWeight.bold,
     );
 
+    // Glitch-Overlay
     if (showGlitchEffect) {
       return Scaffold(
         backgroundColor: Colors.black,
@@ -476,7 +476,7 @@ class _HippocampusGlitchSceneState extends State<HippocampusGlitchScene> {
               ),
               const Center(
                 child: Text(
-                    "SPEICHER ÜBERLASTET...",
+                    "MEMORY OVERLOAD...",
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.white, fontFamily: 'Courier', fontSize: 30, letterSpacing: 5)
                 ),
@@ -544,7 +544,7 @@ class _HippocampusGlitchSceneState extends State<HippocampusGlitchScene> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            "Die Störung:",
+                            "The Disturbance:",
                             style: handStyle.copyWith(fontSize: 18, color: const Color(0xFF3E2723)),
                           ),
                           Text(
@@ -563,7 +563,7 @@ class _HippocampusGlitchSceneState extends State<HippocampusGlitchScene> {
             bottom: 30, left: 0, right: 0,
             child: Center(
               child: WoodButton(
-                text: (dialogIndex == dialogAfterGlitch.length - 1) ? "Abschluss" : "Weiter",
+                text: (dialogIndex == dialogAfterGlitch.length - 1) ? "Finish" : "Next",
                 onPressed: nextDialog,
               ),
             ),
@@ -574,9 +574,8 @@ class _HippocampusGlitchSceneState extends State<HippocampusGlitchScene> {
   }
 }
 
-// ------------------------------------------------------
 // 4. END SCREEN
-// ------------------------------------------------------
+// Abschlussbildschirm des Levels
 class HippocampusEndScreen extends StatelessWidget {
   const HippocampusEndScreen({super.key});
 
@@ -612,13 +611,13 @@ class HippocampusEndScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          "Erinnerung gesichert!",
+                          "Memory Secured!",
                           style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF3E2723), fontFamily: 'Courier'),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 20),
                         const Text(
-                          "Du hast deinen Hippocampus erfolgreich trainiert.",
+                          "You have successfully trained your hippocampus.",
                           style: TextStyle(fontSize: 18, color: Color(0xFF3E2723), fontFamily: 'Courier'),
                           textAlign: TextAlign.center,
                         ),
@@ -656,7 +655,7 @@ class HippocampusEndScreen extends StatelessWidget {
             left: 0, right: 0,
             child: Center(
               child: WoodButton(
-                text: "Zur Karte",
+                text: "To Map",
                 onPressed: () {
                   Navigator.of(context, rootNavigator: true).pop(true);
                 },

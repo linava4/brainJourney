@@ -1,10 +1,9 @@
 import 'dart:ui'; // Wichtig für ImageFilter
 import 'package:flutter/material.dart';
+import 'helpers.dart';
 
 import 'cerebellum.dart';
-// ---------------------------------------------------------------------------
-// GENERIC INTRO SCREEN (Wiederverwendbar für alle Mental Health Games)
-// ---------------------------------------------------------------------------
+// GENERIC INTRO SCREEN
 class MentalHealthIntro extends StatefulWidget {
   final String title;           // z.B. "Der Lichtfänger"
   final String conditionName;   // z.B. "Depression"
@@ -56,12 +55,12 @@ class _MentalHealthIntroState extends State<MentalHealthIntro> {
     return Scaffold(
       body: Stack(
         children: [
-          // 1. Hintergrund (Nacht-Modus für Mental Health)
+          // 1. Hintergrund
           Positioned.fill(
             child: Image.asset("assets/images/WoodBackgroundNight.jpg", fit: BoxFit.cover),
           ),
 
-          // 2. Papierrolle (Content)
+          // 2. Papierrolle
           Center(
             child: Container(
               width: MediaQuery.of(context).size.width * 0.9,

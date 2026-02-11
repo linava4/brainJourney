@@ -79,15 +79,8 @@ class BrainNavigationBar extends StatelessWidget {
               child: Container(
                 width: 50,
                 height: 50,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD7C4A5),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                      color: currentIndex == 2 ? Colors.brown : _inkColor,
-                      width: 2
-                  ),
-                ),
-                child: Icon(Icons.hiking, color: _inkColor, size: 30),
+
+                child: Image.asset("assets/images/logo.png", fit: BoxFit.fitHeight,),
               ),
             ),
 

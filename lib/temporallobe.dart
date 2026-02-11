@@ -1,15 +1,13 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:ui'; // Wichtig für ImageFilter
+import 'dart:ui'; // ImageFilter support
 import 'package:brainjourney/home.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'helpers.dart';
 
-import 'cerebellum.dart';
 
-// ------------------------------------------------------
 // MAIN FLOW / ROUTER
-// ------------------------------------------------------
 class TemporalLobeFlow extends StatelessWidget {
   const TemporalLobeFlow({super.key});
 
@@ -21,14 +19,7 @@ class TemporalLobeFlow extends StatelessWidget {
   }
 }
 
-// ------------------------------------------------------
-// HELPER WIDGET: WOOD BUTTON
-// ------------------------------------------------------
-
-
-// ------------------------------------------------------
 // INTRO SCREEN
-// ------------------------------------------------------
 class TemporalLobeIntro extends StatefulWidget {
   const TemporalLobeIntro({super.key});
 
@@ -37,14 +28,14 @@ class TemporalLobeIntro extends StatefulWidget {
 }
 
 class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
-  int textStep = 0;
+  int textStep = 0; // Textfortschritt
 
   final List<String> explanationText = [
-    "Das ist der Temporallappen, der coole Alleskönner in deinem Kopf.",
-    "Er verarbeitet Geräusche, Musik und hilft dir, Sprache zu verstehen.",
-    "Er speichert neue Erinnerungen.",
-    "Er erkennt Gesichter, Gegenstände und Wörter.",
-    "Zeit, seine Wort-Such-Skills zu testen!"
+    "This is the temporal lobe, the cool all-rounder in your head.",
+    "It processes sounds, music, and helps you understand language.",
+    "It stores new memories.",
+    "It recognizes faces, objects, and words.",
+    "Time to test its word-searching skills!"
   ];
 
   bool get isTaskPhase => textStep == explanationText.length;
@@ -72,7 +63,7 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
     return Scaffold(
       body: Stack(
         children: [
-          // 1. HINTERGRUND
+          // 1. BACKGROUND
           Positioned.fill(
             child: Image.asset(
               "assets/images/WoodBackground.jpg",
@@ -80,7 +71,7 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
             ),
           ),
 
-          // 3. GROSSE PAPIERROLLE (Mitte)
+          // 3. PAPER ROLL (Center)
           Center(
             child: Container(
               width: MediaQuery.of(context).size.width * 0.9,
@@ -107,7 +98,7 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
             ),
           ),
 
-          // 4. SCHILD (Oben drauf)
+          // 4. SIGN (Top)
           Positioned(
             left: 0,
             right: 0,
@@ -129,11 +120,11 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            isTaskPhase ? "Wort-Suchspiel:" : "Die Gehirn-Region:",
+                            isTaskPhase ? "Word search game:" : "The brain region:",
                             style: handStyle.copyWith(fontSize: 18, color: const Color(0xFF3E2723)),
                           ),
                           Text(
-                            isTaskPhase ? "Die Aufgabe" : "Temporallappen",
+                            isTaskPhase ? "The task" : "Temporal Lobe",
                             style: handStyle.copyWith(fontSize: 24, color: const Color(0xFF3E2723), fontWeight: FontWeight.w900),
                           ),
                         ],
@@ -154,7 +145,7 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
             right: 0,
             child: Center(
               child: WoodButton(
-                text: isTaskPhase ? "Los geht's!" : "Weiter",
+                text: isTaskPhase ? "Let's go!" : "Continue",
                 onPressed: isTaskPhase ? startGame : nextStep,
               ),
             ),
@@ -191,7 +182,7 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "Finde aus den Buchstaben eines Wortes so viele neue Wörter wie möglich!",
+          "Find as many new words as possible from the letters of one word!",
           textAlign: TextAlign.center,
           style: handStyle.copyWith(fontSize: 18, height: 1.3),
         ),
@@ -211,8 +202,8 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildArrowWord("LAMPE", 0.3, handStyle),
-            _buildArrowWord("ER", 0, handStyle),
+            _buildArrowWord("LAMP", 0.3, handStyle),
+            _buildArrowWord("OR", 0, handStyle),
             _buildArrowWord("TEMPO", -0.3, handStyle),
           ],
         ),
@@ -238,7 +229,7 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
 }
 
 // ------------------------------------------------------
-// WORT-SUCHSPIEL
+// WORD SEARCH GAME
 // ------------------------------------------------------
 class WordSearchGame extends StatefulWidget {
   const WordSearchGame({super.key});
@@ -248,35 +239,40 @@ class WordSearchGame extends StatefulWidget {
 }
 
 class _WordSearchGameState extends State<WordSearchGame> {
-  static const int _timerDurationSeconds = 5 * 60;
+  static const int _timerDurationSeconds = 5 * 60; // 5 Minuten
 
-  // --- ZIEL DEFINITION ---
-  static const int _minWordsToPass = 45;
+  // --- GOAL DEFINITION ---
+  static const int _minWordsToPass = 30;
 
   late Timer _timer;
   int _timeRemaining = _timerDurationSeconds;
   bool _gameActive = true;
   bool _showGiveUpButton = false;
 
-  // Buttons Steuerung
+  // Button controls
   bool _showContinueButton = false;
-  bool _showRestartButton = false; // Neu für Neustart
+  bool _showRestartButton = false;
 
-  final String baseWord = "VERSTANDEN";
+  final String baseWord = "UNDERSTAND";
   final TextEditingController controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
   final Set<String> foundWords = {};
 
   final Set<String> validWords = {
-    "verstand", "anders", "tarnen", "stranden", "tanne", "adern", "strand",
-    "rasten", "stand", "teer", "ader", "rest", "rede", "rast", "rand", "rasen",
-    "raten", "reste", "erst", "erste", "ersten", "reden", "sterne", "stern",
-    "vater", "sand", "ende", "dran", "erde", "nest", "nester", "nerv", "seen",
-    "dann", "anden", "denn", "senden", "vers", "verse", "nerven", "star",
-    "rate", "see", "ast", "art", "arten", "ernten", "ernte", "vase", "nase", "tee", "rat",
-    "den", "der", "das", "an", "er", "da", "es"
-  };
+    "understand", "stunned", "unrated", "natured",
+
+     "daunted", "unrest", "unseats", "untread"
+
+    ,"ardent", "daunts", "dander","nature", "nurdle", "nursed", "ranted", "runted", "sanded", "snared", "stared", "strand", "sunder", "tanned", "tanner", "tensed", "traded", "treads", "trends", "truant", "turned",  "unseat"
+
+    , "antes", "aster", "daunt", "deans", "dears", "dents", "darts", "duets", "dunes", "durst", "earns", "nears", "neats", "nerds", "nuder", "nudes", "nurse", "rants", "rated", "rates", "reads", "rends", "rents", "resat", "runes", "runts", "sated", "snare", "stand", "stare", "stead", "stern", "sudra", "tarns", "tears", "tends", "trade", "tread", "trend", "tunas", "tuned", "tuner", "tunes", "turns", "under", "unset"
+
+    ,"ante", "ares", "arts", "dare", "dart", "dean", "dear", "dent", "drat", "dues", "duet", "dune", "duns", "dust", "earn", "ears", "east", "eats", "eras", "ern", "erns", "erst", "etna", "nard", "near", "neat", "nerd", "nest", "nets", "nude", "nuts", "rads", "rand", "rant", "rase", "rate", "rats", "read", "rend", "rent", "rest", "rets", "rude", "rued", "rues", "rune", "runs", "runt", "rust", "ruts", "sand", "sane", "sard", "sate", "sear", "seat", "send", "sent", "seta", "star", "stud", "stun", "suer", "suet", "tans", "tare", "tarn", "tear", "teas", "teds", "tend", "tens", "tern", "true", "tuna", "tune", "turd", "turn", "urea", "urns", "used", "user"
+
+    ,"and", "ant", "are", "art", "ate", "due", "dun", "ear", "eat", "end", "era", "est", "eta", "nan", "net", "nun", "nut", "rad", "ran", "rat", "red", "rue", "run", "rut", "sad", "sat", "sea", "sen", "set", "sue", "sun", "tad", "tan", "tar", "tea", "ted", "ten", "tun", "urn", "use"
+
+    ,"ad", "an", "as", "at", "ed", "us"};
 
   String feedback = "";
 
@@ -299,7 +295,6 @@ class _WordSearchGameState extends State<WordSearchGame> {
             _timer.cancel();
             _giveUpOrTimeOut(isTimeout: true);
           } else if (_timeRemaining <= _timerDurationSeconds - 5 * 60) {
-            // Button sofort zeigen (Logik aus Original: 5 Min - 5 Min = 0 Sek)
             _showGiveUpButton = true;
           }
         }
@@ -313,29 +308,28 @@ class _WordSearchGameState extends State<WordSearchGame> {
     return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 
-  // --- LOGIK GEÄNDERT: PRÜFUNG AUF 40 WÖRTER ---
   void _giveUpOrTimeOut({required bool isTimeout}) {
     if (!_gameActive) return;
     _timer.cancel();
     _gameActive = false;
 
-    // Prüfung
+    // Word check
     bool passed = foundWords.length >= _minWordsToPass;
 
     setState(() {
       _timeRemaining = 0;
       if (passed) {
-        // BESTANDEN
+        // PASSED
         if (isTimeout) {
-          feedback = "Zeit um! Aber Ziel erreicht!";
+          feedback = "Time's up! But target reached!";
         } else {
-          feedback = "Super! Genug Wörter gefunden.";
+          feedback = "Great! Enough words found.";
         }
         _showContinueButton = true;
         _showRestartButton = false;
       } else {
-        // NICHT BESTANDEN
-        feedback = "Nicht bestanden! Es fehlen ${( _minWordsToPass - foundWords.length)} Wörter.";
+        // FAILED
+        feedback = "Failed! ${( _minWordsToPass - foundWords.length)} words missing.";
         _showContinueButton = false;
         _showRestartButton = true;
       }
@@ -343,7 +337,6 @@ class _WordSearchGameState extends State<WordSearchGame> {
     _focusNode.unfocus();
   }
 
-  // --- NEUE FUNKTION: SPIEL NEUSTARTEN ---
   void _restartGame() {
     Navigator.pushReplacement(
       context,
@@ -376,7 +369,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
     if (validWords.contains(w) && !foundWords.contains(w)) {
       setState(() {
         foundWords.add(w);
-        feedback = "✔️ korrekt!";
+        feedback = "✔️ correct!";
       });
       if (foundWords.length == validWords.length) {
         _timer.cancel();
@@ -385,9 +378,9 @@ class _WordSearchGameState extends State<WordSearchGame> {
         return;
       }
     } else if (foundWords.contains(w)) {
-      setState(() => feedback = "✔️ bereits gefunden");
+      setState(() => feedback = "✔️ already found");
     } else {
-      setState(() => feedback = "❌ nicht gültig");
+      setState(() => feedback = "❌ not valid");
     }
     controller.clear();
   }
@@ -411,7 +404,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
       fontFamily: "Courier",
     );
 
-    // Farbe für den Status
+    // Status color
     Color statusColor = const Color(0xFF3E2723);
     if (!_gameActive) {
       statusColor = foundWords.length >= _minWordsToPass ? Colors.green[900]! : Colors.red[900]!;
@@ -431,7 +424,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
             );
           },
         ),
-        title: Text("Wort-Suchspiel", style: TextStyle(color: Colors.brown[900], fontWeight: FontWeight.bold, fontSize: 28,
+        title: Text("Word search game", style: TextStyle(color: Colors.brown[900], fontWeight: FontWeight.bold, fontSize: 28,
             fontFamily: 'Courier')),
         centerTitle: true,
       ),
@@ -474,8 +467,8 @@ class _WordSearchGameState extends State<WordSearchGame> {
                 alignment: const Alignment(0.0, 0.6),
                 child: Text(
                   _gameActive
-                      ? "Zeit: ${_formatTime(_timeRemaining)}"
-                      : (foundWords.length >= _minWordsToPass ? "Geschafft!" : "Gescheitert!"),
+                      ? "Time: ${_formatTime(_timeRemaining)}"
+                      : (foundWords.length >= _minWordsToPass ? "Success!" : "Failed!"),
                   style: woodTextStyle.copyWith(fontSize: 20, color: statusColor),
                 ),
               ),
@@ -501,18 +494,18 @@ class _WordSearchGameState extends State<WordSearchGame> {
                             child: Column(
                               children: [
                                 Text(
-                                  "Aus dem Wort: $baseWord",
+                                  "From the word: $baseWord",
                                   style: woodTextStyle.copyWith(fontSize: 18),
                                   textAlign: TextAlign.center,
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
-                                  "Finde mindestens $_minWordsToPass Wörter!",
+                                  "Find at least $_minWordsToPass words!",
                                   style: woodTextStyle.copyWith(fontSize: 16),
                                   textAlign: TextAlign.center,
                                 ),
                                 Text(
-                                  "Gefunden: ${foundWords.length} / ${validWords.length}",
+                                  "Found: ${foundWords.length} / ${validWords.length}",
                                   style: woodTextStyle.copyWith(fontSize: 16),
                                   textAlign: TextAlign.center,
                                 ),
@@ -545,7 +538,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
                                     onSubmitted: (_) => checkWord(),
                                     style: const TextStyle(fontSize: 20, color: Colors.black87, fontWeight: FontWeight.bold),
                                     decoration: InputDecoration(
-                                      hintText: _gameActive ? "Wort..." : "Ende",
+                                      hintText: _gameActive ? "Word..." : "End",
                                       border: InputBorder.none,
                                       contentPadding: const EdgeInsets.only(bottom: 5),
                                     ),
@@ -597,7 +590,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
                                     child: Column(
                                       children: [
                                         Text(
-                                          "Gefunden: ${foundWords.length} / ${validWords.length}",
+                                          "Found: ${foundWords.length} / ${validWords.length}",
                                           style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
@@ -622,7 +615,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
                                                 if (!_gameActive && missingWords.isNotEmpty) ...[
                                                   const SizedBox(height: 15),
                                                   const Text(
-                                                    "Fehlende Wörter:",
+                                                    "Missing words:",
                                                     style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 14),
                                                   ),
                                                   Text(
@@ -668,7 +661,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
               right: 0,
               child: Center(
                 child: WoodButton(
-                  text: "Weiter",
+                  text: "Continue",
                   onPressed: _continueToGlitch,
                 ),
               ),
@@ -681,7 +674,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
               right: 0,
               child: Center(
                 child: WoodButton(
-                  text: "Nochmal",
+                  text: "Retry",
                   onPressed: _restartGame,
                 ),
               ),
@@ -694,7 +687,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
               right: 0,
               child: Center(
                 child: WoodButton(
-                  text: "Fertig / Aufgeben",
+                  text: "Done / Give up",
                   onPressed: () => _giveUpOrTimeOut(isTimeout: false),
                 ),
               ),
@@ -705,9 +698,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
   }
 }
 
-// ------------------------------------------------------
 // PRE-GLITCH DIALOG
-// ------------------------------------------------------
 class PreGlitchDialog extends StatelessWidget {
   final List<String> foundWords;
   const PreGlitchDialog({super.key, required this.foundWords});
@@ -746,20 +737,20 @@ class PreGlitchDialog extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset('assets/images/braintemporallobe1.png',
+                        Image.asset('assets/images/brainThinking.png',
                             height: 140,
                             fit: BoxFit.contain,
                             errorBuilder: (c,o,s) => const Icon(Icons.psychology, size: 80, color: Colors.green)
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          "Super! Du hast viele Wörter gefunden!",
+                          "Super! You found many words!",
                           style: handStyle.copyWith(fontSize: 22),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          "Aber… warte… irgendwas stimmt nicht…",
+                          "But… wait… something's not right…",
                           style: handStyle.copyWith(fontSize: 18, color: Colors.red[900]),
                           textAlign: TextAlign.center,
                         ),
@@ -792,11 +783,7 @@ class PreGlitchDialog extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
-            bottom: 40,
-            left: 5,
-            child: Image.asset("assets/images/brainPointing.png", width: 180),
-          ),
+
           Positioned(
             bottom: 30,
             left: 0, right: 0,
@@ -820,9 +807,7 @@ class PreGlitchDialog extends StatelessWidget {
   }
 }
 
-// ------------------------------------------------------
-// GLITCH SCENE (NEU: WEICHES VERSCHWIMMEN)
-// ------------------------------------------------------
+// GLITCH SCENE
 class _WordData {
   final Offset pos;
   final double baseAngle;
@@ -854,10 +839,10 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
   late final List<String> words;
 
   final List<String> dialogAfterGlitch = [
-    "Bei Schizophrenie habe ich Empfangsstörungen:",
-    "Ich verarbeite Geräusche – aber das Gehirn erzeugt falsche Töne (Halluzinationen).",
-    "Auch die Realität verschwimmt, und neue Informationen zu speichern wird schwer.",
-    "Mit Hilfe kann das Signal wieder klarer werden.",
+    "With Schizophrenia, I have reception interference:",
+    "I process sounds – but the brain creates false tones (hallucinations).",
+    "Reality also blurs, and storing new information becomes difficult.",
+    "With help, the signal can become clear again.",
   ];
 
   int dialogIndex = 0;
@@ -870,13 +855,13 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _generateWordData();
 
-      // Langsame Animation (Atmen/Schweben)
+      // Floating animation
       _controller = AnimationController(
         vsync: this,
         duration: const Duration(seconds: 3),
       )..repeat(reverse: true);
 
-      // Zeit bis zur Diagnose (ca. 5 Sekunden wirken lassen)
+      // Duration until diagnosis
       Future.delayed(const Duration(seconds: 5), () {
         if (!mounted) return;
         _controller?.stop();
@@ -899,7 +884,6 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
       final rx = (r.nextDouble() * 2 - 1) * maxX;
       final ry = (r.nextDouble() * 2 - 1) * maxY;
       final pos = Offset(centerX + rx, centerY + ry);
-      // Weniger Rotation, mehr sanftes Schwanken
       final baseAngle = (r.nextDouble() - 0.5) * 0.3;
       final phase = r.nextDouble() * 2 * math.pi;
       final scale = 0.8 + r.nextDouble() * 0.5;
@@ -930,19 +914,18 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
   Widget build(BuildContext context) {
     final ready = wordData != null && wordData!.length == words.length;
 
-    // --- GLITCH / BLUR SCENE (AKTIV) ---
+    // Blury SCENE
     if (glitchActive) {
       return Scaffold(
         body: Stack(
           children: [
-            // 1. Hintergrund
+            // 1. Background
             Positioned.fill(
               child: Image.asset(
                 "assets/images/WoodBackground.jpg",
                 fit: BoxFit.cover,
               ),
             ),
-            // Papierrolle (leicht transparent im Hintergrund)
             Center(
               child: Opacity(
                 opacity: 0.4,
@@ -955,7 +938,7 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
               ),
             ),
 
-            // 2. Hintergrund-Blur (Macht die ganze Szene traumartig)
+            // 2. Backdrop Blur
             Positioned.fill(
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
@@ -963,7 +946,7 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
               ),
             ),
 
-            // 3. Schwebende, verschwimmende Wörter
+            // 3. Floating words
             if (ready)
               LayoutBuilder(builder: (_, constraints) {
                 final count = math.min(words.length, wordData!.length);
@@ -975,10 +958,8 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
                         builder: (_, __) {
                           final d = wordData![i];
                           final animVal = _controller!.value;
-                          // Sinus-Welle für Pulsieren
                           final sine = math.sin((animVal * 2 * math.pi) + d.phase);
 
-                          // Langsame Schwimm-Bewegung
                           final wobbleX = math.cos(animVal * math.pi + d.phase) * 15;
                           final wobbleY = math.sin(animVal * math.pi + d.phase) * 15;
                           final rot = d.baseAngle + (sine * 0.1);
@@ -986,10 +967,7 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
                           final left = (d.pos.dx + wobbleX).clamp(20.0, constraints.maxWidth - 100.0);
                           final top = (d.pos.dy + wobbleY).clamp(80.0, constraints.maxHeight - 100.0);
 
-                          // Blur-Stärke pulsiert (scharf -> unscharf -> scharf)
                           final blurAmount = (sine.abs() * 3.0) + 0.5;
-
-                          // Opacity schwankt auch
                           final opacity = 0.5 + (sine.abs() * 0.5);
 
                           final baseStyle = TextStyle(
@@ -1006,7 +984,7 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
                               angle: rot,
                               child: Stack(
                                 children: [
-                                  // SCHICHT 1: Der "Geist" (Doppelbild, versetzt)
+                                  // Ghost layer
                                   Transform.translate(
                                     offset: Offset(sine * 5, sine * 5),
                                     child: ImageFiltered(
@@ -1014,7 +992,7 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
                                       child: Text(words[i], style: baseStyle.copyWith(color: Colors.brown.withOpacity(0.4))),
                                     ),
                                   ),
-                                  // SCHICHT 2: Hauptwort (Verschwimmt)
+                                  // Main word
                                   ImageFiltered(
                                     imageFilter: ImageFilter.blur(sigmaX: blurAmount, sigmaY: blurAmount),
                                     child: Text(words[i], style: baseStyle),
@@ -1035,7 +1013,7 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
       );
     }
 
-    // --- MONOLOG / DIAGNOSE ---
+    // --- MONOLOGUE / DIAGNOSIS ---
     else {
       final TextStyle handStyle = TextStyle(
         fontFamily: 'Courier',
@@ -1067,7 +1045,7 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.asset(
-                              'assets/images/braintemporallobe1.png',
+                              'assets/images/brainThinking.png',
                               height: 180,
                               fit: BoxFit.contain,
                               errorBuilder: (c, o, s) => const Icon(Icons.psychology, size: 100, color: Colors.green)
@@ -1100,8 +1078,8 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text("Die Diagnose:", style: handStyle.copyWith(fontSize: 18, color: const Color(0xFF3E2723))),
-                            Text("Schizophrenie", style: handStyle.copyWith(fontSize: 24, color: const Color(0xFF3E2723), fontWeight: FontWeight.w900)),
+                            Text("The diagnosis:", style: handStyle.copyWith(fontSize: 18, color: const Color(0xFF3E2723))),
+                            Text("Schizophrenia", style: handStyle.copyWith(fontSize: 24, color: const Color(0xFF3E2723), fontWeight: FontWeight.w900)),
                           ],
                         ),
                       ),
@@ -1110,15 +1088,12 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
                 ),
               ),
             ),
-            Positioned(
-              bottom: 10, left: 10,
-              child: Image.asset("assets/images/brainPointing.png", width: 180),
-            ),
+
             Positioned(
               bottom: 30, left: 0, right: 0,
               child: Center(
                 child: WoodButton(
-                  text: "Weiter",
+                  text: "Continue",
                   onPressed: nextDialog,
                 ),
               ),
@@ -1130,9 +1105,7 @@ class _TemporalLobeGlitchSceneState extends State<TemporalLobeGlitchScene>
   }
 }
 
-// ------------------------------------------------------
 // END SCREEN
-// ------------------------------------------------------
 class TemporalLobeEndScreen extends StatelessWidget {
   const TemporalLobeEndScreen({super.key});
 
@@ -1168,13 +1141,13 @@ class TemporalLobeEndScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          "Temporallappen-Quest abgeschlossen!",
+                          "Temporal lobe quest completed!",
                           style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF3E2723), fontFamily: 'Courier'),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 20),
                         const Text(
-                          "Bereit für die nächste Gehirnregion?",
+                          "Ready for the next brain region?",
                           style: TextStyle(fontSize: 20, color: Color(0xFF3E2723), fontFamily: 'Courier'),
                           textAlign: TextAlign.center,
                         ),
@@ -1198,7 +1171,7 @@ class TemporalLobeEndScreen extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 30.0),
                       child: Text(
-                        "Geschafft!",
+                        "Success!",
                         style: handStyle.copyWith(fontSize: 28, color: const Color(0xFF3E2723), fontWeight: FontWeight.w900),
                       ),
                     ),
@@ -1212,7 +1185,7 @@ class TemporalLobeEndScreen extends StatelessWidget {
             left: 0, right: 0,
             child: Center(
               child: WoodButton(
-                text: "Zur Karte",
+                text: "Back to map",
                 onPressed: () {
                   Navigator.of(context, rootNavigator: true).pop(true);
                 },

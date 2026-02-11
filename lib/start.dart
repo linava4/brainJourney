@@ -2,9 +2,8 @@ import 'dart:ui'; // Wichtig für ImageFilter
 import 'package:brainjourney/home.dart';
 import 'package:brainjourney/homeMentalHealth.dart';
 import 'package:flutter/material.dart';
+import 'helpers.dart';
 
-import 'cerebellum.dart';
-import 'home.dart';
 
 void main() {
   runApp(const BrainJourneyApp());
@@ -55,9 +54,7 @@ class StartScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
 
-                  // --- A. LOGO BEREICH ---
-                  // Hier laden wir logo.png.
-                  // Ich habe Padding hinzugefügt, damit es nicht ganz oben klebt.
+                  // LOGO BEREICH
                   Padding(
                     padding: const EdgeInsets.only(top: 20.0),
                     child: Image.asset(
@@ -67,29 +64,27 @@ class StartScreen extends StatelessWidget {
                     ),
                   ),
 
-                  // --- B. AVATAR (Brain Hike) ---
-                  // Expanded sorgt dafür, dass dieser Bereich den freien Platz füllt
+                  // avatar
 
                   Expanded(
                     child: Center(
                       child: Image.asset(
                         'assets/images/brainHike.png',
-                        height: 300, // <--- HIER EINSTELLEN (z.B. 200 oder 250)
+                        height: 300,
                         fit: BoxFit.contain,
                       ),
                     ),
                   ),
 
-                  // --- C. BUTTONS ---
+                  //BUTTONS
                   SizedBox(
-                    // Hier setzt du die Breite auf 70% des Bildschirms
+                    // Breite auf 70% des Bildschirms
                     width: MediaQuery.of(context).size.width * 0.7,
                     child: Column(
-                      // WICHTIG: Dies sorgt dafür, dass die Buttons die Breite der SizedBox ausfüllen
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         WoodButton(
-                          text: "Erkunde die Pfade\n(Gehirnregionen)",
+                          text: "Explore the paths\n(Brain regions)",
                           onPressed: () {
                             Navigator.pushReplacement(
                               context,
@@ -99,7 +94,7 @@ class StartScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 16),
                         WoodButton(
-                          text: "Verstehe den Wald\n(Mentale Gesundheit)",
+                          text: "Understand the forest\n(Mental health)",
                           onPressed: () {
                             Navigator.pushReplacement(
                               context,
@@ -112,8 +107,7 @@ class StartScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 30),
 
-                  // --- D. FORTSCHRITTSANZEIGE ---
-                  const ProgressBarRow(textColor: darkBrown),
+
 
                   const SizedBox(height: 10),
                 ],
@@ -126,11 +120,10 @@ class StartScreen extends StatelessWidget {
   }
 }
 
-// --- WIDGET: Holz Button ---
 
 
 
-// --- WIDGET: Fortschrittsbalken ---
+//Progressbar
 class ProgressBarRow extends StatelessWidget {
   final Color textColor;
 
@@ -142,7 +135,7 @@ class ProgressBarRow extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "Wanderfortschritt",
+          "Progress",
           style: TextStyle(
             color: textColor,
             fontWeight: FontWeight.bold,
