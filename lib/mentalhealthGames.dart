@@ -194,7 +194,7 @@ class _QuizScreenState extends State<QuizScreen> {
                     const SizedBox(height: 30),
 
                     if (!answered) ...allAnswers.map((ans) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: WoodButtonWide(
                         onPressed: () => _checkAnswer(ans),
                         text: ans,

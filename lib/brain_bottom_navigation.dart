@@ -71,7 +71,7 @@ class BrainNavigationBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             _navItem(context, Icons.home_outlined, "Start", 0),
-            _navItem(context, Icons.map, "Karte", 1),
+            _navItem(context, Icons.map, "Map", 1),
 
             // Zentraler Action-Button
             GestureDetector(
@@ -84,8 +84,8 @@ class BrainNavigationBar extends StatelessWidget {
               ),
             ),
 
-            _navItem(context, Icons.menu_book_outlined, "Sammelbuch", 3),
-            _navItem(context, Icons.person_outline, "Profil", 4),
+            _navItem(context, Icons.menu_book_outlined, "Collection", 3),
+            _navItem(context, Icons.person_outline, "Profile", 4),
           ],
         ),
       ),

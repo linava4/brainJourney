@@ -230,10 +230,10 @@ class MentalMapScreenState extends State<MentalMapScreen> {
                   children: [
                     _circleIcon(Icons.hiking, 20),
                     Text(
-                      'Brain Map',
+                      'Mental Health Map',
                       style: TextStyle(
                         fontFamily: 'Serif',
-                        fontSize: 28,
+                        fontSize: 26,
                         fontWeight: FontWeight.bold,
                         color: _inkColor,
                         letterSpacing: 1.0,

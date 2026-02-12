@@ -109,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Positioned(
                             top: areaHeight * 0.05,
                             right: areaWidth * 0.05,
-                            width: areaWidth * 0.65,
+                            width: areaWidth * 0.70,
                             height: areaHeight * 0.45,
                             child: Stack(
                               alignment: Alignment.center,
@@ -119,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   fit: BoxFit.contain,
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.fromLTRB(25, 10, 25, 45),
+                                  padding: const EdgeInsets.fromLTRB(35, 10, 35, 45),
                                   child: Center(
                                     child: AutoSizeText(
                                       dialog[_dialogStep],

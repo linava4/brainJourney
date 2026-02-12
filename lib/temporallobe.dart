@@ -228,9 +228,7 @@ class _TemporalLobeIntroState extends State<TemporalLobeIntro> {
   }
 }
 
-// ------------------------------------------------------
 // WORD SEARCH GAME
-// ------------------------------------------------------
 class WordSearchGame extends StatefulWidget {
   const WordSearchGame({super.key});
 
@@ -262,17 +260,17 @@ class _WordSearchGameState extends State<WordSearchGame> {
   final Set<String> validWords = {
     "understand", "stunned", "unrated", "natured",
 
-     "daunted", "unrest", "unseats", "untread"
+     "daunted", "unrest", "unseats"
 
-    ,"ardent", "daunts", "dander","nature", "nurdle", "nursed", "ranted", "runted", "sanded", "snared", "stared", "strand", "sunder", "tanned", "tanner", "tensed", "traded", "treads", "trends", "truant", "turned",  "unseat"
+    ,"ardent", "daunts", "dander","nature", "nurdle", "nursed", "ranted", "sanded", "snared", "stared", "strand", "sunder", "tanned", "tanner", "tensed", "traded", "treads", "trends", "truant", "turned",  "unseat"
 
-    , "antes", "aster", "daunt", "deans", "dears", "dents", "darts", "duets", "dunes", "durst", "earns", "nears", "neats", "nerds", "nuder", "nudes", "nurse", "rants", "rated", "rates", "reads", "rends", "rents", "resat", "runes", "runts", "sated", "snare", "stand", "stare", "stead", "stern", "sudra", "tarns", "tears", "tends", "trade", "tread", "trend", "tunas", "tuned", "tuner", "tunes", "turns", "under", "unset"
+    , "antes", "aster", "daunt", "deans", "dears", "dents", "darts", "duets", "dunes", "durst", "earns", "nears", "nerds", "nuder", "nudes", "nurse", "rants", "rated", "rates", "reads", "rends", "rents", "resat", "runes", "runts", "sated", "snare", "stand", "stare", "stead", "stern", "sudra", "tarns", "tears", "tends", "trade", "tread", "trend", "tunas", "tuned", "tuner", "tunes", "turns", "under", "unset"
 
-    ,"ante", "ares", "arts", "dare", "dart", "dean", "dear", "dent", "drat", "dues", "duet", "dune", "duns", "dust", "earn", "ears", "east", "eats", "eras", "ern", "erns", "erst", "etna", "nard", "near", "neat", "nerd", "nest", "nets", "nude", "nuts", "rads", "rand", "rant", "rase", "rate", "rats", "read", "rend", "rent", "rest", "rets", "rude", "rued", "rues", "rune", "runs", "runt", "rust", "ruts", "sand", "sane", "sard", "sate", "sear", "seat", "send", "sent", "seta", "star", "stud", "stun", "suer", "suet", "tans", "tare", "tarn", "tear", "teas", "teds", "tend", "tens", "tern", "true", "tuna", "tune", "turd", "turn", "urea", "urns", "used", "user"
+    ,"ante", "ares", "arts", "dare", "dart", "dean", "dear", "dent", "drat", "dues", "duet", "dune", "duns", "dust", "earn", "ears", "east", "eats", "eras", "ern", "erst", "etna", "near", "neat", "nerd", "nest", "nets", "nude", "nuts", "rads", "rand", "rant", "rate", "rats", "read", "rend", "rent", "rest", "rets", "rude", "rued", "rues", "rune", "runs", "runt", "rust", "ruts", "sand", "sane", "sate", "sear", "seat", "send", "sent", "star", "stud", "stun", "suer", "trans", "tare", "tarn", "tear", "teas", "tend", "tens", "tern", "true", "tuna", "tune", "turd", "turn", "urea", "urns", "used", "user"
 
-    ,"and", "ant", "are", "art", "ate", "due", "dun", "ear", "eat", "end", "era", "est", "eta", "nan", "net", "nun", "nut", "rad", "ran", "rat", "red", "rue", "run", "rut", "sad", "sat", "sea", "sen", "set", "sue", "sun", "tad", "tan", "tar", "tea", "ted", "ten", "tun", "urn", "use"
+    ,"and", "ant", "are", "art", "ate", "due", "dun", "ear", "eat", "end", "era", "est", "eta", "net", "nun", "nut", "rad", "ran", "rat", "red", "rue", "run", "rut", "sad", "sat", "sea", "set", "sue", "sun", "tad", "tan", "tea", "ted", "ten", "tun", "urn", "use"
 
-    ,"ad", "an", "as", "at", "ed", "us"};
+    ,"add", "an", "as", "at", "ed", "us"};
 
   String feedback = "";
 
@@ -345,7 +343,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
   }
 
   void _continueToGlitch() {
-    final list = validWords.toList();
+    final list = foundWords.toList();
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => PreGlitchDialog(foundWords: list)),

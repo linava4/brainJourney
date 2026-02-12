@@ -172,12 +172,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         fit: BoxFit.fill
                     ),
                     Positioned(
-                      top: 55,
+                      top: 50,
                       child:
                         Text(
                           "Entrance",
                           style: handStyle.copyWith(
-                              fontSize: 32,
+                              fontSize: 30,
                               color: const Color(0xFF3E2723),
                               letterSpacing: 3,
                               fontWeight: FontWeight.w900,
