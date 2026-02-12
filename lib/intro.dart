@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:brainjourney/login.dart';
+import 'package:brainjourney/register.dart';
 import 'package:brainjourney/start.dart';
 import 'package:flutter/material.dart';
 import 'helpers.dart';
@@ -31,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
       } else {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          MaterialPageRoute(builder: (_) => const RegisterScreen()),
         );
       }
     });
